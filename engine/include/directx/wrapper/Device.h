@@ -13,9 +13,9 @@
 class Device
 {
 public:
-    static void Init()
+    static void Init(int adaptor_index = -1)
     {
-        CreateDevice();
+        CreateDevice(adaptor_index);
     }
 
     static ID3D12Device* Get()

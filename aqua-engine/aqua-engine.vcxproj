@@ -154,9 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="engine\directx\wrapper\Device.h" />
     <ClInclude Include="engine\directx\wrapper\Factory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="engine\directx\wrapper\Device.cpp" />
     <ClCompile Include="engine\directx\wrapper\Factory.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

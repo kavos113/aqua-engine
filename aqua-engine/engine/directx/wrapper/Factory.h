@@ -1,18 +1,26 @@
 #pragma once
 
 #include <dxgi1_6.h>
+#include <wrl.h>
 
 class Factory
 {
 public:
-    static void Init()
+    static void Init(bool enableDebugLayer)
     {
-        CreateFactory();
+        if (enableDebugLayer)
+        {
+            CreateFactoryWithDebug();
+        }
+        else
+        {
+            CreateFactory();
+        }
     }
 
     static IDXGIFactory6* Get()
     {
-        return m_dxgiFactory;
+        return m_dxgiFactory.Get();
     }
 
     static void Shutdown()
@@ -24,7 +32,7 @@ public:
         }
     }
 private:
-    static IDXGIFactory6* m_dxgiFactory;
+    static Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
 
     static HRESULT CreateFactory()
     {
@@ -42,4 +50,22 @@ private:
 
         return S_OK;
     }
+
+    static HRESULT CreateFactoryWithDebug()
+    {
+        HRESULT hr = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory));
+        if (FAILED(hr))
+        {
+            MessageBox(
+                nullptr,
+                L"Failed to create DXGI factory.",
+                L"Error",
+                MB_OK | MB_ICONERROR
+            );
+            return hr;
+        }
+
+        return S_OK;
+    }
+
 };

@@ -13,7 +13,7 @@ public:
 
     static ID3D12Device* Get()
     {
-        return m_device.Get();
+        return m_device;
     }
 
     static void Shutdown()
@@ -26,7 +26,7 @@ public:
     }
 
 private:
-    static Microsoft::WRL::ComPtr<ID3D12Device> m_device;
+    static ID3D12Device* m_device;
 
     static HRESULT CreateDevice()
     {

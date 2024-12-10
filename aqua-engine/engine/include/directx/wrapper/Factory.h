@@ -1,5 +1,6 @@
 #pragma once
 
+#include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
 
@@ -20,7 +21,7 @@ public:
 
     static IDXGIFactory6* Get()
     {
-        return m_dxgiFactory.Get();
+        return m_dxgiFactory
     }
 
     static void Shutdown()
@@ -31,8 +32,23 @@ public:
             m_dxgiFactory = nullptr;
         }
     }
+
+    static void EnableDebugLayer()
+    {
+        ID3D12Debug5* debugController;
+        HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
+        if (SUCCEEDED(hr))
+        {
+            debugController->EnableDebugLayer();
+            debugController->SetEnableGPUBasedValidation(TRUE);
+            debugController->SetEnableAutoName(TRUE);
+        }
+        OutputDebugString(L"Debug layer enabled.\n");
+        debugController->Release();
+    }
+
 private:
-    static Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
+    static IDXGIFactory6* m_dxgiFactory;
 
     static HRESULT CreateFactory()
     {

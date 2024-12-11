@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AQUA_DEVICE_H
+#define AQUA_DEVICE_H
 
 #ifndef UNICODE
 #define UNICODE
@@ -106,3 +107,5 @@ private:
         return S_OK;
     }
 };
+
+#endif //AQUA_DEVICE_H

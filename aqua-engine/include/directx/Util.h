@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AQUA_DIRECTX_UTIL_H
+#define AQUA_DIRECTX_UTIL_H
 
 template <typename T>
 void SafeRelease(T** ptr)
@@ -9,3 +10,5 @@ void SafeRelease(T** ptr)
         *ptr = nullptr;
     }
 }
+
+#endif //AQUA_DIRECTX_UTIL_H

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AQUA_FACTORY_H
+#define AQUA_FACTORY_H
 
 #ifndef UNICODE
 #define UNICODE
@@ -87,3 +88,5 @@ private:
     }
 
 };
+
+#endif //AQUA_FACTORY_H

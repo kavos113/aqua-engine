@@ -6,12 +6,16 @@ set(CMAKE_CXX_STANDARD 20)
 set(SRC
         src/directx/wrapper/Device.cpp
         src/directx/wrapper/Factory.cpp
+        src/directx/wrapper/Command.cpp
+        src/directx/wrapper/Fence.cpp
 )
 
 set(INCLUDE
         include/directx/wrapper/Device.h
         include/directx/wrapper/Factory.h
         include/directx/Util.h
+        include/directx/wrapper/Command.h
+        include/directx/wrapper/Fence.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

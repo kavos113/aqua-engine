@@ -9,7 +9,8 @@ protected:
     void SetUp() override
     {
         Factory::Init(true);
-        Device::Init();
+        Device::GetAdaptors();
+        Device::Init(0);
     }
 
     void TearDown() override

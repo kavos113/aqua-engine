@@ -1,10 +1,6 @@
 #ifndef AQUA_DEVICE_H
 #define AQUA_DEVICE_H
 
-#ifndef UNICODE
-#define UNICODE
-#endif
-
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <string>
@@ -95,7 +91,7 @@ private:
 
         if (m_device == nullptr)
         {
-            MessageBox(
+            MessageBoxW(
                 nullptr,
                 L"Failed to create D3D12 device.",
                 L"Error",

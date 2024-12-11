@@ -1,10 +1,6 @@
 #ifndef AQUA_FACTORY_H
 #define AQUA_FACTORY_H
 
-#ifndef UNICODE
-#define UNICODE
-#endif
-
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
@@ -46,7 +42,7 @@ public:
             debugController->SetEnableGPUBasedValidation(TRUE);
             debugController->SetEnableAutoName(TRUE);
         }
-        OutputDebugString(L"Debug layer enabled.\n");
+        OutputDebugStringW(L"Debug layer enabled.\n");
         debugController->Release();
     }
 
@@ -58,7 +54,7 @@ private:
         HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&m_dxgiFactory));
         if (FAILED(hr))
         {
-            MessageBox(
+            MessageBoxW(
                 nullptr,
                 L"Failed to create DXGI factory.",
                 L"Error",
@@ -75,7 +71,7 @@ private:
         HRESULT hr = CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory));
         if (FAILED(hr))
         {
-            MessageBox(
+            MessageBoxW(
                 nullptr,
                 L"Failed to create DXGI factory.",
                 L"Error",

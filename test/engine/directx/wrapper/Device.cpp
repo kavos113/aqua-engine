@@ -35,3 +35,12 @@ TEST_F(DeviceTest, GetAdaptors)
     ASSERT_GT(adaptors.size(), 0);
     Device::Shutdown();
 }
+
+TEST_F(DeviceTest, InitWithAdaptor)
+{
+    auto adaptors = Device::GetAdaptors();
+    std::wcout << L"Choose : " << adaptors[0] << std::endl;
+    Device::Init(0);
+    ASSERT_NE(Device::Get(), nullptr);
+    Device::Shutdown();
+}

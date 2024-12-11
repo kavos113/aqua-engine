@@ -15,3 +15,6 @@ set(INCLUDE
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})
+target_include_directories(aqua-engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3d12.lib)
+target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/dxgi.lib)

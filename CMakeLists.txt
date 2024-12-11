@@ -11,6 +11,8 @@ add_subdirectory(aqua-engine)
 set(TEST_SRC
     test/engine/directx/wrapper/Factory.cpp
     test/engine/directx/wrapper/Device.cpp
+    test/engine/directx/wrapper/Command.cpp
+        test/engine/directx/wrapper/Fence.cpp
 )
 
 include(FetchContent)

@@ -13,6 +13,7 @@ set(TEST_SRC
         test/engine/directx/wrapper/Device.cpp
         test/engine/directx/wrapper/Command.cpp
         test/engine/directx/wrapper/Fence.cpp
+        test/engine/directx/wrapper/SwapChain.cpp
 )
 
 include(FetchContent)

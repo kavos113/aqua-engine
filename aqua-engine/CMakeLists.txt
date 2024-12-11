@@ -8,6 +8,7 @@ set(SRC
         src/directx/wrapper/Factory.cpp
         src/directx/wrapper/Command.cpp
         src/directx/wrapper/Fence.cpp
+        src/directx/wrapper/SwapChain.cpp
 )
 
 set(INCLUDE
@@ -16,6 +17,7 @@ set(INCLUDE
         include/directx/Util.h
         include/directx/wrapper/Command.h
         include/directx/wrapper/Fence.h
+        include/directx/wrapper/SwapChain.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

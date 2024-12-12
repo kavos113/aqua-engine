@@ -5,6 +5,10 @@ project(aqua)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (NOT MSVC)
+    message(FATAL_ERROR "This project is only supported on Windows")
+endif ()
+
 add_subdirectory(aqua-engine)
 
 # Test
@@ -14,6 +18,8 @@ set(TEST_SRC
         test/engine/directx/wrapper/Command.cpp
         test/engine/directx/wrapper/Fence.cpp
         test/engine/directx/wrapper/SwapChain.cpp
+        test/engine/directx/wrapper/DescriptorHeap.cpp
+        test/engine/directx/descriptor_heap/GlobalDescriptorHeap.cpp
 )
 
 include(FetchContent)

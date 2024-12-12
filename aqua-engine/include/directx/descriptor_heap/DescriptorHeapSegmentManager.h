@@ -20,6 +20,7 @@ public:
         D3D12_GPU_DESCRIPTOR_HANDLE first_gpu_handle);
     
     DescriptorHeapSegmentManager();
+    ~DescriptorHeapSegmentManager() = default;
     
     DescriptorHeapSegment Allocate(unsigned int size);
     

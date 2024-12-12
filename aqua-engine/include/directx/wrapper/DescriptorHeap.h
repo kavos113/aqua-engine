@@ -21,5 +21,4 @@ private:
     UINT m_incrementSize;
 };
 
-
 #endif //AQUA_DESCRIPTORHEAP_H

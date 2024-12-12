@@ -17,7 +17,6 @@ protected:
 
     void TearDown() override
     {
-        GlobalDescriptorHeapManager::Shutdown();
         Device::Shutdown();
         Factory::Shutdown();
     }

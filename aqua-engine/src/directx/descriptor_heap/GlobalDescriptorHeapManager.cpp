@@ -14,12 +14,6 @@ void GlobalDescriptorHeapManager::Init()
     m_heaps[1].Init(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 }
 
-void GlobalDescriptorHeapManager::Shutdown()
-{
-    delete &m_heaps;
-    delete &m_shaderHeaps;
-}
-
 DescriptorHeapSegmentManager& GlobalDescriptorHeapManager::CreateShaderManager(
     const std::string& name,
     unsigned int size,

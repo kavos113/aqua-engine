@@ -13,16 +13,17 @@ protected:
         Device::GetAdaptors();
         Device::Init(0);
         
-        command = Command();
+        command = new Command();
     }
 
     void TearDown() override
     {
+        delete command;
         Device::Shutdown();
         Factory::Shutdown();
     }
     
-    Command command;
+    Command* command{};
 };
 
 TEST_F(DescriptorHeapTest, Create)

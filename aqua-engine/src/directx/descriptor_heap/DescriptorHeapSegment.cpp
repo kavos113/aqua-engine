@@ -1,16 +1,17 @@
 #include "directx/descriptor_heap/DescriptorHeapSegment.h"
 
-DescriptorHeapSegment::DescriptorHeapSegment(
-    const unsigned int numDescriptors,
-    const int segmentId,
-    const D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
-    const D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
-    const UINT incrementSize)
+DescriptorHeapSegment::DescriptorHeapSegment(unsigned int numDescriptors,
+                                             int segmentId,
+                                             D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
+                                             D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
+                                             UINT incrementSize,
+                                             std::shared_ptr<DescriptorHeapSegmentManager> manager)
     : m_numDescriptors(numDescriptors)
     , m_cpuHandle(cpu_handle)
     , m_gpuHandle(gpu_handle)
     , m_incrementSize(incrementSize)
     , m_segmentId(segmentId)
+    , m_manager(manager)
 {
 }
 
@@ -20,6 +21,7 @@ DescriptorHeapSegment::DescriptorHeapSegment(DescriptorHeapSegment&& segment) no
     , m_gpuHandle(segment.m_gpuHandle)
     , m_incrementSize(segment.m_incrementSize)
     , m_segmentId(segment.m_segmentId)
+    , m_manager(segment.m_manager)
 {
 }
 
@@ -30,6 +32,7 @@ DescriptorHeapSegment& DescriptorHeapSegment::operator=(DescriptorHeapSegment&& 
     m_cpuHandle = segment.m_cpuHandle;
     m_gpuHandle = segment.m_gpuHandle;
     m_incrementSize = segment.m_incrementSize;
+    m_manager = segment.m_manager;
     
     return *this;
 }
@@ -48,4 +51,9 @@ D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeapSegment::GetGPUHandle(unsigned int off
     handle.ptr += static_cast<UINT64>(offset) * m_incrementSize;
     
     return handle;
+}
+
+void DescriptorHeapSegment::SetGraphicsRootDescriptorTable(Command *command, unsigned int offset) const
+{
+    m_manager->SetGraphicsRootDescriptorTable(command, m_segmentId, offset);
 }

@@ -1,4 +1,6 @@
 #include "directx/descriptor_heap/DescriptorHeapSegmentManager.h"
+
+#include "directx/descriptor_heap/DescriptorHeapSegment.h"
 #include "directx/wrapper/Command.h"
 
 DescriptorHeapSegmentManager::DescriptorHeapSegmentManager(
@@ -50,7 +52,14 @@ DescriptorHeapSegment DescriptorHeapSegmentManager::Allocate(const unsigned int 
     GLOBAL_HEAP_ID id = m_lastId;
     m_lastId++;
     
-    return {m_sizes[id], id, GetCPUHandle(id), GetGPUHandle(id), m_incrementSize};
+    
+    
+    return {m_sizes[id],
+            id,
+            GetCPUHandle(id),
+            GetGPUHandle(id),
+            m_incrementSize,
+            shared_from_this()};
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeapSegmentManager::GetCPUHandle(const GLOBAL_HEAP_ID id) const

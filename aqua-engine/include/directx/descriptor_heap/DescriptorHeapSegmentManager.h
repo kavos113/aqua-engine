@@ -4,12 +4,13 @@
 #include <d3d12.h>
 #include <string>
 #include <vector>
+#include <memory>
 
-#include "DescriptorHeapSegment.h"
 #include "HeapID.h"
 #include "directx/wrapper/Command.h"
 
-class DescriptorHeapSegmentManager
+class DescriptorHeapSegment;
+class DescriptorHeapSegmentManager : public std::enable_shared_from_this<DescriptorHeapSegmentManager>
 {
 public:
     DescriptorHeapSegmentManager(

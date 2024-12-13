@@ -2,20 +2,20 @@
 #define AQUA_DESCRIPTORHEAPSEGMENT_H
 
 #include <d3d12.h>
+#include <memory>
 
 #include "HeapID.h"
+#include "DescriptorHeapSegmentManager.h"
 
 class DescriptorHeapSegment
 {
 public:
-    DescriptorHeapSegment() = default;
-    
-    DescriptorHeapSegment(
-        unsigned int numDescriptors,
-        int segmentId,
-        D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
-        D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
-        UINT incrementSize);
+    DescriptorHeapSegment(unsigned int numDescriptors,
+                          GLOBAL_HEAP_ID segmentId,
+                          D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
+                          D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
+                          UINT incrementSize,
+                          std::shared_ptr<DescriptorHeapSegmentManager> manager);
     
     DescriptorHeapSegment(DescriptorHeapSegment &&segment) noexcept;
     DescriptorHeapSegment &operator=(DescriptorHeapSegment &&segment) noexcept;
@@ -30,6 +30,8 @@ public:
     
     [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle(unsigned int offset = 0) const;
     [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(unsigned int offset = 0) const;
+    
+    void SetGraphicsRootDescriptorTable(Command *command, unsigned int offset = 0) const;
 
 private:
     unsigned int m_numDescriptors;
@@ -39,6 +41,8 @@ private:
     UINT m_incrementSize;
     
     GLOBAL_HEAP_ID m_segmentId;
+    
+    std::shared_ptr<DescriptorHeapSegmentManager> m_manager;
 };
 
 

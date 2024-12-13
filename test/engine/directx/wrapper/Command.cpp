@@ -28,3 +28,9 @@ TEST_F(CommandTest, Init)
     ASSERT_NE(command.Allocator(), nullptr);
     ASSERT_NE(command.List(), nullptr);
 }
+
+TEST_F(CommandTest, Execute)
+{
+    Command command;
+    command.Execute();
+}

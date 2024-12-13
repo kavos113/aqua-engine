@@ -29,7 +29,7 @@ TEST_F(DeviceTest, GetAdaptors)
     auto adaptors = Device::GetAdaptors();
     for (const auto & adaptor : adaptors)
     {
-        std::wcout << adaptor << std::endl;
+        std::wcout << "adaptor: " << adaptor << std::endl;
     }
 
     ASSERT_GT(adaptors.size(), 0);

@@ -3,6 +3,7 @@
 #include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
 #include "directx/wrapper/Device.h"
 #include "directx/wrapper/Factory.h"
+#include "directx/descriptor_heap/DescriptorHeapSegment.h"
 
 class GlobalDescriptorHeapManagerTest : public ::testing::Test
 {

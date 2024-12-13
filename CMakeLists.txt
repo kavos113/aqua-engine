@@ -20,6 +20,8 @@ set(TEST_SRC
         test/engine/directx/wrapper/SwapChain.cpp
         test/engine/directx/wrapper/DescriptorHeap.cpp
         test/engine/directx/descriptor_heap/GlobalDescriptorHeap.cpp
+        test/engine/directx/wrapper/Barrier.cpp
+        test/engine/directx/buffer/Buffer.cpp
 )
 
 include(FetchContent)

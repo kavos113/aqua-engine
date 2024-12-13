@@ -16,7 +16,7 @@ public:
         D3D12_RESOURCE_STATES resourceState,
         D3D12_CLEAR_VALUE* clearValue);
     
-    ID3D12Resource* GetBuffer() const;
+    [[nodiscard]] ID3D12Resource* GetBuffer() const;
     
     struct HeapProperties
     {
@@ -89,6 +89,5 @@ private:
 };
 
 #define BUFFER_DEFAULT(size) Buffer::HeapProperties::Upload(), D3D12_HEAP_FLAG_NONE, Buffer::ResourceDesc::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr
-
 
 #endif //AQUA_BUFFER_H

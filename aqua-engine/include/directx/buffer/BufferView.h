@@ -15,17 +15,17 @@ public:
     void SetDescriptorHeapSegment(std::shared_ptr<DescriptorHeapSegment> descriptorHeapSegment, int offset)
     {
         m_DescriptorHeapSegment = descriptorHeapSegment;
-        this->offset = offset;
+        this->m_offset = offset;
     }
     
     void SetGraphicsRootDescriptorTable(Command *command) const
     {
-        m_DescriptorHeapSegment->SetGraphicsRootDescriptorTable(command, offset);
+        m_DescriptorHeapSegment->SetGraphicsRootDescriptorTable(command, m_offset);
     }
     
 protected:
     std::shared_ptr<DescriptorHeapSegment> m_DescriptorHeapSegment;
-    int offset;
+    int m_offset;
 };
 
 

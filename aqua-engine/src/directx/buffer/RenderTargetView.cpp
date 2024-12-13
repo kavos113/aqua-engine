@@ -12,6 +12,6 @@ void RenderTargetView::Create(Buffer *buffer)
     Device::Get()->CreateRenderTargetView(
         buffer->GetBuffer(),
         &rtvDesc,
-        m_DescriptorHeapSegment->GetCPUHandle(offset)
+        m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );
 }

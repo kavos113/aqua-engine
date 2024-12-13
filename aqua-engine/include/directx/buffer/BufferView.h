@@ -5,11 +5,12 @@
 #include <memory>
 
 #include "directx/descriptor_heap/DescriptorHeapSegment.h"
+#include "Buffer.h"
 
 class BufferView
 {
 public:
-    virtual HRESULT Create() = 0;
+    virtual void Create(Buffer *buffer) = 0;
     
     void SetDescriptorHeapSegment(std::shared_ptr<DescriptorHeapSegment> descriptorHeapSegment, int offset)
     {
@@ -22,7 +23,7 @@ public:
         m_DescriptorHeapSegment->SetGraphicsRootDescriptorTable(command, offset);
     }
     
-private:
+protected:
     std::shared_ptr<DescriptorHeapSegment> m_DescriptorHeapSegment;
     int offset;
 };

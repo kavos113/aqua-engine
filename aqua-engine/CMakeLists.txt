@@ -17,6 +17,7 @@ set(SRC
         src/directx/descriptor_heap/GlobalDescriptorHeapManager.cpp
         src/directx/buffer/Buffer.cpp
         src/directx/buffer/BufferView.cpp
+        src/directx/buffer/RenderTargetView.cpp
 )
 
 set(INCLUDE
@@ -35,6 +36,7 @@ set(INCLUDE
         include/directx/descriptor_heap/HeapID.h
         include/directx/buffer/Buffer.h
         include/directx/buffer/BufferView.h
+        include/directx/buffer/RenderTargetView.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

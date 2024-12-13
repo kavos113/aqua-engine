@@ -59,7 +59,7 @@ DescriptorHeapSegment DescriptorHeapSegmentManager::Allocate(const unsigned int 
             GetCPUHandle(id),
             GetGPUHandle(id),
             m_incrementSize,
-            shared_from_this()};
+            this};
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeapSegmentManager::GetCPUHandle(const GLOBAL_HEAP_ID id) const

@@ -10,7 +10,7 @@
 #include "directx/wrapper/Command.h"
 
 class DescriptorHeapSegment;
-class DescriptorHeapSegmentManager : public std::enable_shared_from_this<DescriptorHeapSegmentManager>
+class DescriptorHeapSegmentManager
 {
 public:
     DescriptorHeapSegmentManager(

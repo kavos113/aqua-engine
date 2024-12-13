@@ -38,4 +38,10 @@ add_dependencies(aqua-test aqua-engine)
 target_link_libraries(aqua-test aqua-engine gtest_main)
 
 include(GoogleTest)
+
 gtest_discover_tests(aqua-test)
+
+# sample
+add_executable(sample-display WIN32 sample/display/main.cpp)
+add_dependencies(sample-display aqua-engine)
+target_link_libraries(sample-display aqua-engine)

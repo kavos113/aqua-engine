@@ -33,7 +33,7 @@ private:
     RECT m_windowRect;
     HWND m_hwnd;
     
-    Command& m_command;
+    Command* m_command;
     
     HRESULT CreateSwapChain();
 };

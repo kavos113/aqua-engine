@@ -14,10 +14,17 @@ public:
         : m_hwnd(hwnd)
         , m_windowRect(rc)
         , m_swapChain(hwnd, rc, command)
+        , m_command(&command)
     {
+        HRESULT hr = CreateBackBuffers();
+        if (FAILED(hr))
+        {
+            OutputDebugStringW(L"Failed to create back buffers\n");
+            return;
+        }
+        
+        CreateRenderTargetViews();
     }
-    
-    HRESULT Create();
     
     void Present()
     {
@@ -34,17 +41,24 @@ public:
         return m_swapChain.GetCurrentBackBufferIndex();
     }
     
+    D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRTVHandle();
+    
+    void BeginRender();
+    void EndRender();
+    
 private:
     HWND m_hwnd;
     RECT m_windowRect;
     
     SwapChain m_swapChain;
     
-    std::vector<Buffer> m_backBuffers;
+    std::vector<ID3D12Resource*> m_backBuffers;
     std::vector<RenderTargetView> m_rtvs;
     
     HRESULT CreateBackBuffers();
     void CreateRenderTargetViews();
+    
+    Command* m_command;
 };
 
 

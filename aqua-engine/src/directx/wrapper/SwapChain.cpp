@@ -4,7 +4,7 @@
 SwapChain::SwapChain(HWND hwnd, RECT rc, Command &command)
     : m_windowRect(rc)
     , m_hwnd(hwnd)
-    , m_command(command)
+    , m_command(&command)
 {
     CreateSwapChain();
 }
@@ -32,7 +32,7 @@ HRESULT SwapChain::CreateSwapChain()
     desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
     
     HRESULT hr = Factory::Get()->CreateSwapChainForHwnd(
-        m_command.Queue(),
+        m_command->Queue(),
         m_hwnd,
         &desc,
         nullptr,

@@ -15,7 +15,7 @@ public:
                           D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
                           D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
                           UINT incrementSize,
-                          std::shared_ptr<DescriptorHeapSegmentManager> manager);
+                          DescriptorHeapSegmentManager* manager);
     
     DescriptorHeapSegment(DescriptorHeapSegment &&segment) noexcept;
     DescriptorHeapSegment &operator=(DescriptorHeapSegment &&segment) noexcept;
@@ -42,7 +42,7 @@ private:
     
     GLOBAL_HEAP_ID m_segmentId;
     
-    std::shared_ptr<DescriptorHeapSegmentManager> m_manager;
+    DescriptorHeapSegmentManager* m_manager;
 };
 
 

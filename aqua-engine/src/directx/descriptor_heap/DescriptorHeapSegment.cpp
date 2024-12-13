@@ -5,7 +5,7 @@ DescriptorHeapSegment::DescriptorHeapSegment(unsigned int numDescriptors,
                                              D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle,
                                              D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle,
                                              UINT incrementSize,
-                                             std::shared_ptr<DescriptorHeapSegmentManager> manager)
+                                             DescriptorHeapSegmentManager* manager)
     : m_numDescriptors(numDescriptors)
     , m_cpuHandle(cpu_handle)
     , m_gpuHandle(gpu_handle)

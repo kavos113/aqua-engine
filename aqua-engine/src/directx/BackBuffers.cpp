@@ -1,21 +1,8 @@
 #include "directx/BackBuffers.h"
 #include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
+#include "directx/wrapper/Barrier.h"
 
 #include <memory>
-
-HRESULT BackBuffers::Create()
-{
-    HRESULT hr = CreateBackBuffers();
-    if (FAILED(hr))
-    {
-        OutputDebugStringW(L"Failed to create back buffers\n");
-        return hr;
-    }
-    
-    CreateRenderTargetViews();
-    
-    return S_OK;
-}
 
 HRESULT BackBuffers::CreateBackBuffers()
 {
@@ -24,10 +11,9 @@ HRESULT BackBuffers::CreateBackBuffers()
     
     m_backBuffers.resize(desc.BufferCount);
     
-    for (int i = 0; i < desc.BufferCount; i++)
+    for (int i = 0; i < desc.BufferCount; ++i)
     {
-        ID3D12Resource* buffer = m_backBuffers[i].GetBuffer();
-        HRESULT hr = m_swapChain.Get()->GetBuffer(i, IID_PPV_ARGS(&buffer));
+        HRESULT hr = m_swapChain.Get()->GetBuffer(i, IID_PPV_ARGS(&m_backBuffers[i]));
         if (FAILED(hr))
         {
             OutputDebugStringW(L"Failed to get back buffer\n");
@@ -52,8 +38,34 @@ void BackBuffers::CreateRenderTargetViews()
     for (int i = 0; i < desc.BufferCount; i++)
     {
         m_rtvs[i].SetDescriptorHeapSegment(rtvSegmentPtr, i);
-        m_rtvs[i].Create(&m_backBuffers[i]);
+        m_rtvs[i].Create(m_backBuffers[i]);
     }
     
     return;
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE BackBuffers::GetCurrentRTVHandle()
+{
+    UINT index = GetCurrentBackBufferIndex();
+    return m_rtvs[index].GetCPUHandle();
+}
+
+void BackBuffers::BeginRender()
+{
+    UINT index = GetCurrentBackBufferIndex();
+    Barrier::Transition(
+        m_command,
+        m_backBuffers[index],
+        D3D12_RESOURCE_STATE_PRESENT,
+        D3D12_RESOURCE_STATE_RENDER_TARGET);
+}
+
+void BackBuffers::EndRender()
+{
+    UINT index = GetCurrentBackBufferIndex();
+    Barrier::Transition(
+        m_command,
+        m_backBuffers[index],
+        D3D12_RESOURCE_STATE_RENDER_TARGET,
+        D3D12_RESOURCE_STATE_PRESENT);
 }

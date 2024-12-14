@@ -37,8 +37,9 @@ HRESULT ShaderObject::CompileFromFile(
     if (FAILED(hr))
     {
         OutputDebugString(_T("Failed to compile vertex shader\n"));
+        HRESULT hr2 = HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
         
-        if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+        if (hr == hr2)
         {
             OutputDebugString(_T("File not found\n"));
             return hr;

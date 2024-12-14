@@ -1,15 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 
-#include "directx/wrapper/Factory.h"
-#include "directx/wrapper/Device.h"
-#include "directx/wrapper/Command.h"
-#include "directx/Display.h"
-#include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
-#include "directx/mesh/Triangle.h"
-#include "directx/ShaderObject.h"
-#include "directx/PipelineState.h"
-#include "directx/RootSignature.h"
+#include "AquaEngine.h"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -71,8 +63,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     };
     
     ShaderObject vs, ps;
-    vs.CompileFromFile(L"sample/triangle/vs.hlsl", "VSMain", "vs_5_0");
-    ps.CompileFromFile(L"sample/triangle/ps.hlsl", "PSMain", "ps_5_0");
+    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
     rootSignature.Create();

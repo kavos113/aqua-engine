@@ -4,6 +4,7 @@
 
 PipelineState::PipelineState()
     : m_pipelineState(nullptr)
+    , m_psoDesc()
 {
 
 }

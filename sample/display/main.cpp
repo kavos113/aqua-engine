@@ -1,11 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 
-#include "directx/wrapper/Factory.h"
-#include "directx/wrapper/Device.h"
-#include "directx/wrapper/Command.h"
-#include "directx/Display.h"
-#include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
+#include "AquaEngine.h"
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

@@ -9,7 +9,7 @@ public:
     Buffer();
     ~Buffer();
     
-    HRESULT Create(
+    virtual HRESULT Create(
         D3D12_HEAP_PROPERTIES heapProperties,
         D3D12_HEAP_FLAGS heapFlags,
         D3D12_RESOURCE_DESC resourceDesc,
@@ -84,7 +84,7 @@ public:
         }
     };
     
-private:
+protected:
     ID3D12Resource* m_Buffer;
 };
 

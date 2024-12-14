@@ -27,6 +27,8 @@ set(SRC
         src/directx/mesh/Polygon.cpp
         src/directx/mesh/Triangle.cpp
         src/directx/ShaderObject.cpp
+        src/directx/RootSignature.cpp
+        src/directx/PipelineState.cpp
 )
 
 set(INCLUDE
@@ -55,6 +57,8 @@ set(INCLUDE
         include/directx/mesh/Polygon.h
         include/directx/mesh/Triangle.h
         include/directx/ShaderObject.h
+        include/directx/RootSignature.h
+        include/directx/PipelineState.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

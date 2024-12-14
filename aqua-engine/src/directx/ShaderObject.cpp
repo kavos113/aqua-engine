@@ -3,6 +3,7 @@
 
 #include <d3dcompiler.h>
 #include <string>
+#include <tchar.h>
 
 ShaderObject::ShaderObject()
     : m_blob(nullptr)

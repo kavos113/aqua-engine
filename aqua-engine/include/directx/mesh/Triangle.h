@@ -4,7 +4,7 @@
 
 #include "Polygon.h"
 
-class Triangle : public Polygon
+class Triangle final : public Polygon
 {
 public:
     Triangle(DirectX::XMFLOAT3 pos1, DirectX::XMFLOAT3 pos2, DirectX::XMFLOAT3 pos3)
@@ -17,7 +17,7 @@ public:
         m_indices = { 0, 1, 2 };
     }
     
-    void Create();
+    void Create() override;
     
 private:
     void CreateVertexBuffer();

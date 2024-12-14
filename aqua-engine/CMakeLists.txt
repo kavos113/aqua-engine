@@ -30,6 +30,7 @@ set(SRC
         src/directx/RootSignature.cpp
         src/directx/PipelineState.cpp
         src/directx/Display.cpp
+        src/directx/mesh/Rectangle.cpp
 )
 
 set(INCLUDE
@@ -61,6 +62,7 @@ set(INCLUDE
         include/directx/RootSignature.h
         include/directx/PipelineState.h
         include/directx/Display.h
+        include/directx/mesh/Rectangle.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

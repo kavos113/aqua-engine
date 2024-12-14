@@ -9,6 +9,8 @@
 class Polygon
 {
 public:
+    virtual ~Polygon() = default;
+
     virtual void Create() = 0;
     
     void Draw(Command& command) const;

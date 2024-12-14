@@ -5,12 +5,17 @@
 #include "BufferView.h"
 #include "Buffer.h"
 
-class RenderTargetView : public BufferView
+namespace AquaEngine
 {
-public:
-    void Create(Buffer *buffer) override;
-    void Create(ID3D12Resource* resource);
-};
+    class RenderTargetView : public BufferView
+    {
+    public:
+        void Create(Buffer *buffer) override;
+        void Create(ID3D12Resource* resource);
+    };
+
+}
+
 
 
 #endif //AQUA_RENDERTARGETVIEW_H

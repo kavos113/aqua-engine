@@ -4,58 +4,61 @@
 
 #include "Buffer.h"
 
-template<typename T>
-class GPUBuffer : public Buffer
+namespace AquaEngine
 {
-public:
-    GPUBuffer()
-        : m_mappedBuffer(nullptr)
+    template<typename T>
+    class GPUBuffer : public Buffer
     {
-    }
-
-    ~GPUBuffer() override
-    {
-        Unmap();
-    }
-
-    HRESULT Create(D3D12_HEAP_PROPERTIES heapProperties,
-                   D3D12_HEAP_FLAGS heapFlags,
-                   D3D12_RESOURCE_DESC resourceDesc,
-                   D3D12_RESOURCE_STATES resourceState,
-                   D3D12_CLEAR_VALUE *clearValue) override
-    {
-        HRESULT hr = Buffer::Create(heapProperties, heapFlags, resourceDesc, resourceState, clearValue);
-        if (FAILED(hr))
+    public:
+        GPUBuffer()
+            : m_mappedBuffer(nullptr)
         {
-            return hr;
         }
 
-        hr = m_Buffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedBuffer));
-        if (FAILED(hr))
+        ~GPUBuffer() override
         {
-            OutputDebugStringW(L"Failed to map buffer\n");
-            return hr;
+            Unmap();
         }
 
-        return S_OK;
-    }
-
-    T* GetMappedBuffer() const
-    {
-        return m_mappedBuffer;
-    }
-
-    void Unmap()
-    {
-        if (m_mappedBuffer)
+        HRESULT Create(D3D12_HEAP_PROPERTIES heapProperties,
+                       D3D12_HEAP_FLAGS heapFlags,
+                       D3D12_RESOURCE_DESC resourceDesc,
+                       D3D12_RESOURCE_STATES resourceState,
+                       D3D12_CLEAR_VALUE *clearValue) override
         {
-            m_Buffer->Unmap(0, nullptr);
-            m_mappedBuffer = nullptr;
+            HRESULT hr = Buffer::Create(heapProperties, heapFlags, resourceDesc, resourceState, clearValue);
+            if (FAILED(hr))
+            {
+                return hr;
+            }
+
+            hr = m_Buffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedBuffer));
+            if (FAILED(hr))
+            {
+                OutputDebugStringW(L"Failed to map buffer\n");
+                return hr;
+            }
+
+            return S_OK;
         }
-    }
-private:
-    T* m_mappedBuffer;
-};
+
+        T* GetMappedBuffer() const
+        {
+            return m_mappedBuffer;
+        }
+
+        void Unmap()
+        {
+            if (m_mappedBuffer)
+            {
+                m_Buffer->Unmap(0, nullptr);
+                m_mappedBuffer = nullptr;
+            }
+        }
+    private:
+        T* m_mappedBuffer;
+    };
+}
 
 
 #endif //AQUA_GPUBUFFER_H

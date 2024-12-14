@@ -5,14 +5,17 @@
 #include "buffer/ShaderResourceView.h"
 
 
-class TextureManager
+namespace AquaEngine
 {
-public:
-    static Buffer LoadTextureFromFile(const std::string &filename, Command &command);
+    class TextureManager
+    {
+    public:
+        static Buffer LoadTextureFromFile(const std::string &filename, Command &command);
 
-private:
-    static std::map<std::string, Buffer> m_resourceTable;
-};
+    private:
+        static std::map<std::string, Buffer> m_resourceTable;
+    };
+}
 
 
 

@@ -15,5 +15,6 @@
 #include "directx/ShaderObject.h"
 
 #include "directx/mesh/Triangle.h"
+#include "directx/mesh/Rectangle.h"
 
 #endif //AQUA_AQUAENGINE_H

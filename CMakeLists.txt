@@ -47,3 +47,7 @@ gtest_discover_tests(aqua-test)
 add_executable(sample-display WIN32 sample/display/main.cpp)
 add_dependencies(sample-display aqua-engine)
 target_link_libraries(sample-display aqua-engine)
+
+add_executable(sample-triangle WIN32 sample/triangle/main.cpp)
+add_dependencies(sample-triangle aqua-engine)
+target_link_libraries(sample-triangle aqua-engine)

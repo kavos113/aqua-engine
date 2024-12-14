@@ -44,7 +44,7 @@ void BackBuffers::CreateRenderTargetViews()
     return;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE BackBuffers::GetCurrentRTVHandle()
+D3D12_CPU_DESCRIPTOR_HANDLE BackBuffers::GetCurrentRTVHandle() const
 {
     UINT index = GetCurrentBackBufferIndex();
     return m_rtvs[index].GetCPUHandle();

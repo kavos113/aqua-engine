@@ -15,6 +15,11 @@ public:
     
     void SetDescriptorHeapSegmentManager(DescriptorHeapSegmentManager *manager);
     
+    void SetToCommand(Command& command) const
+    {
+        command.List()->SetGraphicsRootSignature(m_RootSignature);
+    }
+    
     [[nodiscard]] ID3D12RootSignature* GetRootSignature() const
     {
         return m_RootSignature;

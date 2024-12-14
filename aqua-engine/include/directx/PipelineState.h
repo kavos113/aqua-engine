@@ -19,6 +19,11 @@ public:
     void SetVertexShader(ShaderObject* vs);
     void SetPixelShader(ShaderObject* ps);
     
+    void SetToCommand(Command& command) const
+    {
+        command.List()->SetPipelineState(m_pipelineState);
+    }
+    
 private:
     ID3D12PipelineState* m_pipelineState;
     

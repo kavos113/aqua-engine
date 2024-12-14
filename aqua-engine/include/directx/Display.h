@@ -7,6 +7,7 @@
 
 class Display
 {
+public:
     Display(HWND hwnd, RECT rc, Command& command);
     
     void BeginRender();
@@ -14,6 +15,12 @@ class Display
     void Present();
     
     void SetViewports();
+    
+    // TODO 暫定
+    D3D12_CPU_DESCRIPTOR_HANDLE GetBackBufferRTV() const
+    {
+        return m_backBuffers.GetCurrentRTVHandle();
+    }
 private:
     BackBuffers m_backBuffers;
     Command* m_command;

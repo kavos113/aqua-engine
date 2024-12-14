@@ -5,6 +5,7 @@
 
 RootSignature::RootSignature()
     : m_RootSignature(nullptr)
+    , m_manager(nullptr)
 {
 
 }

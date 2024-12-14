@@ -36,12 +36,12 @@ public:
         m_swapChain.GetDesc(desc);
     }
     
-    UINT GetCurrentBackBufferIndex()
+    UINT GetCurrentBackBufferIndex() const
     {
         return m_swapChain.GetCurrentBackBufferIndex();
     }
     
-    D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRTVHandle();
+    D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRTVHandle() const;
     
     void BeginRender();
     void EndRender();

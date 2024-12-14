@@ -57,3 +57,11 @@ void DescriptorHeapSegment::SetGraphicsRootDescriptorTable(Command *command, uns
 {
     m_manager->SetGraphicsRootDescriptorTable(command, m_segmentId, offset);
 }
+
+void DescriptorHeapSegment::SetRootParameter(D3D12_ROOT_PARAMETER_TYPE type,
+                                             D3D12_SHADER_VISIBILITY visibility,
+                                             const D3D12_DESCRIPTOR_RANGE* descriptorRanges,
+                                             int numDescriptorRanges)
+{
+    m_manager->SetRootParameter(m_segmentId, type, visibility, descriptorRanges, numDescriptorRanges);
+}

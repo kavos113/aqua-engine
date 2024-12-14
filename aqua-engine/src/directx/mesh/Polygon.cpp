@@ -2,6 +2,7 @@
 
 void Polygon::Draw(Command &command) const
 {
+    command.List()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     command.List()->IASetVertexBuffers(0, 1, &m_vertexBufferView);
     command.List()->IASetIndexBuffer(&m_indexBufferView);
     

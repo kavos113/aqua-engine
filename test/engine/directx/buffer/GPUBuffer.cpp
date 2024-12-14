@@ -27,6 +27,10 @@ TEST_F(GPUBufferTest, Create)
 {
     GPUBuffer<int> buffer;
     HRESULT hr = buffer.Create(BUFFER_DEFAULT(sizeof(int) * 3));
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
     ASSERT_EQ(hr, S_OK);
     ASSERT_NE(buffer.GetBuffer(), nullptr);
     

@@ -106,6 +106,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         display.Present();
     }
     
+    GlobalDescriptorHeapManager::Shutdown();
     Device::Shutdown();
     Factory::Shutdown();
     

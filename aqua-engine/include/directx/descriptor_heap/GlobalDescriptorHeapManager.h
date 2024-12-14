@@ -15,6 +15,8 @@ public:
     static DescriptorHeapSegmentManager& GetShaderHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE type, const std::string& name);
     
     static void SetToCommand(Command *command);
+    
+    static void Shutdown();
 private:
     static std::array<ShaderGlobalDescriptorHeap, 2> m_shaderHeaps;
     static std::array<GlobalDescriptorHeap, 2> m_heaps;

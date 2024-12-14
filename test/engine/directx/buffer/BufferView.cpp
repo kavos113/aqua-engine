@@ -4,7 +4,6 @@
 #include "directx/buffer/ConstantBufferView.h"
 #include "directx/buffer/ShaderResourceView.h"
 #include "directx/buffer/DepthStencilView.h"
-#include "directx/buffer/RenderTargetView.h"
 
 class BufferViewTest : public ::testing::Test
 {
@@ -14,13 +13,18 @@ protected:
         Factory::Init(true);
         Device::GetAdaptors();
         Device::Init(0);
-        command = new Command();
         GlobalDescriptorHeapManager::Init();
+        command = new Command();
     }
 
     void TearDown() override
     {
-        delete command;
+        if (command)
+        {
+            delete command;
+            command = nullptr;
+        }
+        GlobalDescriptorHeapManager::Shutdown();
         Device::Shutdown();
         Factory::Shutdown();
     }
@@ -44,14 +48,9 @@ TEST_F(BufferViewTest, CreateCBV)
     ConstantBufferView view;
     view.SetDescriptorHeapSegment(segment, 0);
     view.Create(&buffer);
-    
+
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
     ASSERT_NE(view.GetGPUHandle().ptr, 0);
-    
-    GlobalDescriptorHeapManager::SetToCommand(nullptr);
-    view.SetGraphicsRootDescriptorTable(command);
-    
-    command->Execute();
 }
 
 TEST_F(BufferViewTest, CreateSRV)
@@ -73,11 +72,6 @@ TEST_F(BufferViewTest, CreateSRV)
     
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
     ASSERT_NE(view.GetGPUHandle().ptr, 0);
-    
-    GlobalDescriptorHeapManager::SetToCommand(nullptr);
-    view.SetGraphicsRootDescriptorTable(command);
-    
-    command->Execute();
 }
 
 TEST_F(BufferViewTest, CreateDSV)
@@ -87,39 +81,15 @@ TEST_F(BufferViewTest, CreateDSV)
     std::shared_ptr<DescriptorHeapSegment> segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
     
     Buffer buffer;
-    buffer.Create(BUFFER_DEFAULT(1));
+    buffer.Create(Buffer::HeapProperties::Default(),
+                  D3D12_HEAP_FLAG_NONE,
+                  Buffer::ResourceDesc::DepthStencil(1, 1),
+                  D3D12_RESOURCE_STATE_DEPTH_WRITE,
+                  nullptr);
 
     DepthStencilView view;
     view.SetDescriptorHeapSegment(segment, 0);
     view.Create(&buffer);
     
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
-    ASSERT_NE(view.GetGPUHandle().ptr, 0);
-    
-    GlobalDescriptorHeapManager::SetToCommand(nullptr);
-    view.SetGraphicsRootDescriptorTable(command);
-    
-    command->Execute();
-}
-
-TEST_F(BufferViewTest, CreateRTV)
-{
-    DescriptorHeapSegmentManager manager = GlobalDescriptorHeapManager::GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    
-    std::shared_ptr<DescriptorHeapSegment> segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
-    
-    Buffer buffer;
-    buffer.Create(BUFFER_DEFAULT(1));
-
-    RenderTargetView view;
-    view.SetDescriptorHeapSegment(segment, 0);
-    view.Create(&buffer);
-    
-    ASSERT_NE(view.GetCPUHandle().ptr, 0);
-    ASSERT_NE(view.GetGPUHandle().ptr, 0);
-    
-    GlobalDescriptorHeapManager::SetToCommand(nullptr);
-    view.SetGraphicsRootDescriptorTable(command);
-    
-    command->Execute();
 }

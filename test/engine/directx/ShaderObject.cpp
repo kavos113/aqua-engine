@@ -10,18 +10,13 @@ protected:
         Factory::Init(true);
         Device::GetAdaptors();
         Device::Init(0);
-        GlobalDescriptorHeapManager::Init();
-        command = new Command();
     }
     
     void TearDown() override
     {
-        delete command;
         Device::Shutdown();
         Factory::Shutdown();
     }
-    
-    Command* command;
 };
 
 TEST_F(ShaderObjectTest, PS)

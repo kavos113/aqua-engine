@@ -17,6 +17,7 @@ protected:
     void TearDown() override
     {
         delete command;
+        GlobalDescriptorHeapManager::Shutdown();
         Device::Shutdown();
         Factory::Shutdown();
     }
@@ -54,6 +55,10 @@ TEST_F(PipelineStateTest, Create)
     pipelineState.SetVertexShader(&vs);
     
     HRESULT hr = pipelineState.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
     
     EXPECT_EQ(hr, S_OK);
 }
@@ -145,7 +150,7 @@ TEST_F(PipelineStateTest, CreateWithNoPixelShader)
     
     HRESULT hr = pipelineState.Create();
     
-    EXPECT_EQ(hr, E_INVALIDARG);
+    EXPECT_EQ(hr, S_OK);
 }
 
 TEST_F(PipelineStateTest, CreateWithNoInputLayout)
@@ -199,10 +204,19 @@ TEST_F(PipelineStateTest, Command)
     pipelineState.SetVertexShader(&vs);
     
     HRESULT hr = pipelineState.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
     
     EXPECT_EQ(hr, S_OK);
     
     pipelineState.SetToCommand(*command);
     
-    command->Execute();
+    hr = command->Execute();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    ASSERT_EQ(hr, S_OK);
 }

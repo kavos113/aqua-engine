@@ -82,3 +82,12 @@ DescriptorHeapSegmentManager& GlobalDescriptorHeapManager::GetShaderHeapManager(
     
     return m_shaderHeaps[0].GetHeapManager(name); // unsafe
 }
+
+void GlobalDescriptorHeapManager::Shutdown()
+{
+    m_shaderHeaps[0].Release();
+    m_shaderHeaps[1].Release();
+    
+    m_heaps[0].Release();
+    m_heaps[1].Release();
+}

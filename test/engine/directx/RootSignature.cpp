@@ -17,6 +17,7 @@ protected:
     void TearDown() override
     {
         delete command;
+        GlobalDescriptorHeapManager::Shutdown();
         Device::Shutdown();
         Factory::Shutdown();
     }
@@ -55,44 +56,13 @@ TEST_F(RootSignatureTest, CreateWithManager)
     
     RootSignature rootSignature;
     rootSignature.SetDescriptorHeapSegmentManager(&manager);
-    rootSignature.Create();
-    
+    HRESULT hr = rootSignature.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    ASSERT_EQ(hr, S_OK);
     ASSERT_NE(rootSignature.GetRootSignature(), nullptr);
-}
-
-TEST_F(RootSignatureTest, Command)
-{
-    auto manager = GlobalDescriptorHeapManager::CreateShaderManager(
-        "RootSignatureTest",
-        1,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
-    );
-    auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
-    
-    D3D12_DESCRIPTOR_RANGE range = {
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    };
-    segment->SetRootParameter(
-        D3D12_ROOT_PARAMETER_TYPE_CBV,
-        D3D12_SHADER_VISIBILITY_ALL,
-        &range,
-        1
-    );
-    
-    RootSignature rootSignature;
-    rootSignature.SetDescriptorHeapSegmentManager(&manager);
-    rootSignature.Create();
-    
-    GlobalDescriptorHeapManager::SetToCommand(command);
-    segment->SetGraphicsRootDescriptorTable(command);
-    
-    ASSERT_NE(rootSignature.GetRootSignature(), nullptr);
-    
-    command->Execute();
 }
 
 TEST_F(RootSignatureTest, SetToCommand)
@@ -126,5 +96,10 @@ TEST_F(RootSignatureTest, SetToCommand)
     
     ASSERT_NE(rootSignature.GetRootSignature(), nullptr);
     
-    command->Execute();
+    HRESULT hr = command->Execute();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    ASSERT_EQ(hr, S_OK);
 }

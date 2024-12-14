@@ -24,6 +24,8 @@ set(SRC
         src/directx/buffer/ConstantBufferView.cpp
         src/directx/buffer/DepthStencilView.cpp
         src/directx/buffer/ShaderResourceView.cpp
+        src/directx/mesh/Polygon.cpp
+        src/directx/mesh/Triangle.cpp
 )
 
 set(INCLUDE
@@ -49,9 +51,12 @@ set(INCLUDE
         include/directx/buffer/ConstantBufferView.h
         include/directx/buffer/DepthStencilView.h
         include/directx/buffer/ShaderResourceView.h
+        include/directx/mesh/Polygon.h
+        include/directx/mesh/Triangle.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})
 target_include_directories(aqua-engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3d12.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/dxgi.lib)
+target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3dcompiler.lib)

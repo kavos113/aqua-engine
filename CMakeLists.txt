@@ -24,7 +24,16 @@ set(TEST_SRC
         test/engine/directx/descriptor_heap/GlobalDescriptorHeap.cpp
         test/engine/directx/wrapper/Barrier.cpp
         test/engine/directx/buffer/Buffer.cpp
+        test/engine/directx/buffer/GPUBuffer.cpp
+        test/engine/directx/buffer/BufferView.cpp
+        test/engine/directx/BackBuffers.cpp
+        test/engine/directx/Display.cpp
+        test/engine/directx/ShaderObject.cpp
+        test/engine/directx/RootSignature.cpp
+        test/engine/directx/PipelineState.cpp
 )
+
+file(COPY test/engine/directx/ps.hlsl test/engine/directx/vs.hlsl DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 include(FetchContent)
 FetchContent_Declare(

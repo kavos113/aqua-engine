@@ -16,8 +16,8 @@ public:
     
     void SetViewports();
     
-    // TODO 暫定
-    D3D12_CPU_DESCRIPTOR_HANDLE GetBackBufferRTV() const
+    // TODO zantei
+    [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetBackBufferRTV() const
     {
         return m_backBuffers.GetCurrentRTVHandle();
     }

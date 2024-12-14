@@ -59,9 +59,9 @@ DescriptorHeapSegmentManager& GlobalDescriptorHeapManager::GetCPUHeapManager(D3D
 }
 
 // set to command CBV, SRV, UAV heap
-void GlobalDescriptorHeapManager::SetToCommand()
+void GlobalDescriptorHeapManager::SetToCommand(Command *command)
 {
-    m_shaderHeaps[0].SetToCommand(nullptr);
+    m_shaderHeaps[0].SetToCommand(command);
 }
 
 DescriptorHeapSegmentManager& GlobalDescriptorHeapManager::GetShaderHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE type, const std::string& name)

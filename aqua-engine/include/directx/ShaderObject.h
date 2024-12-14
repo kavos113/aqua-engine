@@ -12,7 +12,7 @@ public:
     HRESULT CompileFromFile(const wchar_t* filename, const char* entryPoint, const char* target);
     HRESULT CompileFromMemory(const char* source, size_t sourceSize, const char* entryPoint, const char* target);
     
-    D3D12_SHADER_BYTECODE Bytecode() const;
+    [[nodiscard]] D3D12_SHADER_BYTECODE Bytecode() const;
 private:
     ID3D10Blob* m_blob;
 };

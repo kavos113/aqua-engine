@@ -21,6 +21,9 @@ set(SRC
         src/directx/BackBuffers.cpp
         src/directx/wrapper/Barrier.cpp
         src/directx/buffer/GPUBuffer.cpp
+        src/directx/buffer/ConstantBufferView.cpp
+        src/directx/buffer/DepthStencilView.cpp
+        src/directx/buffer/ShaderResourceView.cpp
 )
 
 set(INCLUDE
@@ -43,6 +46,9 @@ set(INCLUDE
         include/directx/BackBuffers.h
         include/directx/wrapper/Barrier.h
         include/directx/buffer/GPUBuffer.h
+        include/directx/buffer/ConstantBufferView.h
+        include/directx/buffer/DepthStencilView.h
+        include/directx/buffer/ShaderResourceView.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

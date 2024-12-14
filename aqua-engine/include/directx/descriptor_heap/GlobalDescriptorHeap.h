@@ -14,6 +14,11 @@ public:
     GlobalDescriptorHeap();
     virtual ~GlobalDescriptorHeap() = default;
     
+    void Release()
+    {
+        m_heap.Release();
+    }
+    
     DescriptorHeapSegmentManager& GetHeapManager() { return m_heapManager; }
 
 protected:

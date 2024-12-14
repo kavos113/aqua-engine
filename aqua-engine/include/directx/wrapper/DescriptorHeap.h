@@ -16,6 +16,8 @@ public:
     [[nodiscard]] UINT GetIncrementSize() const;
     void SetToCommand(Command* command) const;
     
+    void Release();
+    
 private:
     ID3D12DescriptorHeap* m_descriptorHeap;
     UINT m_incrementSize;

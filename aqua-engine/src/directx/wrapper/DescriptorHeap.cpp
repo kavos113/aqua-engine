@@ -50,3 +50,8 @@ void DescriptorHeap::SetToCommand(Command *command) const
 {
     command->List()->SetDescriptorHeaps(1, &m_descriptorHeap);
 }
+
+void DescriptorHeap::Release()
+{
+    SafeRelease(&m_descriptorHeap);
+}

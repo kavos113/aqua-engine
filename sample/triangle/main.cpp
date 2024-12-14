@@ -43,8 +43,38 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     Device::GetAdaptors();
     Device::Init(1);
     GlobalDescriptorHeapManager::Init();
+    
     Command command;
     Display display(hwnd, wr, command);
+    
+    Triangle triangle({0.0f, 0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f});
+    triangle.Create();
+    
+    D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
+        {
+            .SemanticName = "POSITION",
+            .SemanticIndex = 0,
+            .Format = DXGI_FORMAT_R32G32B32_FLOAT,
+            .InputSlot = 0,
+            .AlignedByteOffset = 0,
+            .InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+            .InstanceDataStepRate = 0
+        }
+    };
+    
+    ShaderObject vs, ps;
+    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
+    
+    RootSignature rootSignature;
+    rootSignature.Create();
+    
+    PipelineState pipelineState;
+    pipelineState.SetRootSignature(&rootSignature);
+    pipelineState.SetPixelShader(&ps);
+    pipelineState.SetVertexShader(&vs);
+    pipelineState.SetInputLayout(inputElementDescs, 1);
+    pipelineState.Create();
     
     ShowWindow(hwnd, nCmdShow);
     
@@ -62,6 +92,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         
         float clearColor[] = {0.0f, 0.2f, 0.4f, 1.0f};
         command.List()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+        
+        pipelineState.SetToCommand(command);
+        rootSignature.SetToCommand(command);
+        display.SetViewports();
+        
+        triangle.Draw(command);
         
         display.EndRender();
         

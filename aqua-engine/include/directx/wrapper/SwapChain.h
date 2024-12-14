@@ -22,7 +22,7 @@ public:
         m_swapChain->GetDesc1(desc);
     }
     
-    UINT GetCurrentBackBufferIndex()
+    UINT GetCurrentBackBufferIndex() const
     {
         return m_swapChain->GetCurrentBackBufferIndex();
     }

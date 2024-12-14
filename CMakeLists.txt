@@ -5,6 +5,8 @@ project(aqua)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+message(STATUS "CMAKE CURRENT SOURCE DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+
 if (NOT MSVC)
     message(FATAL_ERROR "This project is only supported on Windows")
 endif ()
@@ -22,7 +24,16 @@ set(TEST_SRC
         test/engine/directx/descriptor_heap/GlobalDescriptorHeap.cpp
         test/engine/directx/wrapper/Barrier.cpp
         test/engine/directx/buffer/Buffer.cpp
+        test/engine/directx/buffer/GPUBuffer.cpp
+        test/engine/directx/buffer/BufferView.cpp
+        test/engine/directx/BackBuffers.cpp
+        test/engine/directx/Display.cpp
+        test/engine/directx/ShaderObject.cpp
+        test/engine/directx/RootSignature.cpp
+        test/engine/directx/PipelineState.cpp
 )
+
+file(COPY test/engine/directx/ps.hlsl test/engine/directx/vs.hlsl DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 include(FetchContent)
 FetchContent_Declare(
@@ -44,6 +55,15 @@ include(GoogleTest)
 gtest_discover_tests(aqua-test)
 
 # sample
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/display)
 add_executable(sample-display WIN32 sample/display/main.cpp)
 add_dependencies(sample-display aqua-engine)
+target_include_directories(sample-display PUBLIC aqua-engine/include)
 target_link_libraries(sample-display aqua-engine)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/triangle)
+add_executable(sample-triangle WIN32 sample/triangle/main.cpp)
+add_dependencies(sample-triangle aqua-engine)
+target_include_directories(sample-triangle PUBLIC aqua-engine/include)
+target_link_libraries(sample-triangle aqua-engine)
+file(COPY sample/triangle/vs.hlsl sample/triangle/ps.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})

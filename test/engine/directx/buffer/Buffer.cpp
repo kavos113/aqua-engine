@@ -26,6 +26,10 @@ TEST_F(BufferTest, Create)
 {
     Buffer buffer;
     HRESULT hr = buffer.Create(BUFFER_DEFAULT(1));
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
     ASSERT_EQ(hr, S_OK);
     ASSERT_NE(buffer.GetBuffer(), nullptr);
 }
@@ -44,6 +48,10 @@ TEST_F(BufferTest, CreateDSBuffer)
         D3D12_RESOURCE_STATE_DEPTH_WRITE,
         &clearValue
         );
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
     
     ASSERT_EQ(hr, S_OK);
     ASSERT_NE(buffer.GetBuffer(), nullptr);

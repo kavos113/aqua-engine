@@ -31,6 +31,7 @@ set(SRC
         src/directx/PipelineState.cpp
         src/directx/Display.cpp
         src/directx/mesh/Rectangle.cpp
+        src/directx/TextureManager.cpp
 )
 
 set(INCLUDE
@@ -63,10 +64,13 @@ set(INCLUDE
         include/directx/PipelineState.h
         include/directx/Display.h
         include/directx/mesh/Rectangle.h
+        include/directx/TextureManager.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})
 target_include_directories(aqua-engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(aqua-engine PUBLIC $ENV{DXTEX_DIR})
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3d12.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/dxgi.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3dcompiler.lib)
+target_link_libraries(aqua-engine INTERFACE $ENV{DXTEX_DIR}/Bin/Desktop_2022_Win10/x64/Debug/DirectXTex.lib)

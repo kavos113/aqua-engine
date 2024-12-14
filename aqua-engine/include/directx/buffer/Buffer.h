@@ -7,7 +7,7 @@ class Buffer
 {
 public:
     Buffer();
-    ~Buffer();
+    virtual ~Buffer();
     
     virtual HRESULT Create(
         D3D12_HEAP_PROPERTIES heapProperties,

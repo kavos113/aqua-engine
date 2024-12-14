@@ -13,7 +13,7 @@ public:
     {
     }
 
-    ~GPUBuffer()
+    ~GPUBuffer() override
     {
         Unmap();
     }

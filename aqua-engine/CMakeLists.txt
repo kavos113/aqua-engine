@@ -26,6 +26,7 @@ set(SRC
         src/directx/buffer/ShaderResourceView.cpp
         src/directx/mesh/Polygon.cpp
         src/directx/mesh/Triangle.cpp
+        src/directx/ShaderObject.cpp
 )
 
 set(INCLUDE
@@ -53,6 +54,7 @@ set(INCLUDE
         include/directx/buffer/ShaderResourceView.h
         include/directx/mesh/Polygon.h
         include/directx/mesh/Triangle.h
+        include/directx/ShaderObject.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

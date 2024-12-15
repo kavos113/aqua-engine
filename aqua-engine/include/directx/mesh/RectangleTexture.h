@@ -24,21 +24,19 @@ namespace AquaEngine
             const std::string &texturePath,
             Command &command
         )
+            : m_vertices({
+                {topleft, {0.0f, 0.0f}},
+                {topright, {1.0f, 0.0f}},
+                {bottomleft, {0.0f, 1.0f}},
+                {bottomright, {1.0f, 1.0f}}
+            })
+            , m_indices({0, 1, 2, 2, 1, 3})
+            , m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
+            , m_srv(ShaderResourceView())
+            , m_vertexBuffer(GPUBuffer<Vertex>())
+            , m_indexBuffer(GPUBuffer<unsigned short>())
+            , m_manager(&manager)
         {
-            m_vertices[0].position = topleft;
-            m_vertices[1].position = topright;
-            m_vertices[2].position = bottomleft;
-            m_vertices[3].position = bottomright;
-            m_vertices[0].uv = {0.0f, 0.0f};
-            m_vertices[1].uv = {1.0f, 0.0f};
-            m_vertices[2].uv = {0.0f, 1.0f};
-            m_vertices[3].uv = {1.0f, 1.0f};
-
-            m_indices = {0, 1, 2, 2, 1, 3};
-
-            m_texture = TextureManager::LoadTextureFromFile(texturePath, command);
-
-            m_manager = &manager;
         }
 
         void Create() override;
@@ -55,11 +53,11 @@ namespace AquaEngine
         std::array<Vertex, 4> m_vertices;
         std::array<unsigned short, 6> m_indices;
 
-        GPUBuffer<Vertex> m_vertexBuffer;
-        GPUBuffer<unsigned short> m_indexBuffer;
-
         Buffer m_texture;
         ShaderResourceView m_srv;
+
+        GPUBuffer<Vertex> m_vertexBuffer;
+        GPUBuffer<unsigned short> m_indexBuffer;
 
         DescriptorHeapSegmentManager* m_manager;
 

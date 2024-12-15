@@ -18,7 +18,7 @@ namespace AquaEngine
         DescriptorHeapSegmentManager& GetHeapManager(const std::string &name);
         void CreateManager(const std::string &name, unsigned int size);
 
-        void SetToCommand(Command *command) const;
+        void SetToCommand(Command &command) const;
 
     private:
         std::unordered_map<std::string, DescriptorHeapSegmentManager> m_heapManagers;

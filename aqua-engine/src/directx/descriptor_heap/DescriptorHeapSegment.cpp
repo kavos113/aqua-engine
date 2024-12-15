@@ -57,7 +57,7 @@ namespace AquaEngine
 
     void DescriptorHeapSegment::SetGraphicsRootDescriptorTable(Command *command, unsigned int offset) const
     {
-        m_manager->SetGraphicsRootDescriptorTable(command, m_segmentId, offset);
+        m_manager->SetGraphicsRootDescriptorTable(*command, m_segmentId, offset);
     }
 
     void DescriptorHeapSegment::SetRootParameter(D3D12_ROOT_PARAMETER_TYPE type,

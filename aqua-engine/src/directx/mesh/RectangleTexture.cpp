@@ -29,6 +29,7 @@ namespace AquaEngine
     {
         CreateVertexBuffer();
         CreateIndexBuffer();
+        return;
     }
 
     void RectangleTexture::Draw(Command &command) const
@@ -66,7 +67,7 @@ namespace AquaEngine
         auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
 
         m_srv.SetDescriptorHeapSegment(segment, 0);
-        m_srv.Create(&m_texture);
+        m_srv.Create(m_texture);
 
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,

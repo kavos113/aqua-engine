@@ -11,6 +11,11 @@ namespace AquaEngine
 
     }
 
+    Buffer::Buffer(ID3D12Resource *buffer)
+    {
+        m_Buffer = buffer;
+    }
+
     Buffer::~Buffer()
     {
         SafeRelease(&m_Buffer);

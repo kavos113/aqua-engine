@@ -49,9 +49,9 @@ namespace AquaEngine
         m_lastGpuHandle.ptr += static_cast<UINT64>(size) * m_incrementSize;
     }
 
-    void ShaderGlobalDescriptorHeap::SetToCommand(Command *command) const
+    void ShaderGlobalDescriptorHeap::SetToCommand(Command &command) const
     {
-        m_heap.SetToCommand(command);
+        m_heap.SetToCommand(&command);
     }
 
 }

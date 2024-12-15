@@ -9,7 +9,7 @@ namespace AquaEngine
     class ShaderResourceView : public BufferView
     {
     public:
-        void Create(Buffer *buffer) override;
+        void Create(Buffer &buffer) override;
     };
 }
 

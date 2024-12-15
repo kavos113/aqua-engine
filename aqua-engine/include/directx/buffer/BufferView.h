@@ -14,7 +14,7 @@ namespace AquaEngine
     public:
         virtual ~BufferView() = default;
 
-        virtual void Create(Buffer *buffer) = 0;
+        virtual void Create(Buffer &buffer) = 0;
 
         void SetDescriptorHeapSegment(std::shared_ptr<DescriptorHeapSegment> descriptorHeapSegment, int offset)
         {

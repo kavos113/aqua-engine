@@ -9,6 +9,7 @@ namespace AquaEngine
     {
     public:
         Buffer();
+        Buffer(ID3D12Resource* buffer);
         virtual ~Buffer();
 
         virtual HRESULT Create(
@@ -22,7 +23,7 @@ namespace AquaEngine
 
         struct HeapProperties
         {
-            static inline D3D12_HEAP_PROPERTIES Default()
+            static D3D12_HEAP_PROPERTIES Default()
             {
                 return D3D12_HEAP_PROPERTIES {
                     .Type = D3D12_HEAP_TYPE_DEFAULT,
@@ -33,7 +34,7 @@ namespace AquaEngine
                 };
             }
 
-            static inline D3D12_HEAP_PROPERTIES Upload()
+            static D3D12_HEAP_PROPERTIES Upload()
             {
                 return D3D12_HEAP_PROPERTIES {
                     .Type = D3D12_HEAP_TYPE_UPLOAD,
@@ -47,7 +48,7 @@ namespace AquaEngine
 
         struct ResourceDesc
         {
-            static inline D3D12_RESOURCE_DESC Buffer(UINT64 size)
+            static D3D12_RESOURCE_DESC Buffer(UINT64 size)
             {
                 return D3D12_RESOURCE_DESC {
                     .Dimension = D3D12_RESOURCE_DIMENSION_BUFFER,
@@ -66,7 +67,7 @@ namespace AquaEngine
                 };
             }
 
-            static inline D3D12_RESOURCE_DESC DepthStencil(UINT width, UINT height)
+            static D3D12_RESOURCE_DESC DepthStencil(UINT width, UINT height)
             {
                 return D3D12_RESOURCE_DESC {
                     .Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D,

@@ -4,7 +4,7 @@
 
 namespace AquaEngine
 {
-    void RenderTargetView::Create(Buffer *buffer)
+    void RenderTargetView::Create(Buffer &buffer)
     {
         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 
@@ -12,7 +12,7 @@ namespace AquaEngine
         rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
         Device::Get()->CreateRenderTargetView(
-            buffer->GetBuffer(),
+            buffer.GetBuffer(),
             &rtvDesc,
             m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );

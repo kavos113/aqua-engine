@@ -10,7 +10,7 @@ namespace AquaEngine
     class RenderTargetView : public BufferView
     {
     public:
-        void Create(Buffer *buffer) override;
+        void Create(Buffer &buffer) override;
         void Create(ID3D12Resource* resource);
     };
 

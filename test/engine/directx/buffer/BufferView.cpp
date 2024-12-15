@@ -49,7 +49,7 @@ TEST_F(BufferViewTest, CreateCBV)
 
     ConstantBufferView view;
     view.SetDescriptorHeapSegment(segment, 0);
-    view.Create(&buffer);
+    view.Create(buffer);
 
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
     ASSERT_NE(view.GetGPUHandle().ptr, 0);
@@ -70,7 +70,7 @@ TEST_F(BufferViewTest, CreateDSV)
 
     DepthStencilView view;
     view.SetDescriptorHeapSegment(segment, 0);
-    view.Create(&buffer);
+    view.Create(buffer);
     
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
 }

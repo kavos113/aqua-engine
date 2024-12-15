@@ -16,7 +16,7 @@ namespace AquaEngine
         static DescriptorHeapSegmentManager& GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE type);
         static DescriptorHeapSegmentManager& GetShaderHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE type, const std::string& name);
 
-        static void SetToCommand(Command *command);
+        static void SetToCommand(Command &command);
 
         static void Shutdown();
     private:

@@ -102,12 +102,14 @@ namespace AquaEngine
         const D3D12_DESCRIPTOR_RANGE* descriptor_ranges,
         const int num_descriptor_ranges)
     {
-        D3D12_ROOT_PARAMETER root_parameter;
-
-        root_parameter.ParameterType = type;
-        root_parameter.ShaderVisibility = visibility;
-        root_parameter.DescriptorTable.NumDescriptorRanges = num_descriptor_ranges;
-        root_parameter.DescriptorTable.pDescriptorRanges = descriptor_ranges;
+        D3D12_ROOT_PARAMETER root_parameter = {
+            .ParameterType = type,
+            .ShaderVisibility = visibility
+        };
+        root_parameter.DescriptorTable = {
+            .NumDescriptorRanges = static_cast<UINT>(num_descriptor_ranges),
+            .pDescriptorRanges = descriptor_ranges
+        };
 
         if (static_cast<GLOBAL_HEAP_ID>(m_rootParameters.size()) <= id)
         {
@@ -123,14 +125,16 @@ namespace AquaEngine
     }
 
     void DescriptorHeapSegmentManager::SetGraphicsRootDescriptorTable(
-        Command *command,
+        const Command &command,
         GLOBAL_HEAP_ID id,
-        unsigned int offset) const
+        unsigned int offset
+    ) const
     {
         D3D12_GPU_DESCRIPTOR_HANDLE handle = GetGPUHandle(id);
         handle.ptr += static_cast<UINT64>(offset) * m_incrementSize;
 
-        command->List()->SetGraphicsRootDescriptorTable(id, handle);
+
+        command.List()->SetGraphicsRootDescriptorTable(id, handle);
     }
 
 }

@@ -10,10 +10,10 @@ namespace AquaEngine
     class TextureManager
     {
     public:
-        static Buffer LoadTextureFromFile(const std::string &filename, Command &command);
+        static ID3D12Resource* LoadTextureFromFile(const std::string &filename, Command &command);
 
     private:
-        static std::map<std::string, Buffer> m_resourceTable;
+        static std::map<std::string, ID3D12Resource*> m_resourceTable;
     };
 }
 

@@ -61,7 +61,7 @@ namespace AquaEngine
     }
 
     // set to command CBV, SRV, UAV heap
-    void GlobalDescriptorHeapManager::SetToCommand(Command *command)
+    void GlobalDescriptorHeapManager::SetToCommand(Command &command)
     {
         m_shaderHeaps[0].SetToCommand(command);
     }

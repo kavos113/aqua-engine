@@ -42,8 +42,8 @@ namespace AquaEngine
             desc.pStaticSamplers = m_samplers.data();
         }
 
-        ID3DBlob* signature;
-        ID3DBlob* error;
+        ID3DBlob* signature = nullptr;
+        ID3DBlob* error = nullptr;
 
         HRESULT hr = D3D12SerializeRootSignature(
             &desc,
@@ -67,6 +67,9 @@ namespace AquaEngine
             OutputDebugStringA(errStr.c_str());
             return hr;
         }
+
+        auto p = signature->GetBufferPointer();
+        auto s = signature->GetBufferSize();
 
         hr = Device::Get()->CreateRootSignature(
             0,

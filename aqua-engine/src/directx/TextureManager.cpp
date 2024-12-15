@@ -10,7 +10,9 @@
 
 namespace AquaEngine
 {
-    Buffer TextureManager::LoadTextureFromFile(const std::string &filename, Command &command)
+    std::map<std::string, ID3D12Resource*> TextureManager::m_resourceTable;
+
+    ID3D12Resource* TextureManager::LoadTextureFromFile(const std::string &filename, Command &command)
     {
         if (m_resourceTable.contains(filename))
         {
@@ -36,14 +38,14 @@ namespace AquaEngine
         const DirectX::Image *image = scratchImage.GetImage(0, 0, 0);
 
         GPUBuffer<uint8_t> upload_buffer;
-        hr = upload_buffer.Create(BUFFER_DEFAULT(AlignmentSize(image->rowPitch, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT)));
+        hr = upload_buffer.Create(BUFFER_DEFAULT(AlignmentSize(image->rowPitch, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT) * image->height));
         if (FAILED(hr))
         {
             OutputDebugString(_T("Failed to create upload buffer\n"));
             return {};
         }
 
-        Buffer texture_buffer;
+        ID3D12Resource* texture = nullptr;
         D3D12_RESOURCE_DESC desc = {
             .Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension),
             .Alignment = 0,
@@ -59,12 +61,14 @@ namespace AquaEngine
             .Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN,
             .Flags = D3D12_RESOURCE_FLAG_NONE
         };
-        hr = texture_buffer.Create(
-            Buffer::HeapProperties::Default(),
+        auto prop = Buffer::HeapProperties::Default();
+        hr = Device::Get()->CreateCommittedResource(
+            &prop,
             D3D12_HEAP_FLAG_NONE,
-            desc,
+            &desc,
             D3D12_RESOURCE_STATE_COPY_DEST,
-            nullptr
+            nullptr,
+            IID_PPV_ARGS(&texture)
         );
         if (FAILED(hr))
         {
@@ -84,16 +88,12 @@ namespace AquaEngine
             dst_addr += row_pitch;
         }
 
-        D3D12_TEXTURE_COPY_LOCATION src = {
-            .pResource = upload_buffer.GetBuffer(),
-            .Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT
-        };
-
         D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint;
         UINT num_rows;
         UINT64 row_size;
-        UINT64 upload_size;
-        D3D12_RESOURCE_DESC texture_desc = texture_buffer.GetBuffer()->GetDesc();
+        UINT64 total_size;
+
+        D3D12_RESOURCE_DESC texture_desc = texture->GetDesc();
         Device::Get()->GetCopyableFootprints(
             &texture_desc,
             0,
@@ -102,23 +102,20 @@ namespace AquaEngine
             &footprint,
             &num_rows,
             &row_size,
-            &upload_size
-        );
+            &total_size
+            );
 
-        src.PlacedFootprint = footprint;
-        src.PlacedFootprint.Offset = 0;
-        src.PlacedFootprint.Footprint.Width = static_cast<UINT>(metadata.width);
-        src.PlacedFootprint.Footprint.Height = static_cast<UINT>(metadata.height);
-        src.PlacedFootprint.Footprint.Depth = static_cast<UINT>(metadata.depth);
-        src.PlacedFootprint.Footprint.RowPitch = static_cast<UINT>(AlignmentSize(image->rowPitch, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT));
-        src.PlacedFootprint.Footprint.Format = image->format;
+        D3D12_TEXTURE_COPY_LOCATION src = {
+            .pResource = upload_buffer.GetBuffer(),
+            .Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
+            .PlacedFootprint = footprint
+        };
 
         D3D12_TEXTURE_COPY_LOCATION dst = {
-            .pResource = texture_buffer.GetBuffer(),
+            .pResource = texture,
             .Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX,
             .SubresourceIndex = 0
         };
-
 
         command.List()->CopyTextureRegion(
             &dst,
@@ -131,7 +128,7 @@ namespace AquaEngine
 
         Barrier::Transition(
             &command,
-            texture_buffer.GetBuffer(),
+            texture,
             D3D12_RESOURCE_STATE_COPY_DEST,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
         );
@@ -143,9 +140,9 @@ namespace AquaEngine
             return {};
         }
 
-        m_resourceTable[filename] = texture_buffer;
+        m_resourceTable[filename] = texture;
 
-        return texture_buffer;
+        return texture;
     }
 
 }

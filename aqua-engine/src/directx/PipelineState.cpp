@@ -30,7 +30,7 @@ namespace AquaEngine
 
         m_psoDesc.RasterizerState = {
             .FillMode = D3D12_FILL_MODE_SOLID,
-            .CullMode = D3D12_CULL_MODE_BACK,
+            .CullMode = D3D12_CULL_MODE_NONE,
             .FrontCounterClockwise = FALSE,
             .DepthBias = D3D12_DEFAULT_DEPTH_BIAS,
             .DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP,
@@ -68,7 +68,19 @@ namespace AquaEngine
         );
         if (FAILED(hr))
         {
-            OutputDebugStringW(L"Failed to create pipeline state\n");
+            OutputDebugStringW(L"Failed to create pipeline state: ");
+
+            if (m_psoDesc.pRootSignature == nullptr)
+            {
+                OutputDebugStringW(L"Root signature is null |");
+            }
+            if (m_psoDesc.InputLayout.pInputElementDescs == nullptr)
+            {
+                OutputDebugStringW(L"Input layout is null |");
+            }
+
+            OutputDebugStringW(L"\n");
+
             return hr;
         }
 

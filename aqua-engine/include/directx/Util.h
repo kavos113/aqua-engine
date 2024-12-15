@@ -1,6 +1,8 @@
 #ifndef AQUA_DIRECTX_UTIL_H
 #define AQUA_DIRECTX_UTIL_H
 
+#include <string>
+
 namespace AquaEngine
 {
     template <typename T>

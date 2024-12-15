@@ -18,7 +18,7 @@ namespace AquaEngine
         SafeRelease(&m_blob);
     }
 
-    HRESULT ShaderObject::CompileFromFile(
+    HRESULT ShaderObject::Load(
         const wchar_t *filename,
         const char *entryPoint,
         const char *target)

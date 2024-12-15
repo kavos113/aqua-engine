@@ -40,7 +40,7 @@ namespace AquaEngine
         m_scissorRect.bottom = m_scissorRect.top + (wr.bottom - wr.top);
     }
 
-    void Display::SetViewports()
+    void Display::SetViewports() const
     {
         m_command->List()->RSSetViewports(1, &m_viewport);
         m_command->List()->RSSetScissorRects(1, &m_scissorRect);

@@ -32,6 +32,8 @@ set(SRC
         src/directx/Display.cpp
         src/directx/mesh/Rectangle.cpp
         src/directx/TextureManager.cpp
+        src/directx/mesh/RectangleTexture.cpp
+        src/directx/mesh/Mesh.cpp
 )
 
 set(INCLUDE
@@ -65,6 +67,8 @@ set(INCLUDE
         include/directx/Display.h
         include/directx/mesh/Rectangle.h
         include/directx/TextureManager.h
+        include/directx/mesh/RectangleTexture.h
+        include/directx/mesh/Mesh.h
 )
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

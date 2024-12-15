@@ -1,5 +1,7 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
+#include <array>
+
 #include "Polygon.h"
 
 
@@ -21,9 +23,16 @@ namespace AquaEngine
 
         void Create() override;
 
+        static std::array<D3D12_INPUT_ELEMENT_DESC, 1> GetInputElementDescs()
+        {
+            return m_inputElementDescs;
+        }
+
     private:
         void CreateVertexBuffer();
         void CreateIndexBuffer();
+
+        static std::array<D3D12_INPUT_ELEMENT_DESC, 1> m_inputElementDescs;
     };
 }
 

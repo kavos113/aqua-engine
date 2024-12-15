@@ -16,7 +16,7 @@ namespace AquaEngine
         void EndRender();
         void Present();
 
-        void SetViewports();
+        void SetViewports() const;
 
         // TODO zantei
         [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetBackBufferRTV() const
@@ -27,8 +27,8 @@ namespace AquaEngine
         BackBuffers m_backBuffers;
         Command* m_command;
 
-        D3D12_VIEWPORT m_viewport;
-        D3D12_RECT m_scissorRect;
+        D3D12_VIEWPORT m_viewport{};
+        D3D12_RECT m_scissorRect{};
         RECT wr;
 
         void CreateViewport();

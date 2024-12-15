@@ -14,17 +14,17 @@ namespace AquaEngine
         SwapChain(HWND hwnd, RECT rc, Command &command);
         ~SwapChain();
 
-        void Present()
+        void Present() const
         {
             m_swapChain->Present(1, 0);
         }
 
-        void GetDesc(DXGI_SWAP_CHAIN_DESC1* desc)
+        void GetDesc(DXGI_SWAP_CHAIN_DESC1* desc) const
         {
             m_swapChain->GetDesc1(desc);
         }
 
-        UINT GetCurrentBackBufferIndex() const
+        [[nodiscard]] UINT GetCurrentBackBufferIndex() const
         {
             return m_swapChain->GetCurrentBackBufferIndex();
         }

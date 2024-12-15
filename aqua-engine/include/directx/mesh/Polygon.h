@@ -3,32 +3,28 @@
 
 #include <DirectXMath.h>
 #include <vector>
+
+#include "Mesh.h"
 #include "directx/buffer/GPUBuffer.h"
 #include "directx/wrapper/Command.h"
 
 namespace AquaEngine
 {
-    class Polygon
+    class Polygon : public Mesh
     {
     public:
-        virtual ~Polygon() = default;
+        ~Polygon() override = default;
 
-        virtual void Create() = 0;
+        void Create() override = 0;
 
-        void Draw(Command& command) const;
-
-        [[nodiscard]] D3D12_VERTEX_BUFFER_VIEW GetVertexBufferView() const;
-        [[nodiscard]] D3D12_INDEX_BUFFER_VIEW GetIndexBufferView() const;
+        void Draw(Command& command) const override;
 
     protected:
-        std::vector<DirectX::XMFLOAT3> m_vertices;
-        std::vector<unsigned short> m_indices;
+        std::vector<DirectX::XMFLOAT3> m_vertices{};
+        std::vector<unsigned short> m_indices{};
 
         GPUBuffer<DirectX::XMFLOAT3> m_vertexBuffer;
         GPUBuffer<unsigned short> m_indexBuffer;
-
-        D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView{};
-        D3D12_INDEX_BUFFER_VIEW m_indexBufferView{};
     };
 }
 

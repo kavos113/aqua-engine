@@ -1,5 +1,7 @@
 #include "../../../include/directx/mesh/Rectangle.h"
 
+#include <array>
+
 namespace AquaEngine
 {
     void Rectangle::Create()
@@ -29,5 +31,17 @@ namespace AquaEngine
         m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * 6;
     }
+
+    std::array<D3D12_INPUT_ELEMENT_DESC, 1> Rectangle::m_inputElementDescs = {
+        {
+            "POSITION",
+            0,
+            DXGI_FORMAT_R32G32B32_FLOAT,
+            0,
+            0,
+            D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+            0
+        }
+    };
 
 }

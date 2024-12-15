@@ -11,7 +11,7 @@ namespace AquaEngine
         ShaderObject();
         ~ShaderObject();
 
-        HRESULT CompileFromFile(const wchar_t* filename, const char* entryPoint, const char* target);
+        HRESULT Load(const wchar_t* filename, const char* entryPoint, const char* target);
         HRESULT CompileFromMemory(const char* source, size_t sourceSize, const char* entryPoint, const char* target);
 
         [[nodiscard]] D3D12_SHADER_BYTECODE Bytecode() const;

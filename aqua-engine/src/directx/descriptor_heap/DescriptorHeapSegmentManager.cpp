@@ -90,15 +90,9 @@ namespace AquaEngine
         return m_incrementSize;
     }
 
-    std::pair<D3D12_ROOT_PARAMETER*, size_t> DescriptorHeapSegmentManager::GetRootParameters() const
+    std::vector<D3D12_ROOT_PARAMETER> DescriptorHeapSegmentManager::GetRootParameters() const
     {
-        auto root_parameters = new D3D12_ROOT_PARAMETER[m_rootParameters.size()];
-        for (size_t i = 0; i < m_rootParameters.size(); i++)
-        {
-            root_parameters[i] = m_rootParameters[i];
-        }
-
-        return std::make_pair(root_parameters, m_rootParameters.size());
+        return m_rootParameters;
     }
 
     void DescriptorHeapSegmentManager::SetRootParameter(

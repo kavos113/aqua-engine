@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "directx/wrapper/Factory.h"
 
+using namespace AquaEngine;
+
 TEST(Factory, Init)
 {
     Factory::Init(false);

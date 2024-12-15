@@ -1,9 +1,12 @@
 #ifndef MESH_H
 #define MESH_H
+#include <vector>
+
 #include "directx/wrapper/Command.h"
 
 namespace AquaEngine
 {
+    template<class DerivedClass>
     class Mesh
     {
     public:
@@ -27,9 +30,16 @@ namespace AquaEngine
             return m_indexBufferView;
         }
 
+        [[nodiscard]] static std::vector<D3D12_INPUT_ELEMENT_DESC> GetInputElementDescs()
+        {
+            return m_inputElementDescs;
+        }
+
     protected:
         D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView{};
         D3D12_INDEX_BUFFER_VIEW m_indexBufferView{};
+
+        static std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputElementDescs;
     };
 }
 

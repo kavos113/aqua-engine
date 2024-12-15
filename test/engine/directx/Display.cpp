@@ -3,6 +3,8 @@
 
 #include "AquaEngine.h"
 
+using namespace AquaEngine;
+
 class DisplayTest : public ::testing::Test
 {
 protected:

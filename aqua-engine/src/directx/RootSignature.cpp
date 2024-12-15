@@ -6,7 +6,7 @@
 namespace AquaEngine
 {
     RootSignature::RootSignature()
-        : m_RootSignature(nullptr)
+        : m_rootSignature(nullptr)
         , m_manager(nullptr)
     {
 
@@ -14,7 +14,7 @@ namespace AquaEngine
 
     RootSignature::~RootSignature()
     {
-        SafeRelease(&m_RootSignature);
+        SafeRelease(&m_rootSignature);
     }
 
     HRESULT RootSignature::Create()
@@ -23,16 +23,24 @@ namespace AquaEngine
 
         desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+        std::vector<D3D12_ROOT_PARAMETER> rootParameters;
         if (m_manager)
         {
-            std::pair<D3D12_ROOT_PARAMETER*, size_t> rootParameters = m_manager->GetRootParameters();
+            rootParameters = m_manager->GetRootParameters();
 
-            desc.NumParameters = static_cast<UINT>(rootParameters.second);
-            desc.pParameters = rootParameters.first;
+            desc.NumParameters = static_cast<UINT>(rootParameters.size());
+            desc.pParameters = rootParameters.data();
         }
 
-        // TODO: static samplers
-        desc.NumStaticSamplers = 0;
+        if (m_samplers.empty())
+        {
+            desc.NumStaticSamplers = 0;
+        }
+        else
+        {
+            desc.NumStaticSamplers = static_cast<UINT>(m_samplers.size());
+            desc.pStaticSamplers = m_samplers.data();
+        }
 
         ID3DBlob* signature;
         ID3DBlob* error;
@@ -47,6 +55,11 @@ namespace AquaEngine
         {
             OutputDebugString(_T("Failed to serialize root signature.\n"));
 
+            if (error == nullptr)
+            {
+                return hr;
+            }
+
             std::string errStr;
             errStr.resize(error->GetBufferSize());
             std::copy_n(reinterpret_cast<char*>(error->GetBufferPointer()), error->GetBufferSize(), errStr.begin());
@@ -59,7 +72,7 @@ namespace AquaEngine
             0,
             signature->GetBufferPointer(),
             signature->GetBufferSize(),
-            IID_PPV_ARGS(&m_RootSignature)
+            IID_PPV_ARGS(&m_rootSignature)
         );
         if (FAILED(hr))
         {

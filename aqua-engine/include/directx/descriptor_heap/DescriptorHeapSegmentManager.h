@@ -36,7 +36,7 @@ namespace AquaEngine
         [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(GLOBAL_HEAP_ID id) const;
         [[nodiscard]] unsigned int GetSize(GLOBAL_HEAP_ID id) const;
         [[nodiscard]] UINT GetIncrementSize() const;
-        [[nodiscard]] std::pair<D3D12_ROOT_PARAMETER*, size_t> GetRootParameters() const;
+        [[nodiscard]] std::vector<D3D12_ROOT_PARAMETER> GetRootParameters() const;
 
         void SetRootParameter(
             GLOBAL_HEAP_ID id,

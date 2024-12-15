@@ -3,6 +3,8 @@
 #include "directx/wrapper/Device.h"
 #include "directx/wrapper/Fence.h"
 
+using namespace AquaEngine;
+
 class FenceTest : public ::testing::Test
 {
 protected:

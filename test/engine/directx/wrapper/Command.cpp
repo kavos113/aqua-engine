@@ -4,6 +4,8 @@
 #include "directx/wrapper/Device.h"
 #include "directx/wrapper/Factory.h"
 
+using namespace AquaEngine;
+
 class CommandTest : public ::testing::Test
 {
 protected:

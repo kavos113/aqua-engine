@@ -16,18 +16,24 @@ namespace AquaEngine
         HRESULT Create();
 
         void SetDescriptorHeapSegmentManager(DescriptorHeapSegmentManager *manager);
-
-        void SetToCommand(Command& command) const
+        void AddStaticSampler(const D3D12_STATIC_SAMPLER_DESC& sampler)
         {
-            command.List()->SetGraphicsRootSignature(m_RootSignature);
+            m_samplers.push_back(sampler);
+        }
+
+        void SetToCommand(const Command& command) const
+        {
+            command.List()->SetGraphicsRootSignature(m_rootSignature);
         }
 
         [[nodiscard]] ID3D12RootSignature* GetRootSignature() const
         {
-            return m_RootSignature;
+            return m_rootSignature;
         }
     private:
-        ID3D12RootSignature *m_RootSignature;
+        ID3D12RootSignature *m_rootSignature;
+
+        std::vector<D3D12_STATIC_SAMPLER_DESC> m_samplers;
 
         DescriptorHeapSegmentManager* m_manager;
     };

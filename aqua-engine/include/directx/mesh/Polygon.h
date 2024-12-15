@@ -10,7 +10,7 @@
 
 namespace AquaEngine
 {
-    class Polygon : public Mesh
+    class Polygon : public Mesh<Polygon>
     {
     public:
         ~Polygon() override = default;

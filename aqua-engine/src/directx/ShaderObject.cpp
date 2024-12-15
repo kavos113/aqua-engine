@@ -47,6 +47,11 @@ namespace AquaEngine
                 return hr;
             }
 
+            if (errorBlob == nullptr)
+            {
+                return hr;
+            }
+
             std::string errStr;
             errStr.resize(errorBlob->GetBufferSize());
             std::copy_n(reinterpret_cast<char*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize(), errStr.begin());

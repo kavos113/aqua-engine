@@ -16,5 +16,6 @@
 
 #include "directx/mesh/Triangle.h"
 #include "directx/mesh/Rectangle.h"
+#include "directx/mesh/RectangleTexture.h"
 
 #endif //AQUA_AQUAENGINE_H

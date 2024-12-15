@@ -7,6 +7,8 @@
 
 #include <windows.h>
 
+using namespace AquaEngine;
+
 class SwapChainTest : public ::testing::Test
 {
 protected:

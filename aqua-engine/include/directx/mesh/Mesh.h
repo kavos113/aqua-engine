@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <vector>
 
+#include "directx/Util.h"
 #include "directx/buffer/ConstantBufferView.h"
 #include "directx/buffer/GPUBuffer.h"
 #include "directx/descriptor_heap/DescriptorHeapSegmentManager.h"
@@ -14,7 +15,7 @@ namespace AquaEngine
     class Mesh
     {
     public:
-        Mesh(DescriptorHeapSegmentManager& manager)
+        explicit Mesh(DescriptorHeapSegmentManager& manager)
             : m_manager(&manager)
         {
 
@@ -22,7 +23,7 @@ namespace AquaEngine
         virtual ~Mesh() = default;
 
         virtual void Create() = 0;
-        virtual void Draw(Command& command) const
+        virtual void Render(Command& command) const
         {
             command.List()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             command.List()->IASetVertexBuffers(0, 1, &m_vertexBufferView);
@@ -51,7 +52,7 @@ namespace AquaEngine
 
         void CreateMatrixBuffer(const D3D12_DESCRIPTOR_RANGE &matrix_range)
         {
-            m_matrixBuffer.Create(BUFFER_DEFAULT(sizeof(TransformMatrix)));
+            m_matrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(TransformMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
 
             auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));

@@ -17,6 +17,7 @@ namespace AquaEngine
             if (enableDebugLayer)
             {
                 CreateFactoryWithDebug();
+                EnableDebugLayer();
             }
             else
             {
@@ -32,20 +33,6 @@ namespace AquaEngine
         static void Shutdown()
         {
             SafeRelease(&m_dxgiFactory);
-        }
-
-        static void EnableDebugLayer()
-        {
-            ID3D12Debug5* debugController;
-            HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
-            if (SUCCEEDED(hr))
-            {
-                debugController->EnableDebugLayer();
-                debugController->SetEnableGPUBasedValidation(TRUE);
-                debugController->SetEnableAutoName(TRUE);
-            }
-            OutputDebugStringW(L"Debug layer enabled.\n");
-            debugController->Release();
         }
 
     private:
@@ -83,6 +70,20 @@ namespace AquaEngine
             }
 
             return S_OK;
+        }
+
+        static void EnableDebugLayer()
+        {
+            ID3D12Debug5* debugController;
+            HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
+            if (SUCCEEDED(hr))
+            {
+                debugController->EnableDebugLayer();
+                debugController->SetEnableGPUBasedValidation(TRUE);
+                debugController->SetEnableAutoName(TRUE);
+            }
+            OutputDebugStringW(L"Debug layer enabled.\n");
+            debugController->Release();
         }
 
     };

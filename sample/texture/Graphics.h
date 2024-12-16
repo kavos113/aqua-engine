@@ -27,6 +27,7 @@ private:
     std::unique_ptr<AquaEngine::RectangleTexture> rectangle{};
     AquaEngine::RootSignature rootSignature;
     AquaEngine::PipelineState pipelineState;
+    AquaEngine::Camera camera;
 };
 
 

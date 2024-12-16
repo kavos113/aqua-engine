@@ -31,9 +31,9 @@ namespace AquaEngine
         CreateIndexBuffer();
     }
 
-    void RectangleTexture::Draw(Command &command) const
+    void RectangleTexture::Render(Command &command) const
     {
-        Mesh::Draw(command);
+        Mesh::Render(command);
 
         m_srv.SetGraphicsRootDescriptorTable(&command);
         command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);

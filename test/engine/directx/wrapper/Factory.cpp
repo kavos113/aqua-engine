@@ -14,7 +14,6 @@ TEST(Factory, Init)
 TEST(Factory, EnableDebugLayer)
 {
     Factory::Init(true);
-    Factory::EnableDebugLayer();
 
     EXPECT_NE(Factory::Get(), nullptr);
 

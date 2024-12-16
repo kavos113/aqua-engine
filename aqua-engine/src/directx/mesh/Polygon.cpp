@@ -2,9 +2,9 @@
 
 namespace AquaEngine
 {
-    void Polygon::Draw(Command &command) const
+    void Polygon::Render(Command &command) const
     {
-        Mesh::Draw(command);
+        Mesh::Render(command);
 
         command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
     }

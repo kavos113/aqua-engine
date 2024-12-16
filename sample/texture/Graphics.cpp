@@ -6,6 +6,7 @@ Graphics::Graphics(HWND hwnd, RECT rc)
     , command(nullptr)
     , display(nullptr)
     , rectangle(nullptr)
+    , camera(rc)
 {
     AquaEngine::Factory::Init(true);
     AquaEngine::Device::GetAdaptors();
@@ -27,8 +28,22 @@ void Graphics::SetUp()
 
     auto& manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
         "texture",
-        2,
+        3,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+    );
+
+    camera.Init(
+        manager,
+        {0.0f, 0.0f, -5.0f},
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f},
+        {
+            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+            .NumDescriptors = 1,
+            .BaseShaderRegister = 0,
+            .RegisterSpace = 0,
+            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        }
     );
 
     rectangle = std::make_unique<AquaEngine::RectangleTexture>(
@@ -51,7 +66,7 @@ void Graphics::SetUp()
     rectangle->CreateMatrixBuffer({
         .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
+        .BaseShaderRegister = 1,
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     });
@@ -90,9 +105,10 @@ void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    rectangle->RotationY(0.01f);
+    rectangle->RotationY(0.1f);
 
     display->BeginRender();
+
 
     D3D12_CPU_DESCRIPTOR_HANDLE rtv = display->GetBackBufferRTV();
     command->List()->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
@@ -104,7 +120,8 @@ void Graphics::Render() const
     rootSignature.SetToCommand(*command);
     display->SetViewports();
 
-    rectangle->Draw(*command);
+    camera.Render(*command);
+    rectangle->Render(*command);
 
     display->EndRender();
 

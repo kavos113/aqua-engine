@@ -9,7 +9,7 @@ namespace AquaEngine
     {
     public:
         Buffer();
-        Buffer(ID3D12Resource* buffer);
+        explicit Buffer(ID3D12Resource* buffer);
         virtual ~Buffer();
 
         virtual HRESULT Create(

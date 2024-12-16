@@ -2,6 +2,7 @@
 #define AQUA_DIRECTX_UTIL_H
 
 #include <string>
+#include <Windows.h>
 
 namespace AquaEngine
 {

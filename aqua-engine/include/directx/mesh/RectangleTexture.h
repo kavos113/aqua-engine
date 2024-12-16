@@ -42,7 +42,7 @@ namespace AquaEngine
 
         void Create() override;
         void Draw(Command &command) const override;
-        void CreateShaderResourceView(const D3D12_DESCRIPTOR_RANGE& texture_param);
+        void CreateShaderResourceView(const D3D12_DESCRIPTOR_RANGE& texture_range);
 
     private:
         struct Vertex

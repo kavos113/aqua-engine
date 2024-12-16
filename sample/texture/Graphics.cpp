@@ -48,6 +48,13 @@ void Graphics::SetUp()
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     });
+    rectangle->CreateMatrixBuffer({
+        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        .NumDescriptors = 1,
+        .BaseShaderRegister = 0,
+        .RegisterSpace = 0,
+        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    });
     auto inputElement = rectangle->GetInputElementDescs();
 
     rootSignature.AddStaticSampler({
@@ -82,6 +89,8 @@ void Graphics::SetUp()
 void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
+
+    rectangle->RotationY(0.01f);
 
     display->BeginRender();
 

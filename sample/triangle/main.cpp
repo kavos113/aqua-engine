@@ -47,7 +47,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     AquaEngine::Command command;
     AquaEngine::Display display(hwnd, wr, command);
 
-    AquaEngine::Triangle triangle({0.0f, 0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f});
+    AquaEngine::Triangle triangle(
+        {0.0f, 0.5f, 0.0f},
+        {0.5f, -0.5f, 0.0f},
+        {-0.5f, -0.5f, 0.0f},
+        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager("triangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
     triangle.Create();
     
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
@@ -84,6 +88,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
         
         display.BeginRender();
         

@@ -9,7 +9,12 @@ namespace AquaEngine
     class Triangle final : public Polygon
     {
     public:
-        Triangle(DirectX::XMFLOAT3 pos1, DirectX::XMFLOAT3 pos2, DirectX::XMFLOAT3 pos3)
+        Triangle(
+            DirectX::XMFLOAT3 pos1,
+            DirectX::XMFLOAT3 pos2,
+            DirectX::XMFLOAT3 pos3,
+            DescriptorHeapSegmentManager& manager)
+            : Polygon(manager)
         {
             m_vertices.resize(3);
             m_vertices[0] = pos1;

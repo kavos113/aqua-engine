@@ -1,7 +1,9 @@
 #ifndef MESH_H
 #define MESH_H
+#include <DirectXMath.h>
 #include <vector>
 
+#include "directx/descriptor_heap/DescriptorHeapSegmentManager.h"
 #include "directx/wrapper/Command.h"
 
 namespace AquaEngine
@@ -10,6 +12,11 @@ namespace AquaEngine
     class Mesh
     {
     public:
+        Mesh(DescriptorHeapSegmentManager& manager)
+            : m_manager(&manager)
+        {
+
+        }
         virtual ~Mesh() = default;
 
         virtual void Create() = 0;
@@ -40,6 +47,10 @@ namespace AquaEngine
         D3D12_INDEX_BUFFER_VIEW m_indexBufferView{};
 
         static std::vector<D3D12_INPUT_ELEMENT_DESC> m_inputElementDescs;
+        
+        DirectX::XMMATRIX m_worldMatrix = DirectX::XMMatrixIdentity();
+
+        DescriptorHeapSegmentManager* m_manager{};
     };
 }
 

@@ -10,7 +10,13 @@ namespace AquaEngine
     class Rectangle final : public Polygon
     {
     public:
-        Rectangle(DirectX::XMFLOAT3 topleft, DirectX::XMFLOAT3 topright, DirectX::XMFLOAT3 bottomleft, DirectX::XMFLOAT3 bottomright)
+        Rectangle(
+            DirectX::XMFLOAT3 topleft,
+            DirectX::XMFLOAT3 topright,
+            DirectX::XMFLOAT3 bottomleft,
+            DirectX::XMFLOAT3 bottomright,
+            DescriptorHeapSegmentManager& manager)
+            : Polygon(manager)
         {
             m_vertices.resize(4);
             m_vertices[0] = topleft;

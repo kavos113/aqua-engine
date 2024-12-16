@@ -24,7 +24,8 @@ namespace AquaEngine
             const std::string &texturePath,
             Command &command
         )
-            : m_vertices({
+            : Mesh(manager)
+            , m_vertices({
                 {topleft, {0.0f, 0.0f}},
                 {topright, {1.0f, 0.0f}},
                 {bottomleft, {0.0f, 1.0f}},
@@ -35,8 +36,8 @@ namespace AquaEngine
             , m_srv(ShaderResourceView())
             , m_vertexBuffer(GPUBuffer<Vertex>())
             , m_indexBuffer(GPUBuffer<unsigned short>())
-            , m_manager(&manager)
         {
+
         }
 
         void Create() override;
@@ -58,8 +59,6 @@ namespace AquaEngine
 
         GPUBuffer<Vertex> m_vertexBuffer;
         GPUBuffer<unsigned short> m_indexBuffer;
-
-        DescriptorHeapSegmentManager* m_manager;
 
         void CreateVertexBuffer();
         void CreateIndexBuffer();

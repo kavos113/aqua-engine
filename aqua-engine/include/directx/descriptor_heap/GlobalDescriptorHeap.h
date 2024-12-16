@@ -6,32 +6,34 @@
 #include "DescriptorHeapSegmentManager.h"
 #include "directx/wrapper/DescriptorHeap.h"
 
-
-class GlobalDescriptorHeap
+namespace AquaEngine
 {
-public:
-    virtual void Init(D3D12_DESCRIPTOR_HEAP_TYPE type);
-    GlobalDescriptorHeap();
-    virtual ~GlobalDescriptorHeap() = default;
-    
-    void Release()
+    class GlobalDescriptorHeap
     {
-        m_heap.Release();
-    }
-    
-    DescriptorHeapSegmentManager& GetHeapManager() { return m_heapManager; }
+    public:
+        virtual void Init(D3D12_DESCRIPTOR_HEAP_TYPE type);
+        GlobalDescriptorHeap();
+        virtual ~GlobalDescriptorHeap() = default;
 
-protected:
-    DescriptorHeap m_heap;
-    UINT m_incrementSize;
-    
-    D3D12_CPU_DESCRIPTOR_HANDLE m_lastCpuHandle;
+        void Release()
+        {
+            m_heap.Release();
+        }
 
-private:
-    DescriptorHeapSegmentManager m_heapManager;
-    
-    constexpr static unsigned int kMaxDescriptorHeapSize = 65536;
-};
+        DescriptorHeapSegmentManager& GetHeapManager() { return m_heapManager; }
+
+    protected:
+        DescriptorHeap m_heap;
+        UINT m_incrementSize;
+
+        D3D12_CPU_DESCRIPTOR_HANDLE m_lastCpuHandle;
+
+    private:
+        DescriptorHeapSegmentManager m_heapManager;
+
+        constexpr static unsigned int kMaxDescriptorHeapSize = 65536;
+    };
+}
 
 
 #endif //AQUA_GLOBALDESCRIPTORHEAP_H

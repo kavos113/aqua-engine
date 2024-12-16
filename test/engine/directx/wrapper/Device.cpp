@@ -2,6 +2,8 @@
 
 #include "directx/wrapper/Device.h"
 
+using namespace AquaEngine;
+
 class DeviceTest : public ::testing::Test
 {
 protected:

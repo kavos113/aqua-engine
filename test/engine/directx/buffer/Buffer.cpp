@@ -5,6 +5,8 @@
 #include "directx/wrapper/Command.h"
 #include "directx/buffer/Buffer.h"
 
+using namespace AquaEngine;
+
 class BufferTest : public ::testing::Test
 {
 protected:
@@ -25,7 +27,7 @@ protected:
 TEST_F(BufferTest, Create)
 {
     Buffer buffer;
-    HRESULT hr = buffer.Create(BUFFER_DEFAULT(1));
+    HRESULT hr = buffer.Create(BUFFER_DEFAULT(256));
     if (FAILED(hr))
     {
         std::cout << std::hex << hr << std::endl;

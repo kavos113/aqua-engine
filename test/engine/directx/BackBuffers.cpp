@@ -3,6 +3,8 @@
 
 #include "AquaEngine.h"
 
+using namespace AquaEngine;
+
 class BackBuffersTest : public ::testing::Test
 {
 protected:
@@ -84,6 +86,7 @@ TEST_F(BackBuffersTest, BeginRender)
 TEST_F(BackBuffersTest, EndRender)
 {
     BackBuffers backBuffers(hwnd, wr, *command);
+    backBuffers.BeginRender();
     backBuffers.EndRender();
     
     HRESULT hr = command->Execute();

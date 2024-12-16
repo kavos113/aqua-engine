@@ -5,16 +5,19 @@
 #include <d3d12.h>
 #include "Command.h"
 
-class Barrier
+namespace AquaEngine
 {
-public:
-    static void Transition(Command *command,
-                           ID3D12Resource *resource,
-                           D3D12_RESOURCE_STATES before,
-                           D3D12_RESOURCE_STATES after);
-private:
-    static D3D12_RESOURCE_BARRIER m_Barrier;
-};
+    class Barrier
+    {
+    public:
+        static void Transition(Command *command,
+                               ID3D12Resource *resource,
+                               D3D12_RESOURCE_STATES before,
+                               D3D12_RESOURCE_STATES after);
+    private:
+        static D3D12_RESOURCE_BARRIER m_Barrier;
+    };
+}
 
 
 #endif //AQUA_BARRIER_H

@@ -1,3 +1,7 @@
 #include "directx/wrapper/Factory.h"
 
-IDXGIFactory6* Factory::m_dxgiFactory = nullptr;
+namespace AquaEngine
+{
+    IDXGIFactory6* Factory::m_dxgiFactory = nullptr;
+
+}

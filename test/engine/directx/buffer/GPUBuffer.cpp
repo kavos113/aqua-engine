@@ -2,6 +2,8 @@
 
 #include "AquaEngine.h"
 
+using namespace AquaEngine;
+
 class GPUBufferTest : public ::testing::Test
 {
 protected:

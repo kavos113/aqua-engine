@@ -13,7 +13,10 @@
 #include "directx/PipelineState.h"
 #include "directx/RootSignature.h"
 #include "directx/ShaderObject.h"
+#include "directx/Camera.h"
 
 #include "directx/mesh/Triangle.h"
+#include "directx/mesh/Rectangle.h"
+#include "directx/mesh/RectangleTexture.h"
 
 #endif //AQUA_AQUAENGINE_H

@@ -2,6 +2,8 @@
 
 #include "AquaEngine.h"
 
+using namespace AquaEngine;
+
 class PipelineStateTest : public ::testing::Test
 {
 protected:
@@ -28,10 +30,10 @@ protected:
 TEST_F(PipelineStateTest, Create)
 {
     ShaderObject vs;
-    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     
     ShaderObject ps;
-    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
+    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
     rootSignature.Create();
@@ -66,10 +68,10 @@ TEST_F(PipelineStateTest, Create)
 TEST_F(PipelineStateTest, CreateWithNoRootSignature)
 {
     ShaderObject vs;
-    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     
     ShaderObject ps;
-    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
+    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
         {
@@ -96,7 +98,7 @@ TEST_F(PipelineStateTest, CreateWithNoRootSignature)
 TEST_F(PipelineStateTest, CreateWithNoVertexShader)
 {
     ShaderObject ps;
-    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
+    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
     rootSignature.Create();
@@ -126,7 +128,7 @@ TEST_F(PipelineStateTest, CreateWithNoVertexShader)
 TEST_F(PipelineStateTest, CreateWithNoPixelShader)
 {
     ShaderObject vs;
-    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     
     RootSignature rootSignature;
     rootSignature.Create();
@@ -156,10 +158,10 @@ TEST_F(PipelineStateTest, CreateWithNoPixelShader)
 TEST_F(PipelineStateTest, CreateWithNoInputLayout)
 {
     ShaderObject vs;
-    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     
     ShaderObject ps;
-    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
+    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
     rootSignature.Create();
@@ -177,10 +179,10 @@ TEST_F(PipelineStateTest, CreateWithNoInputLayout)
 TEST_F(PipelineStateTest, Command)
 {
     ShaderObject vs;
-    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
+    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     
     ShaderObject ps;
-    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
+    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
     rootSignature.Create();

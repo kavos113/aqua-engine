@@ -1,20 +1,24 @@
 #include "directx/mesh/Polygon.h"
 
-void Polygon::Draw(Command &command) const
+namespace AquaEngine
 {
-    command.List()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    command.List()->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-    command.List()->IASetIndexBuffer(&m_indexBufferView);
-    
-    command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
-}
+    void Polygon::Render(Command &command) const
+    {
+        Mesh::Render(command);
 
-D3D12_VERTEX_BUFFER_VIEW Polygon::GetVertexBufferView() const
-{
-    return m_vertexBufferView;
-}
+        command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
+    }
 
-D3D12_INDEX_BUFFER_VIEW Polygon::GetIndexBufferView() const
-{
-    return m_indexBufferView;
+    std::vector<D3D12_INPUT_ELEMENT_DESC> Mesh<Polygon>::m_inputElementDescs = {
+        {
+            "POSITION",
+            0,
+            DXGI_FORMAT_R32G32B32_FLOAT,
+            0,
+            D3D12_APPEND_ALIGNED_ELEMENT,
+            D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+            0
+        }
+    };
+
 }

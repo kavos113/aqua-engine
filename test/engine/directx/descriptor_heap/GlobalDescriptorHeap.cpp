@@ -5,6 +5,8 @@
 #include "directx/wrapper/Factory.h"
 #include "directx/descriptor_heap/DescriptorHeapSegment.h"
 
+using namespace AquaEngine;
+
 class GlobalDescriptorHeapManagerTest : public ::testing::Test
 {
 protected:

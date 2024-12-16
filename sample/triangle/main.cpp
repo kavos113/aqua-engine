@@ -35,19 +35,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     );
     if (hwnd == nullptr)
     {
-        return 0;
+        return -1;
     }
     
     // d3d init
-    Factory::Init(true);
-    Device::GetAdaptors();
-    Device::Init(1);
-    GlobalDescriptorHeapManager::Init();
+    AquaEngine::Factory::Init(true);
+    AquaEngine::Device::GetAdaptors();
+    AquaEngine::Device::Init(0);
+    AquaEngine::GlobalDescriptorHeapManager::Init();
     
-    Command command;
-    Display display(hwnd, wr, command);
-    
-    Triangle triangle({0.0f, 0.5f, 0.0f}, {0.5f, -0.5f, 0.0f}, {-0.5f, -0.5f, 0.0f});
+    AquaEngine::Command command;
+    AquaEngine::Display display(hwnd, wr, command);
+
+    AquaEngine::Triangle triangle(
+        {0.0f, 0.5f, 0.0f},
+        {0.5f, -0.5f, 0.0f},
+        {-0.5f, -0.5f, 0.0f},
+        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager("triangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
     triangle.Create();
     
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
@@ -61,15 +65,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
             .InstanceDataStepRate = 0
         }
     };
-    
-    ShaderObject vs, ps;
-    vs.CompileFromFile(L"vs.hlsl", "vsMain", "vs_5_0");
-    ps.CompileFromFile(L"ps.hlsl", "psMain", "ps_5_0");
-    
-    RootSignature rootSignature;
+
+    AquaEngine::ShaderObject vs, ps;
+    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
+    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
+
+    AquaEngine::RootSignature rootSignature;
     rootSignature.Create();
-    
-    PipelineState pipelineState;
+
+    AquaEngine::PipelineState pipelineState;
     pipelineState.SetRootSignature(&rootSignature);
     pipelineState.SetPixelShader(&ps);
     pipelineState.SetVertexShader(&vs);
@@ -84,6 +88,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
         
         display.BeginRender();
         
@@ -106,9 +112,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         display.Present();
     }
     
-    GlobalDescriptorHeapManager::Shutdown();
-    Device::Shutdown();
-    Factory::Shutdown();
+    AquaEngine::GlobalDescriptorHeapManager::Shutdown();
+    AquaEngine::Device::Shutdown();
+    AquaEngine::Factory::Shutdown();
     
     UnregisterClass(_T("WindowClass"), wc.hInstance);
     

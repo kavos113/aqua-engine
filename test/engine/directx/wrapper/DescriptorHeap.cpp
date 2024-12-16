@@ -4,6 +4,8 @@
 #include "directx/wrapper/Command.h"
 #include "directx/wrapper/DescriptorHeap.h"
 
+using namespace AquaEngine;
+
 class DescriptorHeapTest : public ::testing::Test
 {
 protected:

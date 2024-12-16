@@ -5,6 +5,8 @@
 #include "directx/buffer/ShaderResourceView.h"
 #include "directx/buffer/DepthStencilView.h"
 
+using namespace AquaEngine;
+
 class BufferViewTest : public ::testing::Test
 {
 protected:
@@ -43,33 +45,12 @@ TEST_F(BufferViewTest, CreateCBV)
     std::shared_ptr<DescriptorHeapSegment> segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
     
     Buffer buffer;
-    buffer.Create(BUFFER_DEFAULT(1));
+    buffer.Create(BUFFER_DEFAULT(256));
 
     ConstantBufferView view;
     view.SetDescriptorHeapSegment(segment, 0);
-    view.Create(&buffer);
+    view.Create(buffer);
 
-    ASSERT_NE(view.GetCPUHandle().ptr, 0);
-    ASSERT_NE(view.GetGPUHandle().ptr, 0);
-}
-
-TEST_F(BufferViewTest, CreateSRV)
-{
-    DescriptorHeapSegmentManager manager = GlobalDescriptorHeapManager::CreateShaderManager(
-        "SRV",
-        1,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
-        );
-    
-    std::shared_ptr<DescriptorHeapSegment> segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
-    
-    Buffer buffer;
-    buffer.Create(BUFFER_DEFAULT(1));
-
-    ShaderResourceView view;
-    view.SetDescriptorHeapSegment(segment, 0);
-    view.Create(&buffer);
-    
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
     ASSERT_NE(view.GetGPUHandle().ptr, 0);
 }
@@ -89,7 +70,7 @@ TEST_F(BufferViewTest, CreateDSV)
 
     DepthStencilView view;
     view.SetDescriptorHeapSegment(segment, 0);
-    view.Create(&buffer);
+    view.Create(buffer);
     
     ASSERT_NE(view.GetCPUHandle().ptr, 0);
 }

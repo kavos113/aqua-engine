@@ -39,12 +39,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     }
     
     // d3d init
-    Factory::Init(true);
-    Device::GetAdaptors();
-    Device::Init(1);
-    GlobalDescriptorHeapManager::Init();
-    Command command;
-    Display display(hwnd, wr, command);
+    AquaEngine::Factory::Init(true);
+    AquaEngine::Device::GetAdaptors();
+    AquaEngine::Device::Init(1);
+    AquaEngine::GlobalDescriptorHeapManager::Init();
+    AquaEngine::Command command;
+    AquaEngine::Display display(hwnd, wr, command);
     
     ShowWindow(hwnd, nCmdShow);
     
@@ -69,10 +69,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         
         display.Present();
     }
-    
-    GlobalDescriptorHeapManager::Shutdown();
-    Device::Shutdown();
-    Factory::Shutdown();
+
+    AquaEngine::GlobalDescriptorHeapManager::Shutdown();
+    AquaEngine::Device::Shutdown();
+    AquaEngine::Factory::Shutdown();
     
     UnregisterClass(_T("WindowClass"), wc.hInstance);
     

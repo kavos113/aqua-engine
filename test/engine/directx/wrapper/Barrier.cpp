@@ -6,6 +6,8 @@
 #include "directx/wrapper/Barrier.h"
 #include "directx/buffer/Buffer.h"
 
+using namespace AquaEngine;
+
 class BarrierTest : public testing::Test
 {
 protected:

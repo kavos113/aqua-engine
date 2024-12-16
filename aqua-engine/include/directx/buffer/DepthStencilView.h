@@ -4,11 +4,14 @@
 
 #include "BufferView.h"
 
-class DepthStencilView : public BufferView
+namespace AquaEngine
 {
-public:
-    void Create(Buffer *buffer) override;
-};
+    class DepthStencilView : public BufferView
+    {
+    public:
+        void Create(Buffer &buffer) override;
+    };
+}
 
 
 #endif //AQUA_DEPTHSTENCILVIEW_H

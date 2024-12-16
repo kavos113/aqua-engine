@@ -67,3 +67,13 @@ add_dependencies(sample-triangle aqua-engine)
 target_include_directories(sample-triangle PUBLIC aqua-engine/include)
 target_link_libraries(sample-triangle aqua-engine)
 file(COPY sample/triangle/vs.hlsl sample/triangle/ps.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/texture)
+add_executable(sample-texture WIN32 sample/texture/Graphics.cpp sample/texture/Graphics.h
+        sample/texture/main.cpp)
+add_dependencies(sample-texture aqua-engine)
+target_include_directories(sample-texture PUBLIC aqua-engine/include)
+target_link_libraries(sample-texture aqua-engine)
+file(COPY sample/texture/vs.hlsl sample/texture/ps.hlsl sample/texture/type.hlsli sample/texture/icon.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

@@ -4,39 +4,42 @@
 #include <d3d12.h>
 #include "Fence.h"
 
-class Command
+namespace AquaEngine
 {
-public:
-    Command();
-    ~Command();
-
-    HRESULT Execute();
-
-    [[nodiscard]] ID3D12CommandQueue* Queue() const
+    class Command
     {
-        return m_commandQueue;
-    }
+    public:
+        Command();
+        ~Command();
 
-    [[nodiscard]] ID3D12CommandAllocator* Allocator() const
-    {
-        return m_commandAllocator;
-    }
+        HRESULT Execute();
 
-    [[nodiscard]] ID3D12GraphicsCommandList* List() const
-    {
-        return m_commandList;
-    }
-private:
-    ID3D12CommandQueue* m_commandQueue{};
-    ID3D12CommandAllocator* m_commandAllocator{};
-    ID3D12GraphicsCommandList* m_commandList{};
-    
-    Fence m_fence;
-    
-    HRESULT CreateCommandQueue();
-    HRESULT CreateCommandAllocator();
-    HRESULT CreateCommandList();
-};
+        [[nodiscard]] ID3D12CommandQueue* Queue() const
+        {
+            return m_commandQueue;
+        }
+
+        [[nodiscard]] ID3D12CommandAllocator* Allocator() const
+        {
+            return m_commandAllocator;
+        }
+
+        [[nodiscard]] ID3D12GraphicsCommandList* List() const
+        {
+            return m_commandList;
+        }
+    private:
+        ID3D12CommandQueue* m_commandQueue{};
+        ID3D12CommandAllocator* m_commandAllocator{};
+        ID3D12GraphicsCommandList* m_commandList{};
+
+        Fence m_fence;
+
+        HRESULT CreateCommandQueue();
+        HRESULT CreateCommandAllocator();
+        HRESULT CreateCommandList();
+    };
+}
 
 
 #endif //AQUA_COMMAND_H

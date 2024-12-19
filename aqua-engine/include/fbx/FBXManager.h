@@ -23,7 +23,7 @@ namespace AquaEngine {
             lSdkManager->Destroy();
         }
 
-        static int ReadFile(const char* filename, FbxScene* scene)
+        static int ReadFile(const char* filename, FbxScene** scene)
         {
             if (!FbxFileUtils::Exist(filename))
             {
@@ -43,12 +43,12 @@ namespace AquaEngine {
                 return -1;
             }
 
-            scene = FbxScene::Create(lSdkManager, filename);
-            lImporter->Import(scene);
+            *scene = FbxScene::Create(lSdkManager, filename);
+            lImporter->Import(*scene);
             lImporter->Destroy();
 
             FbxGeometryConverter lGeomConverter(lSdkManager);
-            lGeomConverter.Triangulate(scene, true);
+            lGeomConverter.Triangulate(*scene, true);
 
             return 0;
         }

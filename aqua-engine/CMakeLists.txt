@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.29)
 project(aqua-engine CXX)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRC
         src/directx/wrapper/Device.cpp
@@ -36,6 +37,8 @@ set(SRC
         src/directx/mesh/Mesh.cpp
         src/directx/Camera.cpp
         src/fbx/FbxManager.cpp
+        src/directx/mesh/FBXModel.cpp
+        include/directx/mesh/FBXModel.h
 )
 
 set(INCLUDE
@@ -73,7 +76,11 @@ set(INCLUDE
         include/directx/mesh/Mesh.h
         include/directx/Camera.h
         include/fbx/FbxManager.h
+        src/directx/mesh/FBXModel.cpp
+        include/directx/mesh/FBXModel.h
 )
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})
 target_include_directories(aqua-engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -86,3 +93,4 @@ target_link_libraries(aqua-engine INTERFACE $ENV{DXTEX_DIR}/Bin/Desktop_2022_Win
 target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/libfbxsdk-md.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/libxml2-md.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/zlib-md.lib)
+set_property(TARGET aqua-engine PROPERTY MSVC-RUNTIME-LIBRARY "MultiThreadedDebugDLL")

@@ -92,6 +92,12 @@ namespace AquaEngine
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
         }
 
+        void SetMatrix(DirectX::XMMATRIX m)
+        {
+            m_transformMatrix = m;
+            m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
+        }
+
 
     protected:
         struct TransformMatrix

@@ -11,9 +11,10 @@ Type vsMain(
 )
 {
     float4 pos = mul(world, position);
+    matrix mat = mul(projection, mul(view, world));
 
     Type output;
-    output.svpos = mul(projection, mul(view, pos));
+    output.svpos = mul(mat, position);
     output.uv = uv;
     return output;
 }

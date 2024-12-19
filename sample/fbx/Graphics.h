@@ -3,7 +3,7 @@
 
 #include <windows.h>
 
-#include "AquaEngine.h"
+#include "../../aqua-engine/include/AquaEngine.h"
 
 class Graphics {
 public:
@@ -17,14 +17,14 @@ public:
     }
 
     void SetUp();
-    void Render();
+    void Render() const;
 private:
     HWND hwnd;
     RECT rc;
 
     std::unique_ptr<AquaEngine::Command> command{};
     std::unique_ptr<AquaEngine::Display> display{};
-    std::unique_ptr<AquaEngine::RectangleTexture> rectangle{};
+    std::unique_ptr<AquaEngine::FBXModel> model{};
     AquaEngine::RootSignature rootSignature;
     AquaEngine::PipelineState pipelineState;
     AquaEngine::Camera camera;
@@ -32,8 +32,6 @@ private:
     DirectX::XMMATRIX world;
     DirectX::XMMATRIX view;
     DirectX::XMMATRIX projection;
-
-    float angle = 0.0f;
 };
 
 

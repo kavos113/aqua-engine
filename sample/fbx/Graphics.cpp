@@ -1,19 +1,19 @@
 #include "Graphics.h"
 
-using DirectX::operator*;
-
 Graphics::Graphics(HWND hwnd, RECT rc)
     : hwnd(hwnd)
     , rc(rc)
     , command(nullptr)
     , display(nullptr)
-    , rectangle(nullptr)
+    , model(nullptr)
     , camera(rc)
 {
     AquaEngine::Factory::Init(true);
     AquaEngine::Device::GetAdaptors();
     AquaEngine::Device::Init(0);
     AquaEngine::GlobalDescriptorHeapManager::Init();
+
+    AquaEngine::FBXManager::Init();
 }
 
 void Graphics::SetUp()
@@ -36,7 +36,7 @@ void Graphics::SetUp()
 
     camera.Init(
         manager,
-        {0.0f, 0.0f, -5.0f},
+        {0.0f, 0.0f, -2.0f},
         {0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f},
         {
@@ -48,47 +48,20 @@ void Graphics::SetUp()
         }
     );
 
-    rectangle = std::make_unique<AquaEngine::RectangleTexture>(
+    model = std::make_unique<AquaEngine::FBXModel>(
         manager,
-        DirectX::XMFLOAT3(-0.5f, 0.5f, 0.0f),
-        DirectX::XMFLOAT3(0.5f, 0.5f, 0.0f),
-        DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f),
-        DirectX::XMFLOAT3(0.5f, -0.5f, 0.0f),
-        "icon.png",
-        *command
+        "isu.fbx"
     );
-    rectangle->Create();
-    rectangle->CreateShaderResourceView({
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
-    rectangle->CreateMatrixBuffer({
+    model->Create();
+    model->CreateMatrixBuffer({
         .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         .NumDescriptors = 1,
         .BaseShaderRegister = 1,
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     });
-    auto inputElement = rectangle->GetInputElementDescs();
+    auto inputElement = model->GetInputElementDescs();
 
-    rootSignature.AddStaticSampler({
-        .Filter = D3D12_FILTER_MIN_MAG_MIP_POINT,
-        .AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        .AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        .AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        .MipLODBias = 0,
-        .MaxAnisotropy = 0,
-        .ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
-        .BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,
-        .MinLOD = 0.0f,
-        .MaxLOD = D3D12_FLOAT32_MAX,
-        .ShaderRegister = 0,
-        .RegisterSpace = 0,
-        .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
-    });
     rootSignature.SetDescriptorHeapSegmentManager(&manager);
     rootSignature.Create();
 
@@ -101,7 +74,6 @@ void Graphics::SetUp()
     pipelineState.SetPixelShader(&ps);
     pipelineState.SetInputLayout(inputElement.data(), inputElement.size());
     pipelineState.Create();
-
 
     world = DirectX::XMMatrixIdentity();
     DirectX::XMFLOAT3 eye(0, 0, -5);
@@ -118,18 +90,18 @@ void Graphics::SetUp()
         0.1f,
         100.0f
     );
-    rectangle->SetMatrix(world * view * projection);
+    model->SetMatrix(world * view * projection);
+
 }
 
-void Graphics::Render()
+void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    world = DirectX::XMMatrixRotationY(0.1f) * world;
-    //rectangle->SetMatrix(world * view * projection);
-    rectangle->SetMatrix(world);
+    //model->RotationY(0.1f);
 
     display->BeginRender();
+
 
     D3D12_CPU_DESCRIPTOR_HANDLE rtv = display->GetBackBufferRTV();
     command->List()->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
@@ -142,7 +114,7 @@ void Graphics::Render()
     display->SetViewports();
 
     camera.Render(*command);
-    rectangle->Render(*command);
+    model->Render(*command);
 
     display->EndRender();
 

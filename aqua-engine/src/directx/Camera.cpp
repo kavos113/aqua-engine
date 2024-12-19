@@ -28,7 +28,11 @@ namespace AquaEngine {
         const D3D12_DESCRIPTOR_RANGE &matrix_range
     )
     {
-        m_view = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&focus), XMLoadFloat3(&up));
+        m_view = DirectX::XMMatrixLookAtLH(
+            XMLoadFloat3(&eye),
+            XMLoadFloat3(&focus),
+            XMLoadFloat3(&up)
+            );
         m_projection = DirectX::XMMatrixPerspectiveFovLH(
             DirectX::XM_PIDIV2,
             static_cast<float>(wr.right - wr.left) / static_cast<float>(wr.bottom - wr.top),

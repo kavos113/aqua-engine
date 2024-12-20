@@ -41,8 +41,8 @@ namespace AquaEngine {
             );
 
         m_matrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(CameraMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
-        m_matrixBuffer.GetMappedBuffer()->view = XMMatrixTranspose(m_view);
-        m_matrixBuffer.GetMappedBuffer()->projection = XMMatrixTranspose(m_projection);
+        m_matrixBuffer.GetMappedBuffer()->view = m_view;
+        m_matrixBuffer.GetMappedBuffer()->projection = m_projection;
 
         auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
         segment->SetRootParameter(

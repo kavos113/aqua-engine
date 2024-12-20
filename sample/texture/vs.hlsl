@@ -1,5 +1,11 @@
 #include "type.hlsli"
 
+cbuffer CameraMatrix : register(b0)
+{
+    matrix view;
+	matrix projection;
+};
+
 cbuffer cbuff0 : register(b1)
 {
     matrix world;

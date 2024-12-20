@@ -54,7 +54,6 @@ namespace AquaEngine
         {
             m_matrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(TransformMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
-
             auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
 
             m_matrixCBV.SetDescriptorHeapSegment(segment, 0);
@@ -89,12 +88,6 @@ namespace AquaEngine
         void SetRotation(float x, float y, float z)
         {
             m_transformMatrix = DirectX::XMMatrixRotationRollPitchYaw(x, y, z);
-            m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
-        }
-
-        void SetMatrix(DirectX::XMMATRIX m)
-        {
-            m_transformMatrix = m;
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
         }
 

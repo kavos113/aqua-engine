@@ -101,33 +101,15 @@ void Graphics::SetUp()
     pipelineState.SetPixelShader(&ps);
     pipelineState.SetInputLayout(inputElement.data(), inputElement.size());
     pipelineState.Create();
-
-
-    world = DirectX::XMMatrixIdentity();
-    DirectX::XMFLOAT3 eye(0, 0, -5);
-    DirectX::XMFLOAT3 target(0, 0, 0);
-    DirectX::XMFLOAT3 up(0, 1, 0);
-    view = DirectX::XMMatrixLookAtLH(
-        XMLoadFloat3(&eye),
-        XMLoadFloat3(&target),
-        XMLoadFloat3(&up)
-    );
-    projection = DirectX::XMMatrixPerspectiveFovLH(
-        DirectX::XM_PIDIV2,
-        static_cast<float>(rc.right - rc.left) / static_cast<float>(rc.bottom - rc.top),
-        0.1f,
-        100.0f
-    );
-    rectangle->SetMatrix(world * view * projection);
 }
 
 void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    world = DirectX::XMMatrixRotationY(0.1f) * world;
-    //rectangle->SetMatrix(world * view * projection);
-    rectangle->SetMatrix(world);
+    rectangle->RotationY(0.1f);
+    rectangle->RotationX(0.05f);
+    rectangle->RotationZ(0.03f);
 
     display->BeginRender();
 

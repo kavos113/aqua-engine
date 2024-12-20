@@ -41,8 +41,8 @@ namespace AquaEngine {
         void LoadContent(FbxNode* node);
         void LoadMesh(FbxNode* node);
 
-        void LoadVertices(FbxMesh* mesh);
-        void LoadIndices(FbxMesh* mesh);
+        void LoadVertices(const FbxMesh* mesh);
+        void LoadIndices(const FbxMesh* mesh);
     };
 
 } // AquaEngine

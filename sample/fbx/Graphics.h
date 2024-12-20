@@ -28,10 +28,6 @@ private:
     AquaEngine::RootSignature rootSignature;
     AquaEngine::PipelineState pipelineState;
     AquaEngine::Camera camera;
-
-    DirectX::XMMATRIX world;
-    DirectX::XMMATRIX view;
-    DirectX::XMMATRIX projection;
 };
 
 

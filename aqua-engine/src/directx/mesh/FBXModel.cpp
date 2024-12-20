@@ -61,8 +61,7 @@ namespace AquaEngine {
             return;
         }
 
-        FbxNode* root = m_scene->GetRootNode();
-        if (root)
+        if (FbxNode* root = m_scene->GetRootNode())
         {
             for (int i = 0; i < root->GetChildCount(); ++i)
             {
@@ -94,7 +93,7 @@ namespace AquaEngine {
         LoadIndices(mesh);
     }
 
-    void FBXModel::LoadVertices(FbxMesh *mesh)
+    void FBXModel::LoadVertices(const FbxMesh *mesh)
     {
         int vertex_count = mesh->GetControlPointsCount();
         m_vertices.resize(vertex_count);
@@ -103,11 +102,11 @@ namespace AquaEngine {
 
         for (int i = 0; i < vertex_count; ++i)
         {
-            m_vertices[i] = DirectX::XMFLOAT3(control_points[i][0] * 10, control_points[i][1] * 10, control_points[i][2] * 10);
+            m_vertices[i] = DirectX::XMFLOAT3(control_points[i][0], control_points[i][1], control_points[i][2]);
         }
     }
 
-    void FBXModel::LoadIndices(FbxMesh *mesh)
+    void FBXModel::LoadIndices(const FbxMesh *mesh)
     {
         int polygon_count = mesh->GetPolygonCount();
         m_indices.resize(polygon_count * 3);

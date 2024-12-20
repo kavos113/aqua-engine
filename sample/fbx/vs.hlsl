@@ -11,5 +11,5 @@ cbuffer WorldMatrix : register(b1)
 
 float4 vsMain(float4 position : POSITION) : SV_POSITION
 {
-    return mul(world, position);
+    return mul(projection, mul(view, mul(world, position)));
 }

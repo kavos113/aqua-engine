@@ -81,6 +81,7 @@ void Graphics::Render() const
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
     //model->RotationY(0.1f);
+    model->RotationX(0.05f);
 
     display->BeginRender();
 

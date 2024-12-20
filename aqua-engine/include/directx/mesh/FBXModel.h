@@ -24,10 +24,17 @@ namespace AquaEngine {
         void Render(Command& command) const override;
 
     private:
-        std::vector<DirectX::XMFLOAT3> m_vertices;
+        struct Vertex
+        {
+            DirectX::XMFLOAT3 position;
+            //DirectX::XMFLOAT2 uv;
+            //DirectX::XMFLOAT3 normal;
+        };
+
+        std::vector<Vertex> m_vertices;
         std::vector<unsigned short> m_indices;
 
-        GPUBuffer<DirectX::XMFLOAT3> m_vertexBuffer;
+        GPUBuffer<Vertex> m_vertexBuffer;
         GPUBuffer<unsigned short> m_indexBuffer;
 
         FbxScene* m_scene;

@@ -32,13 +32,13 @@ namespace AquaEngine {
 
     void FBXModel::CreateVertexBuffer()
     {
-        m_vertexBuffer.Create(BUFFER_DEFAULT(sizeof(DirectX::XMFLOAT3) * m_vertices.size()));
+        m_vertexBuffer.Create(BUFFER_DEFAULT(sizeof(Vertex) * m_vertices.size()));
         std::ranges::copy(m_vertices, m_vertexBuffer.GetMappedBuffer());
         m_vertexBuffer.Unmap();
 
         m_vertexBufferView.BufferLocation = m_vertexBuffer.GetBuffer()->GetGPUVirtualAddress();
-        m_vertexBufferView.StrideInBytes = sizeof(DirectX::XMFLOAT3);
-        m_vertexBufferView.SizeInBytes = sizeof(DirectX::XMFLOAT3) * m_vertices.size();
+        m_vertexBufferView.StrideInBytes = sizeof(Vertex);
+        m_vertexBufferView.SizeInBytes = sizeof(Vertex) * m_vertices.size();
     }
 
     void FBXModel::CreateIndexBuffer()
@@ -102,7 +102,7 @@ namespace AquaEngine {
 
         for (int i = 0; i < vertex_count; ++i)
         {
-            m_vertices[i] = DirectX::XMFLOAT3(control_points[i][0], control_points[i][1], control_points[i][2]);
+            m_vertices[i].position = DirectX::XMFLOAT3(control_points[i][0], control_points[i][1], control_points[i][2]);
         }
     }
 

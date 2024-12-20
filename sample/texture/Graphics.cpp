@@ -103,7 +103,7 @@ void Graphics::SetUp()
     pipelineState.Create();
 }
 
-void Graphics::Render()
+void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
@@ -112,12 +112,6 @@ void Graphics::Render()
     rectangle->RotationZ(0.03f);
 
     display->BeginRender();
-
-    D3D12_CPU_DESCRIPTOR_HANDLE rtv = display->GetBackBufferRTV();
-    command->List()->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
-
-    float clear_color[] = {0.0f, 0.2f, 0.4f, 1.0f};
-    command->List()->ClearRenderTargetView(rtv, clear_color, 0, nullptr);
 
     pipelineState.SetToCommand(*command);
     rootSignature.SetToCommand(*command);

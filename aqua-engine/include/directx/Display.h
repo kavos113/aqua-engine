@@ -3,6 +3,7 @@
 
 #include <d3d12.h>
 
+#include "buffer/DepthStencilView.h"
 #include "directx/BackBuffers.h"
 
 namespace AquaEngine
@@ -12,8 +13,8 @@ namespace AquaEngine
     public:
         Display(HWND hwnd, RECT rc, Command& command);
 
-        void BeginRender();
-        void EndRender();
+        void BeginRender() const;
+        void EndRender() const;
         void Present();
 
         void SetViewports() const;
@@ -27,11 +28,17 @@ namespace AquaEngine
         BackBuffers m_backBuffers;
         Command* m_command;
 
+        Buffer m_depthStencilBuffer;
+        DepthStencilView m_dsv;
+
         D3D12_VIEWPORT m_viewport{};
         D3D12_RECT m_scissorRect{};
         RECT wr;
 
         void CreateViewport();
+        void CreateDepthStencilBuffer();
+
+        float m_clearColor[4] = {0.0f, 0.2f, 0.4f, 1.0f};
     };
 }
 

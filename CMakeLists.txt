@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.29)
 
 project(aqua)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 message(STATUS "CMAKE CURRENT SOURCE DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -76,4 +76,12 @@ add_dependencies(sample-texture aqua-engine)
 target_include_directories(sample-texture PUBLIC aqua-engine/include)
 target_link_libraries(sample-texture aqua-engine)
 file(COPY sample/texture/vs.hlsl sample/texture/ps.hlsl sample/texture/type.hlsli sample/texture/icon.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/fbx)
+add_executable(sample-fbx WIN32 sample/fbx/main.cpp sample/fbx/Graphics.cpp sample/fbx/Graphics.h)
+add_dependencies(sample-fbx aqua-engine)
+target_include_directories(sample-fbx PUBLIC aqua-engine/include)
+target_link_libraries(sample-fbx aqua-engine)
+file(COPY sample/fbx/vs.hlsl sample/fbx/ps.hlsl sample/fbx/isu.fbx DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

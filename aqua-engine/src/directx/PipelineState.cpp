@@ -30,7 +30,7 @@ namespace AquaEngine
 
         m_psoDesc.RasterizerState = {
             .FillMode = D3D12_FILL_MODE_SOLID,
-            .CullMode = D3D12_CULL_MODE_BACK,
+            .CullMode = D3D12_CULL_MODE_NONE,
             .FrontCounterClockwise = FALSE,
             .DepthBias = D3D12_DEFAULT_DEPTH_BIAS,
             .DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP,

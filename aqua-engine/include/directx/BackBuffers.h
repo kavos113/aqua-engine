@@ -45,8 +45,8 @@ namespace AquaEngine
 
         [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRTVHandle() const;
 
-        void BeginRender();
-        void EndRender();
+        void BeginRender() const;
+        void EndRender() const;
 
     private:
         HWND m_hwnd;

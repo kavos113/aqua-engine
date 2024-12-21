@@ -31,7 +31,7 @@ void Graphics::SetUp()
 
     auto& manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
         "texture",
-        3,
+        5,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
     );
 
@@ -51,7 +51,9 @@ void Graphics::SetUp()
 
     model = std::make_unique<AquaEngine::FBXModel>(
         manager,
-        "isu.fbx"
+        "isu.fbx",
+        "isu.png",
+        *command
     );
     model->Create();
     model->CreateMatrixBuffer({
@@ -61,8 +63,32 @@ void Graphics::SetUp()
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     });
+    model->SetTexture(
+        {
+            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+            .NumDescriptors = 1,
+            .BaseShaderRegister = 0,
+            .RegisterSpace = 0,
+            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        },
+        manager
+    );
     auto inputElement = model->GetInputElementDescs();
 
+    rootSignature.AddStaticSampler(
+        {
+            .Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+            .AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+            .AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+            .AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+            .ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
+            .MinLOD = 0.0f,
+            .MaxLOD = D3D12_FLOAT32_MAX,
+            .ShaderRegister = 0,
+            .RegisterSpace = 0,
+            .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
+        }
+    );
     rootSignature.SetDescriptorHeapSegmentManager(&manager);
     hr = rootSignature.Create();
     if (FAILED(hr)) exit(-1);

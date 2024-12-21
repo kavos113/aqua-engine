@@ -1,7 +1,11 @@
 #include "../../../include/directx/mesh/FBXModel.h"
 
 #include "directx/TextureManager.h"
+#include "directx/wrapper/Barrier.h"
+#include "directx/wrapper/Device.h"
 #include "fbx/FBXManager.h"
+
+#include <ranges>
 
 namespace AquaEngine {
 
@@ -253,14 +257,9 @@ namespace AquaEngine {
     }
 
     void FBXModel::SetTexture(
-        const std::string &texturePath,
         const D3D12_DESCRIPTOR_RANGE &texture_range,
-        Command &command,
         DescriptorHeapSegmentManager &manager)
     {
-        Buffer b = Buffer(TextureManager::LoadTextureFromFile(texturePath, command));
-        m_texture = std::move(b);
-
         auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
 
         m_textureSrv.SetDescriptorHeapSegment(segment, 0);
@@ -268,7 +267,7 @@ namespace AquaEngine {
 
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
-            D3D12_SHADER_VISIBILITY_PIXEL,
+            D3D12_SHADER_VISIBILITY_ALL,
             &texture_range,
             1
         );

@@ -93,17 +93,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         
         display.BeginRender();
         
-        D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = display.GetBackBufferRTV();
-        command.List()->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-        
-        float clearColor[] = {0.0f, 0.2f, 0.4f, 1.0f};
-        command.List()->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-        
         pipelineState.SetToCommand(command);
         rootSignature.SetToCommand(command);
         display.SetViewports();
         
-        triangle.Draw(command);
+        triangle.Render(command);
         
         display.EndRender();
         

@@ -50,11 +50,11 @@ void Graphics::SetUp()
 
     rectangle = std::make_unique<AquaEngine::RectangleTexture>(
         manager,
-        DirectX::XMFLOAT3(-0.5f, 0.5f, 0.0f),
-        DirectX::XMFLOAT3(0.5f, 0.5f, 0.0f),
-        DirectX::XMFLOAT3(-0.5f, -0.5f, 0.0f),
-        DirectX::XMFLOAT3(0.5f, -0.5f, 0.0f),
-        "icon.png",
+        DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),
+        DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),
+        DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),
+        DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f),
+        "isu.png",
         *command
     );
     rectangle->Create();

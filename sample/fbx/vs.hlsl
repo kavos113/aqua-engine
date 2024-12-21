@@ -1,3 +1,5 @@
+#include "type.hlsli"
+
 cbuffer SceneMatrix : register(b0)
 {
     matrix view;
@@ -9,7 +11,16 @@ cbuffer WorldMatrix : register(b1)
     matrix world;
 };
 
-float4 vsMain(float4 position : POSITION) : SV_POSITION
+Type vsMain(
+    float4 position : POSITION,
+    float2 uv : TEXCOORD,
+    float4 normal : NORMAL
+)
 {
-    return mul(projection, mul(view, mul(world, position)));
+    Type output;
+    output.position = mul(projection, mul(view, mul(world, position)));
+    output.uv = uv;
+    output.normal = mul(world, normal);
+
+    return output;
 }

@@ -21,6 +21,11 @@ namespace AquaEngine
 
         [[nodiscard]] ID3D12Resource* GetBuffer() const;
 
+        bool IsActive() const
+        {
+            return m_Buffer != nullptr;
+        }
+
         struct HeapProperties
         {
             static D3D12_HEAP_PROPERTIES Default()

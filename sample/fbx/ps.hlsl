@@ -1,4 +1,9 @@
-float4 psMain(float4 pos : SV_POSITION) : SV_TARGET
+#include "type.hlsli"
+
+float4 psMain(Type input) : SV_TARGET
 {
-	return float4(1, 1, 1, 1);
+	float3 light = normalize(float3(-1.0, -1.0, -1.0));
+	float brightness = dot(input.normal.xyz, light);
+
+	return float4(brightness, brightness, brightness, 1.0);
 }

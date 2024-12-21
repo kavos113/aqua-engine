@@ -11,6 +11,8 @@ public:
 
     ~Graphics()
     {
+        AquaEngine::FBXManager::Shutdown();
+
         AquaEngine::GlobalDescriptorHeapManager::Shutdown();
         AquaEngine::Device::Shutdown();
         AquaEngine::Factory::Shutdown();

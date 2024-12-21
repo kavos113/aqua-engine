@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "Mesh.h"
+#include "directx/TextureManager.h"
 #include "directx/buffer/ShaderResourceView.h"
 
 namespace AquaEngine {
@@ -14,11 +15,25 @@ namespace AquaEngine {
     public:
         FBXModel(
             DescriptorHeapSegmentManager& manager,
-            std::string path
+            std::string model_path
         )
             : Mesh(manager)
             , m_scene(nullptr)
-            , m_path(std::move(path))
+            , m_path(std::move(model_path))
+        {
+
+        }
+
+        explicit FBXModel(
+            DescriptorHeapSegmentManager& manager,
+            std::string model_path,
+            const std::string &texturePath,
+            Command &command
+        )
+            : Mesh(manager)
+            , m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
+            , m_scene(nullptr)
+            , m_path(std::move(model_path))
         {
 
         }
@@ -26,7 +41,10 @@ namespace AquaEngine {
         void Create() override;
         void Render(Command& command) const override;
 
-        void SetTexture(const std::string& texturePath, const D3D12_DESCRIPTOR_RANGE &texture_range, Command &command, DescriptorHeapSegmentManager &manager);
+        void SetTexture(
+            const D3D12_DESCRIPTOR_RANGE &texture_range,
+            DescriptorHeapSegmentManager &manager
+            );
 
     private:
         struct Vertex

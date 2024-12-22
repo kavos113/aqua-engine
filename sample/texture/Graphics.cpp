@@ -107,9 +107,9 @@ void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    rectangle->RotationY(0.1f);
-    rectangle->RotationX(0.05f);
-    rectangle->RotationZ(0.03f);
+    rectangle->RotY(0.1f);
+    rectangle->RotX(0.05f);
+    rectangle->RotZ(0.03f);
 
     display->BeginRender();
 

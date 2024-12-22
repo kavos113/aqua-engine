@@ -44,6 +44,7 @@ namespace AquaEngine {
         LoadFBX();
         CreateVertexBuffer();
         CreateIndexBuffer();
+        CreateMaterialBuffer();
     }
 
     void FBXModel::Render(Command &command) const
@@ -52,7 +53,12 @@ namespace AquaEngine {
 
         if (m_texture.IsActive())
         {
-            m_textureSrv.SetGraphicsRootDescriptorTable(&command);
+            m_textureSRV.SetGraphicsRootDescriptorTable(&command);
+        }
+
+        if (m_materialBuffer.IsActive())
+        {
+            m_materialCBV.SetGraphicsRootDescriptorTable(&command);
         }
 
         command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
@@ -80,6 +86,32 @@ namespace AquaEngine {
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * m_indices.size();
     }
 
+    void FBXModel::CreateMaterialBuffer()
+    {
+        m_materialBuffer.Create(BUFFER_DEFAULT(sizeof(Material) * m_materials.size()));
+        std::ranges::copy(m_materials, m_materialBuffer.GetMappedBuffer());
+        m_materialBuffer.Unmap();
+    }
+
+    void FBXModel::CreateMaterialBufferView(const D3D12_DESCRIPTOR_RANGE &material_range)
+    {
+        auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+        segment->SetRootParameter(
+            D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+            D3D12_SHADER_VISIBILITY_ALL,
+            &material_range,
+            1
+        );
+
+        CreateMaterialBufferView(segment, 0);
+    }
+
+    void FBXModel::CreateMaterialBufferView(const std::shared_ptr<DescriptorHeapSegment> &segment, int offset)
+    {
+        m_materialCBV.SetDescriptorHeapSegment(segment, offset);
+        m_materialCBV.Create(m_materialBuffer);
+    }
+
     void FBXModel::LoadFBX()
     {
         int result = FBXManager::ReadFile(m_path.c_str(), &m_scene);
@@ -105,6 +137,7 @@ namespace AquaEngine {
         if (type == FbxNodeAttribute::eMesh)
         {
             LoadMesh(node);
+            LoadMatrial(node);
         }
 
         for (int i = 0; i < node->GetChildCount(); ++i)
@@ -252,18 +285,64 @@ namespace AquaEngine {
             }
 
         }
-
-
     }
 
-    void FBXModel::SetTexture(
-        const D3D12_DESCRIPTOR_RANGE &texture_range,
-        DescriptorHeapSegmentManager &manager)
+    // all same only
+    void FBXModel::LoadMatrial(FbxNode *node)
     {
-        auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
+        int material_count = node->GetMaterialCount();
 
-        m_textureSrv.SetDescriptorHeapSegment(segment, 0);
-        m_textureSrv.Create(m_texture);
+        for (int i = 0; i < material_count; ++i)
+        {
+            FbxSurfaceMaterial* material = node->GetMaterial(i);
+
+            // phong model
+            if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
+            {
+                auto ambient = dynamic_cast<FbxSurfacePhong*>(material)->Ambient;
+                m_materials[i].ambient = DirectX::XMFLOAT3(ambient.Get()[0], ambient.Get()[1], ambient.Get()[2]);
+
+                auto diffuse = dynamic_cast<FbxSurfacePhong*>(material)->Diffuse;
+                m_materials[i].diffuse = DirectX::XMFLOAT3(diffuse.Get()[0], diffuse.Get()[1], diffuse.Get()[2]);
+
+                auto specular = dynamic_cast<FbxSurfacePhong*>(material)->Specular;
+                m_materials[i].specular = DirectX::XMFLOAT3(specular.Get()[0], specular.Get()[1], specular.Get()[2]);
+
+                auto emissive = dynamic_cast<FbxSurfacePhong*>(material)->Emissive;
+                m_materials[i].emissive = DirectX::XMFLOAT3(emissive.Get()[0], emissive.Get()[1], emissive.Get()[2]);
+
+                auto opacity = dynamic_cast<FbxSurfacePhong*>(material)->TransparencyFactor;
+                m_materials[i].opacity = 1.0f - opacity.Get();
+
+                auto shininess = dynamic_cast<FbxSurfacePhong*>(material)->Shininess;
+                m_materials[i].shininess = shininess.Get();
+
+                auto reflectivity = dynamic_cast<FbxSurfacePhong*>(material)->ReflectionFactor;
+                m_materials[i].reflectivity = reflectivity.Get();
+            }
+            else if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
+            {
+                auto ambient = dynamic_cast<FbxSurfaceLambert*>(material)->Ambient;
+                m_materials[i].ambient = DirectX::XMFLOAT3(ambient.Get()[0], ambient.Get()[1], ambient.Get()[2]);
+
+                auto diffuse = dynamic_cast<FbxSurfaceLambert*>(material)->Diffuse;
+                m_materials[i].diffuse = DirectX::XMFLOAT3(diffuse.Get()[0], diffuse.Get()[1], diffuse.Get()[2]);
+
+                auto emissive = dynamic_cast<FbxSurfaceLambert*>(material)->Emissive;
+                m_materials[i].emissive = DirectX::XMFLOAT3(emissive.Get()[0], emissive.Get()[1], emissive.Get()[2]);
+
+                auto opacity = dynamic_cast<FbxSurfaceLambert*>(material)->TransparencyFactor;
+                m_materials[i].opacity = 1.0f - opacity.Get();
+            }
+        }
+    }
+
+    void FBXModel::SetTexture(const D3D12_DESCRIPTOR_RANGE &texture_range)
+    {
+        auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+
+        m_textureSRV.SetDescriptorHeapSegment(segment, 0);
+        m_textureSRV.Create(m_texture);
 
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
@@ -271,5 +350,14 @@ namespace AquaEngine {
             &texture_range,
             1
         );
+    }
+
+    void FBXModel::SetTexture(
+        const std::shared_ptr<DescriptorHeapSegment> &segment,
+        const int offset
+    )
+    {
+        m_textureSRV.SetDescriptorHeapSegment(segment, offset);
+        m_textureSRV.Create(m_texture);
     }
 } // AquaEngine

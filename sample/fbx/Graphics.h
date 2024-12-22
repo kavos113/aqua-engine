@@ -27,6 +27,7 @@ private:
     std::unique_ptr<AquaEngine::Command> command{};
     std::unique_ptr<AquaEngine::Display> display{};
     std::unique_ptr<AquaEngine::FBXModel> model{};
+    std::unique_ptr<AquaEngine::FBXModel> model2{};
     AquaEngine::RootSignature rootSignature;
     AquaEngine::PipelineState pipelineState;
     AquaEngine::Camera camera;

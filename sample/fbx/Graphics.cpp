@@ -25,13 +25,15 @@ void Graphics::SetUp()
         return;
     }
 
+    OutputDebugString("[Message] COM initialized\n");
+
     command = std::make_unique<AquaEngine::Command>();
     display = std::make_unique<AquaEngine::Display>(hwnd, rc, *command);
     display->SetBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     auto& manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
         "texture",
-        5,
+        10,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
     );
 
@@ -49,30 +51,50 @@ void Graphics::SetUp()
         }
     );
 
-    model = std::make_unique<AquaEngine::FBXModel>(
-        manager,
-        "isu.fbx",
-        "isu.png",
-        *command
-    );
-    model->Create();
-    model->CreateMatrixBuffer({
+    OutputDebugString("[Message] Camera initialized\n");
+
+    auto matrix_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
+    D3D12_DESCRIPTOR_RANGE matrix_range = {
         .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         .NumDescriptors = 1,
         .BaseShaderRegister = 1,
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
-    model->SetTexture(
-        {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = 0,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        },
-        manager
+    };
+    matrix_segment->SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+        D3D12_SHADER_VISIBILITY_ALL,
+        &matrix_range,
+        1
     );
+
+    auto texture_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
+    D3D12_DESCRIPTOR_RANGE texture_range = {
+        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+        .NumDescriptors = 1,
+        .BaseShaderRegister = 0,
+        .RegisterSpace = 0,
+        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    };
+    texture_segment->SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+        D3D12_SHADER_VISIBILITY_ALL,
+        &texture_range,
+        1
+    );
+
+    model = std::make_unique<AquaEngine::FBXModel>(manager, "ninja.fbx", "ninja.png", *command);
+    model->Create();
+    model->CreateMatrixBuffer(matrix_segment,0);
+    model->SetTexture(texture_segment, 0);
+    OutputDebugString("[Message] Model loaded\n");
+
+    model2 = std::make_unique<AquaEngine::FBXModel>(manager,"isu.fbx", "isu.png", *command);
+    model2->Create();
+    model2->CreateMatrixBuffer(matrix_segment, 1);
+    model2->SetTexture(texture_segment, 1);
+    OutputDebugString("[Message] Model2 loaded\n");
+
     auto inputElement = model->GetInputElementDescs();
 
     rootSignature.AddStaticSampler(
@@ -96,6 +118,7 @@ void Graphics::SetUp()
     AquaEngine::ShaderObject vs, ps;
     vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
+    OutputDebugString("[Message] Shader loaded\n");
 
     pipelineState.SetRootSignature(&rootSignature);
     pipelineState.SetVertexShader(&vs);
@@ -104,14 +127,24 @@ void Graphics::SetUp()
     hr = pipelineState.Create();
     if (FAILED(hr)) exit(-1);
 
-    model->RotationX(-DirectX::XM_PIDIV2 + 0.3f);
+    OutputDebugString("[Message] Pipeline state created\n");
+
+    model->RotX(-DirectX::XM_PIDIV2);
+    model2->RotX(-DirectX::XM_PIDIV2);
+
+    model->Move(-1.5f, -1.0f, 0.0f);
+    model2->Move(1.5f, -1.0f, 0.0f);
+
+    model->Scale(2.0f, 2.0f, 2.0f);
+    model2->Scale(2.0f, 2.0f, 2.0f);
 }
 
 void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    model->RotationY(0.01f);
+    model->RotY(0.01f);
+    model2->RotY(-0.1f);
 
     display->BeginRender();
 
@@ -121,6 +154,7 @@ void Graphics::Render() const
 
     camera.Render(*command);
     model->Render(*command);
+    model2->Render(*command);
 
     display->EndRender();
 

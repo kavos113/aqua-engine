@@ -272,4 +272,13 @@ namespace AquaEngine {
             1
         );
     }
+
+    void FBXModel::SetTexture(
+        const std::shared_ptr<DescriptorHeapSegment> &segment,
+        const int offset
+    )
+    {
+        m_textureSrv.SetDescriptorHeapSegment(segment, offset);
+        m_textureSrv.Create(m_texture);
+    }
 } // AquaEngine

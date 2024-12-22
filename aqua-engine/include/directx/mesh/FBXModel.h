@@ -46,6 +46,12 @@ namespace AquaEngine {
             DescriptorHeapSegmentManager &manager
             );
 
+        // if use shared segment
+        void SetTexture(
+            const std::shared_ptr<DescriptorHeapSegment>& segment,
+            const int offset = 0
+            );
+
     private:
         struct Vertex
         {

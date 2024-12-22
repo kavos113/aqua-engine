@@ -152,6 +152,11 @@ namespace AquaEngine
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix * m_coordinateMatrix;
         }
 
+        DirectX::XMMATRIX GetCoordinate() const
+        {
+            return m_coordinateMatrix;
+        }
+
 
     protected:
         struct TransformMatrix

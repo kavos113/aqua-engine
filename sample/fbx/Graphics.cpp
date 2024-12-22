@@ -83,16 +83,33 @@ void Graphics::SetUp()
         1
     );
 
+    auto material_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
+    D3D12_DESCRIPTOR_RANGE material_range = {
+        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        .NumDescriptors = 1,
+        .BaseShaderRegister = 2,
+        .RegisterSpace = 0,
+        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    };
+    material_segment->SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+        D3D12_SHADER_VISIBILITY_ALL,
+        &material_range,
+        1
+    );
+
     model = std::make_unique<AquaEngine::FBXModel>(manager, "ninja.fbx", "ninja.png", *command);
     model->Create();
     model->CreateMatrixBuffer(matrix_segment,0);
     model->SetTexture(texture_segment, 0);
+    model->CreateMaterialBufferView(material_segment, 0);
     OutputDebugString("[Message] Model loaded\n");
 
     model2 = std::make_unique<AquaEngine::FBXModel>(manager,"isu.fbx", "isu.png", *command);
     model2->Create();
     model2->CreateMatrixBuffer(matrix_segment, 1);
     model2->SetTexture(texture_segment, 1);
+    model2->CreateMaterialBufferView(material_segment, 1);
     OutputDebugString("[Message] Model2 loaded\n");
 
     auto inputElement = model->GetInputElementDescs();

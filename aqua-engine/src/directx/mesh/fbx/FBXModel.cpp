@@ -1,11 +1,63 @@
-#include "../../../include/directx/mesh/FBXModel.h"
+#include "directx/mesh/fbx/FBXModel.h"
 
-#include "directx/TextureManager.h"
 #include "directx/wrapper/Barrier.h"
 #include "directx/wrapper/Device.h"
 #include "fbx/FBXManager.h"
 
 #include <ranges>
+
+#include "directx/mesh/Mesh.h"
+
+namespace
+{
+    FbxAMatrix GetGlobalPosition(FbxNode* node, const FbxTime& time, FbxPose* pose = nullptr, FbxAMatrix* parent_matrix = nullptr)
+    {
+        // if not specified pose, return global position at the current time
+        if (!pose)
+        {
+            return node->EvaluateGlobalTransform(time);
+        }
+
+        int node_index = pose->Find(node);
+        if (node_index < 0)
+        {
+            return node->EvaluateGlobalTransform(time);
+        }
+
+        if (pose->IsBindPose() || !pose->IsLocalMatrix(node_index))
+        {
+            FbxAMatrix global_position;
+            FbxMatrix matrix = pose->GetMatrix(node_index);
+
+            //std::copy(&matrix[0][0], &matrix[0][0] + sizeof(matrix.mData), &global_position[0][0]);
+            memcpy(global_position, matrix, sizeof(matrix.mData));
+            return global_position;
+        }
+
+        FbxAMatrix parent_global_position;
+
+        if (parent_matrix)
+        {
+            parent_global_position = *parent_matrix;
+        }
+        else
+        {
+            if (FbxNode* parent = node->GetParent())
+            {
+                parent_global_position = GetGlobalPosition(parent, time, pose);
+            }
+        }
+
+        FbxAMatrix local_position;
+        FbxMatrix matrix = pose->GetMatrix(node_index);
+
+        memcpy(local_position, matrix, sizeof(matrix.mData));
+
+        local_position = parent_global_position * local_position;
+
+        return local_position;
+    }
+}
 
 namespace AquaEngine {
 
@@ -42,9 +94,13 @@ namespace AquaEngine {
     void FBXModel::Create()
     {
         LoadFBX();
+        OutputDebugString("[FBX] Load FBX file.\n");
         CreateVertexBuffer();
+        OutputDebugString("[FBX] Create vertex buffer.\n");
         CreateIndexBuffer();
+        OutputDebugString("[FBX] Create index buffer.\n");
         CreateMaterialBuffer();
+        OutputDebugString("[FBX] Create material buffer.\n");
     }
 
     void FBXModel::Render(Command &command) const
@@ -88,7 +144,7 @@ namespace AquaEngine {
 
     void FBXModel::CreateMaterialBuffer()
     {
-        m_materialBuffer.Create(BUFFER_DEFAULT(sizeof(Material) * m_materials.size()));
+        m_materialBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(Material) * m_materials.size(), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
         std::ranges::copy(m_materials, m_materialBuffer.GetMappedBuffer());
         m_materialBuffer.Unmap();
     }
@@ -121,6 +177,17 @@ namespace AquaEngine {
             return;
         }
 
+        m_scene->FillAnimStackNameArray(m_animStackNameArray);
+
+        // pose
+        int pose_count = m_scene->GetPoseCount();
+        for (int i = 0; i < pose_count; ++i)
+        {
+            m_poseArray.Add(m_scene->GetPose(i));
+        }
+
+        m_frameTime.SetTime(0, 0, 0, 1, 0, m_scene->GetGlobalSettings().GetTimeMode());
+
         if (FbxNode* root = m_scene->GetRootNode())
         {
             for (int i = 0; i < root->GetChildCount(); ++i)
@@ -137,7 +204,7 @@ namespace AquaEngine {
         if (type == FbxNodeAttribute::eMesh)
         {
             LoadMesh(node);
-            LoadMatrial(node);
+            LoadMaterial(node);
         }
 
         for (int i = 0; i < node->GetChildCount(); ++i)
@@ -288,9 +355,14 @@ namespace AquaEngine {
     }
 
     // all same only
-    void FBXModel::LoadMatrial(FbxNode *node)
+    void FBXModel::LoadMaterial(FbxNode *node)
     {
         int material_count = node->GetMaterialCount();
+
+        FbxPropertyT<FbxDouble3> fbx_double3;
+        FbxPropertyT<FbxDouble> fbx_double;
+
+        m_materials.resize(material_count);
 
         for (int i = 0; i < material_count; ++i)
         {
@@ -299,40 +371,44 @@ namespace AquaEngine {
             // phong model
             if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
             {
-                auto ambient = dynamic_cast<FbxSurfacePhong*>(material)->Ambient;
-                m_materials[i].ambient = DirectX::XMFLOAT3(ambient.Get()[0], ambient.Get()[1], ambient.Get()[2]);
+                auto phong_material = reinterpret_cast<FbxSurfacePhong *>(material);
 
-                auto diffuse = dynamic_cast<FbxSurfacePhong*>(material)->Diffuse;
-                m_materials[i].diffuse = DirectX::XMFLOAT3(diffuse.Get()[0], diffuse.Get()[1], diffuse.Get()[2]);
+                fbx_double3 = phong_material->Ambient;
+                m_materials[i].ambient = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
 
-                auto specular = dynamic_cast<FbxSurfacePhong*>(material)->Specular;
-                m_materials[i].specular = DirectX::XMFLOAT3(specular.Get()[0], specular.Get()[1], specular.Get()[2]);
+                fbx_double3 = phong_material->Diffuse;
+                m_materials[i].diffuse = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
 
-                auto emissive = dynamic_cast<FbxSurfacePhong*>(material)->Emissive;
-                m_materials[i].emissive = DirectX::XMFLOAT3(emissive.Get()[0], emissive.Get()[1], emissive.Get()[2]);
+                fbx_double3 = phong_material->Specular;
+                m_materials[i].specular = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
 
-                auto opacity = dynamic_cast<FbxSurfacePhong*>(material)->TransparencyFactor;
-                m_materials[i].opacity = 1.0f - opacity.Get();
+                fbx_double3 = phong_material->Emissive;
+                m_materials[i].emissive = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
 
-                auto shininess = dynamic_cast<FbxSurfacePhong*>(material)->Shininess;
-                m_materials[i].shininess = shininess.Get();
+                fbx_double = phong_material->TransparencyFactor;
+                m_materials[i].opacity = 1.0f - fbx_double.Get();
 
-                auto reflectivity = dynamic_cast<FbxSurfacePhong*>(material)->ReflectionFactor;
-                m_materials[i].reflectivity = reflectivity.Get();
+                fbx_double = phong_material->Shininess;
+                m_materials[i].shininess = fbx_double.Get();
+
+                fbx_double = phong_material->ReflectionFactor;
+                m_materials[i].reflectivity = fbx_double.Get();
             }
             else if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
             {
-                auto ambient = dynamic_cast<FbxSurfaceLambert*>(material)->Ambient;
-                m_materials[i].ambient = DirectX::XMFLOAT3(ambient.Get()[0], ambient.Get()[1], ambient.Get()[2]);
+                auto lambert_material = reinterpret_cast<FbxSurfaceLambert *>(material);
 
-                auto diffuse = dynamic_cast<FbxSurfaceLambert*>(material)->Diffuse;
-                m_materials[i].diffuse = DirectX::XMFLOAT3(diffuse.Get()[0], diffuse.Get()[1], diffuse.Get()[2]);
+                fbx_double3 = lambert_material->Ambient;
+                m_materials[i].ambient = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
 
-                auto emissive = dynamic_cast<FbxSurfaceLambert*>(material)->Emissive;
-                m_materials[i].emissive = DirectX::XMFLOAT3(emissive.Get()[0], emissive.Get()[1], emissive.Get()[2]);
+                fbx_double3 = lambert_material->Diffuse;
+                m_materials[i].diffuse = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
 
-                auto opacity = dynamic_cast<FbxSurfaceLambert*>(material)->TransparencyFactor;
-                m_materials[i].opacity = 1.0f - opacity.Get();
+                fbx_double3 = lambert_material->Emissive;
+                m_materials[i].emissive = DirectX::XMFLOAT3(fbx_double3.Get()[0], fbx_double3.Get()[1], fbx_double3.Get()[2]);
+
+                fbx_double = lambert_material->TransparencyFactor;
+                m_materials[i].opacity = 1.0f - fbx_double.Get();
             }
         }
     }
@@ -359,5 +435,54 @@ namespace AquaEngine {
     {
         m_textureSRV.SetDescriptorHeapSegment(segment, offset);
         m_textureSRV.Create(m_texture);
+    }
+
+    HRESULT FBXModel::SetCurrentAnimStack(int index)
+    {
+        int anim_stack_count = m_animStackNameArray.GetCount();
+        if (index < 0 || index >= anim_stack_count)
+        {
+            OutputDebugString("[FBX] invalid anim stack index.\n");
+            return E_INVALIDARG;
+        }
+
+        FbxAnimStack* current_anim_stack = m_scene->FindMember<FbxAnimStack>(m_animStackNameArray[index]->Buffer());
+        if (!current_anim_stack)
+        {
+            OutputDebugString("[FBX] failed to find anim stack.\n");
+            return E_FAIL;
+        }
+
+        m_currentAnimLayer = current_anim_stack->GetMember<FbxAnimLayer>();
+        m_scene->SetCurrentAnimationStack(current_anim_stack);
+
+        FbxTakeInfo* current_take_info = m_scene->GetTakeInfo(*(m_animStackNameArray[index]));
+        if (current_take_info)
+        {
+            m_startTime = current_take_info->mLocalTimeSpan.GetStart();
+            m_stopTime = current_take_info->mLocalTimeSpan.GetStop();
+        }
+        else
+        {
+            FbxTimeSpan time_span;
+            m_scene->GetGlobalSettings().GetTimelineDefaultTimeSpan(time_span);
+            m_startTime = time_span.GetStart();
+            m_stopTime = time_span.GetStop();
+        }
+
+        m_status = Status::MUST_BE_REFRESHED;
+
+        return S_OK;
+    }
+
+    HRESULT FBXModel::SetCurrentPoseIndex(int index)
+    {
+        m_poseIndex = index;
+        m_status = Status::MUST_BE_REFRESHED;
+        return S_OK;
+    }
+
+    void FBXModel::LoadAnimation(FbxNode *node)
+    {
     }
 } // AquaEngine

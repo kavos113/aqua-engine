@@ -4,15 +4,22 @@
 
 #include <utility>
 
-#include "Mesh.h"
 #include "directx/TextureManager.h"
 #include "directx/buffer/ShaderResourceView.h"
+#include "directx/mesh/Mesh.h"
 
 namespace AquaEngine {
 
+    // vertex(control point), index(polygon), material, texture(uv), animation, pose
     class FBXModel : public Mesh<FBXModel>
     {
     public:
+        enum class Status
+        {
+            MUST_BE_REFRESHED,
+            REFRESHED
+        };
+
         FBXModel(
             DescriptorHeapSegmentManager& manager,
             std::string model_path
@@ -57,6 +64,9 @@ namespace AquaEngine {
             int offset = 0
         );
 
+        HRESULT SetCurrentAnimStack(int index);
+        HRESULT SetCurrentPoseIndex(int index);
+
     private:
         struct Vertex
         {
@@ -90,6 +100,16 @@ namespace AquaEngine {
         ShaderResourceView m_textureSRV;
 
         FbxScene* m_scene;
+        FbxAnimLayer* m_currentAnimLayer;
+
+        FbxArray<FbxString*> m_animStackNameArray;
+        FbxArray<FbxPose*> m_poseArray;
+
+        FbxTime m_frameTime, m_startTime, m_stopTime, m_currentTime;
+
+        Status m_status;
+
+        int m_poseIndex;
 
         const std::string m_path;
 
@@ -100,7 +120,8 @@ namespace AquaEngine {
 
         void LoadContent(FbxNode* node);
         void LoadMesh(FbxNode* node);
-        void LoadMatrial(FbxNode *node);
+        void LoadMaterial(FbxNode *node);
+        void LoadAnimation(FbxNode* node);
 
         void LoadVertices(FbxMesh* mesh);
         void LoadIndices(FbxMesh* mesh);

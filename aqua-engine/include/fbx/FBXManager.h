@@ -50,6 +50,13 @@ namespace AquaEngine {
             FbxGeometryConverter lGeomConverter(lSdkManager);
             lGeomConverter.Triangulate(*scene, true);
 
+            FbxAxisSystem sceneAxisSystem = (*scene)->GetGlobalSettings().GetAxisSystem();
+            FbxAxisSystem directXAxisSystem(FbxAxisSystem::eDirectX);
+            if (sceneAxisSystem != directXAxisSystem)
+            {
+                directXAxisSystem.ConvertScene(*scene);
+            }
+
             return 0;
         }
 

@@ -18,7 +18,7 @@
 #include "directx/mesh/Triangle.h"
 #include "directx/mesh/Rectangle.h"
 #include "directx/mesh/RectangleTexture.h"
-#include "directx/mesh/FBXModel.h"
+#include "directx/mesh/fbx/FBXModel.h"
 
 #include "fbx/FBXManager.h"
 

@@ -152,7 +152,7 @@ namespace AquaEngine
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix * m_coordinateMatrix;
         }
 
-        DirectX::XMMATRIX GetCoordinate() const
+        [[nodiscard]] DirectX::XMMATRIX GetCoordinate() const
         {
             return m_coordinateMatrix;
         }

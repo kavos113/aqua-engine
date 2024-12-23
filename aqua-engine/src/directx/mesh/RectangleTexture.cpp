@@ -31,7 +31,7 @@ namespace AquaEngine
         CreateIndexBuffer();
     }
 
-    void RectangleTexture::Render(Command &command) const
+    void RectangleTexture::Render(Command &command)
     {
         Mesh::Render(command);
 

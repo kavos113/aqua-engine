@@ -2,7 +2,7 @@
 
 namespace AquaEngine
 {
-    void Polygon::Render(Command &command) const
+    void Polygon::Render(Command &command)
     {
         Mesh::Render(command);
 

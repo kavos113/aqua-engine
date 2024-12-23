@@ -46,7 +46,7 @@ namespace AquaEngine {
         }
 
         void Create() override;
-        void Render(Command& command) const override;
+        void Render(Command& command) override;
 
         void SetTexture(
             const D3D12_DESCRIPTOR_RANGE &texture_range
@@ -66,6 +66,7 @@ namespace AquaEngine {
 
         HRESULT SetCurrentAnimStack(int index);
         HRESULT SetCurrentPoseIndex(int index);
+        HRESULT SetSelectedNode(FbxNode* node);
 
     private:
         struct Vertex
@@ -100,6 +101,7 @@ namespace AquaEngine {
         ShaderResourceView m_textureSRV;
 
         FbxScene* m_scene;
+        FbxNode* m_selectedNode;
         FbxAnimLayer* m_currentAnimLayer;
 
         FbxArray<FbxString*> m_animStackNameArray;
@@ -125,6 +127,14 @@ namespace AquaEngine {
 
         void LoadVertices(FbxMesh* mesh);
         void LoadIndices(FbxMesh* mesh);
+
+        void UpdateNode(
+            FbxNode* node,
+            const FbxTime &time,
+            const FbxAMatrix &parentGlobalPosition,
+            FbxAnimLayer* animLayer,
+            FbxPose* pose
+        );
     };
 
 } // AquaEngine

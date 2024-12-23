@@ -23,7 +23,7 @@ namespace AquaEngine
         virtual ~Mesh() = default;
 
         virtual void Create() = 0;
-        virtual void Render(Command& command) const
+        virtual void Render(Command& command)
         {
             command.List()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             command.List()->IASetVertexBuffers(0, 1, &m_vertexBufferView);

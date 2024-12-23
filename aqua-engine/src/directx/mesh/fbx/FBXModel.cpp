@@ -103,23 +103,6 @@ namespace AquaEngine {
         OutputDebugString("[FBX] Create material buffer.\n");
     }
 
-    void FBXModel::Render(Command &command) const
-    {
-        Mesh::Render(command);
-
-        if (m_texture.IsActive())
-        {
-            m_textureSRV.SetGraphicsRootDescriptorTable(&command);
-        }
-
-        if (m_materialBuffer.IsActive())
-        {
-            m_materialCBV.SetGraphicsRootDescriptorTable(&command);
-        }
-
-        command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
-    }
-
     void FBXModel::CreateVertexBuffer()
     {
         m_vertexBuffer.Create(BUFFER_DEFAULT(sizeof(Vertex) * m_vertices.size()));
@@ -482,7 +465,59 @@ namespace AquaEngine {
         return S_OK;
     }
 
+    HRESULT FBXModel::SetSelectedNode(FbxNode *node)
+    {
+        m_selectedNode = node;
+        m_status = Status::MUST_BE_REFRESHED;
+    }
+
+
     void FBXModel::LoadAnimation(FbxNode *node)
     {
+    }
+
+    void FBXModel::Render(Command &command)
+    {
+        FbxPose* pose = nullptr;
+        if (m_poseIndex >= 0)
+        {
+            pose = m_scene->GetPose(m_poseIndex);
+        }
+
+        if (m_selectedNode)
+        {
+            UpdateNode(
+                m_selectedNode,
+                m_currentTime,
+                FbxAMatrix(),
+                m_currentAnimLayer,
+                pose
+            );
+        }
+
+        Mesh::Render(command);
+
+        if (m_texture.IsActive())
+        {
+            m_textureSRV.SetGraphicsRootDescriptorTable(&command);
+        }
+
+        if (m_materialBuffer.IsActive())
+        {
+            m_materialCBV.SetGraphicsRootDescriptorTable(&command);
+        }
+
+        command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
+    }
+
+    void FBXModel::UpdateNode(
+        FbxNode *node,
+        const FbxTime &time,
+        const FbxAMatrix &parentGlobalPosition,
+        FbxAnimLayer *animLayer,
+        FbxPose *pose = nullptr
+    )
+    {
+
     }
 } // AquaEngine

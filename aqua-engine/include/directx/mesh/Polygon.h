@@ -22,7 +22,7 @@ namespace AquaEngine
 
         void Create() override = 0;
 
-        void Render(Command& command) const override;
+        void Render(Command& command) override;
 
     protected:
         std::vector<DirectX::XMFLOAT3> m_vertices{};

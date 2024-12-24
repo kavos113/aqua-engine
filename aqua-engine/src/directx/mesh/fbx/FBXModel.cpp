@@ -148,7 +148,6 @@ namespace AquaEngine {
     {
         m_vertexBuffer.Create(BUFFER_DEFAULT(sizeof(Vertex) * m_vertices.size()));
         std::ranges::copy(m_vertices, m_vertexBuffer.GetMappedBuffer());
-        m_vertexBuffer.Unmap();
 
         m_vertexBufferView.BufferLocation = m_vertexBuffer.GetBuffer()->GetGPUVirtualAddress();
         m_vertexBufferView.StrideInBytes = sizeof(Vertex);
@@ -494,25 +493,6 @@ namespace AquaEngine {
             m_stopTime = time_span.GetStop();
         }
 
-        m_status = Status::MUST_BE_REFRESHED;
-
-        return S_OK;
-    }
-
-    void FBXModel::SetCurrentPoseIndex(int index)
-    {
-        m_poseIndex = index;
-        m_status = Status::MUST_BE_REFRESHED;
-    }
-
-    void FBXModel::SetSelectedNode(FbxNode *node)
-    {
-        m_selectedNode = node;
-        m_status = Status::MUST_BE_REFRESHED;
-    }
-
-    void FBXModel::Render(Command &command)
-    {
         FbxPose* pose = nullptr;
         if (m_poseIndex >= 0)
         {
@@ -538,6 +518,34 @@ namespace AquaEngine {
             );
         }
 
+        // auto b = m_vertexBuffer.GetMappedBuffer();
+        // std::println("FrameTime: {}", m_currentTime.GetMilliSeconds());
+        // // for (int i = 0; i < m_vertices.size(); ++i)
+        // // {
+        // //     std::println("{}, {}, {}", b[i].position.x, b[i].position.y, b[i].position.z);
+        // // }
+        // std::println("{}, {}, {}", b[0].position.x, b[0].position.y, b[0].position.z);
+        // std::println("--------------------------------");
+
+        m_status = Status::MUST_BE_REFRESHED;
+
+        return S_OK;
+    }
+
+    void FBXModel::SetCurrentPoseIndex(int index)
+    {
+        m_poseIndex = index;
+        m_status = Status::MUST_BE_REFRESHED;
+    }
+
+    void FBXModel::SetSelectedNode(FbxNode *node)
+    {
+        m_selectedNode = node;
+        m_status = Status::MUST_BE_REFRESHED;
+    }
+
+    void FBXModel::Render(Command &command)
+    {
         Mesh::Render(command);
 
         if (m_texture.IsActive())
@@ -548,6 +556,31 @@ namespace AquaEngine {
         if (m_materialBuffer.IsActive())
         {
             m_materialCBV.SetGraphicsRootDescriptorTable(&command);
+        }
+
+        FbxPose* pose = nullptr;
+        if (m_poseIndex >= 0)
+        {
+            pose = m_scene->GetPose(m_poseIndex);
+        }
+
+        if (m_selectedNode)
+        {
+            UpdateNode(
+                m_selectedNode,
+                m_currentTime,
+                m_currentAnimLayer,
+                pose
+            );
+        }
+        else
+        {
+            UpdateNode(
+                m_scene->GetRootNode(),
+                m_currentTime,
+                m_currentAnimLayer,
+                pose
+            );
         }
 
         command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
@@ -569,6 +602,16 @@ namespace AquaEngine {
         {
             m_status = Status::REFRESHED;
         }
+
+
+        // auto b = m_vertexBuffer.GetMappedBuffer();
+        // std::println("FrameTime: {}", m_currentTime.GetMilliSeconds());
+        // // for (int i = 0; i < m_vertices.size(); ++i)
+        // // {
+        // //     std::println("{}, {}, {}", b[i].position.x, b[i].position.y, b[i].position.z);
+        // // }
+        // std::println("{}, {}, {}", b[0].position.x, b[0].position.y, b[0].position.z);
+        // std::println("--------------------------------");
     }
 
     void FBXModel::UpdateNode(
@@ -659,7 +702,7 @@ namespace AquaEngine {
 
             while (index < vertex_count)
             {
-                m_vertices[index].position = DirectX::XMFLOAT3(buf[index * 3 + 0], buf[index * 3 + 1], buf[index * 3 + 2]);
+                m_vertexBuffer.GetMappedBuffer()[index].position = DirectX::XMFLOAT3(buf[index * 3 + 0], buf[index * 3 + 1], buf[index * 3 + 2]);
                 index++;
             }
         }
@@ -739,7 +782,7 @@ namespace AquaEngine {
                         const float y = current.y + (second_fbx_vertex[1] - current.y) * weight / 100;
                         const float z = current.z + (second_fbx_vertex[2] - current.z) * weight / 100;
 
-                        m_vertices[k].position = DirectX::XMFLOAT3(x, y, z);
+                        m_vertexBuffer.GetMappedBuffer()[k].position = DirectX::XMFLOAT3(x, y, z);
                     }
                 }
                 else if (first_index >= 0 && second_index >= 0)
@@ -758,7 +801,7 @@ namespace AquaEngine {
                         const float y = current.y + (second_fbx_vertex[1] - first_fbx_vertex[1]) * weight / 100;
                         const float z = current.z + (second_fbx_vertex[2] - first_fbx_vertex[2]) * weight / 100;
 
-                        m_vertices[k].position = DirectX::XMFLOAT3(x, y, z);
+                        m_vertexBuffer.GetMappedBuffer()[k].position = DirectX::XMFLOAT3(x, y, z);
                     }
                 }
             }
@@ -796,7 +839,7 @@ namespace AquaEngine {
             {
                 double weight = skin_deformer->GetControlPointBlendWeights()[i];
                 FbxVector4 new_fbx = dual_quaternion[i] * weight + linear[i] * (1.0 - weight);
-                m_vertices[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
+                m_vertexBuffer.GetMappedBuffer()[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
             }
 
         }
@@ -818,6 +861,17 @@ namespace AquaEngine {
         const int vertex_count = mesh->GetControlPointsCount();
 
         std::vector<FbxAMatrix> cluster_deformation(vertex_count);
+        for (auto && deformation : cluster_deformation)
+        {
+            for (int i = 0; i < 4; ++i)
+            {
+                for (int j = 0; j < 4; ++j)
+                {
+                    deformation[i][j] = 0.0;
+                }
+            }
+        }
+
         std::vector<double> cluster_weights(vertex_count);
 
         if (cluster_mode == FbxCluster::eAdditive)
@@ -828,10 +882,13 @@ namespace AquaEngine {
             }
         }
 
+        std::vector<int> counts(vertex_count);
+        std::vector<double> weights(vertex_count, 0);
+
         const int skin_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
         for (int i = 0; i < skin_count; ++i)
         {
-            FbxSkin* skin_deformer = reinterpret_cast<FbxSkin*>(mesh->GetDeformer(i, FbxDeformer::eSkin));
+            auto* skin_deformer = reinterpret_cast<FbxSkin*>(mesh->GetDeformer(i, FbxDeformer::eSkin));
 
             const int cluster_count = skin_deformer->GetClusterCount();
             for (int j = 0; j < cluster_count; ++j)
@@ -846,10 +903,12 @@ namespace AquaEngine {
                 FbxAMatrix vertex_trasnsform_matrix;
                 ComputeClusterDeformation(mesh, time, global_position, pose, cluster, vertex_trasnsform_matrix);
 
+
                 const int index_count = cluster->GetControlPointIndicesCount();
                 for (int k = 0; k < index_count; ++k)
                 {
                     const int index = cluster->GetControlPointIndices()[k];
+                    counts[index] += 1;
 
                     if (index >= vertex_count)
                     {
@@ -857,6 +916,7 @@ namespace AquaEngine {
                     }
 
                     const double weight = cluster->GetControlPointWeights()[k];
+                    weights[index] += weight;
 
                     if (weight == 0.0)
                     {
@@ -870,7 +930,7 @@ namespace AquaEngine {
                     {
                         FbxMatrixAddDiagonal(influence, 1.0 - weight);
                         cluster_deformation[index] = influence * cluster_deformation[index];
-                        cluster_weights[index] = index;
+                        cluster_weights[index] = 1.0;
                     }
                     else
                     {
@@ -915,7 +975,7 @@ namespace AquaEngine {
             }
             else
             {
-                m_vertices[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
+                m_vertexBuffer.GetMappedBuffer()[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
             }
 
         }
@@ -1047,7 +1107,7 @@ namespace AquaEngine {
             }
             else
             {
-                m_vertices[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
+                m_vertexBuffer.GetMappedBuffer()[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
             }
         }
     }

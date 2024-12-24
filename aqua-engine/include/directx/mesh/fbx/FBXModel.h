@@ -65,8 +65,10 @@ namespace AquaEngine {
         );
 
         HRESULT SetCurrentAnimStack(int index);
-        HRESULT SetCurrentPoseIndex(int index);
-        HRESULT SetSelectedNode(FbxNode* node);
+
+        void SetCurrentPoseIndex(int index);
+
+        void SetSelectedNode(FbxNode *node);
 
     private:
         struct Vertex
@@ -123,18 +125,23 @@ namespace AquaEngine {
         void LoadContent(FbxNode* node);
         void LoadMesh(FbxNode* node);
         void LoadMaterial(FbxNode *node);
-        void LoadAnimation(FbxNode* node);
 
         void LoadVertices(FbxMesh* mesh);
         void LoadIndices(FbxMesh* mesh);
 
         void UpdateNode(
-            FbxNode* node,
-            const FbxTime &time,
-            const FbxAMatrix &parentGlobalPosition,
-            FbxAnimLayer* animLayer,
-            FbxPose* pose
+            FbxNode *node,
+            FbxTime &time,
+            FbxAnimLayer *animLayer,
+            FbxPose *pose
         );
+        void ReadVertexCache(FbxMesh* mesh, FbxTime &time);
+        void ComputeShapeDeformation(FbxMesh* mesh, FbxTime &time, FbxAnimLayer *animLayer);
+        void ComputeSkinDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+        void ComputeLinearDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+        void ComputeDualQuaternionDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+        void ComputeClusterDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose, FbxCluster* cluster, FbxAMatrix& vertex_transform_matrix);
+
     };
 
 } // AquaEngine

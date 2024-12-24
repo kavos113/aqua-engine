@@ -60,13 +60,43 @@ namespace
         return local_position;
     }
 
-    FbxAMatrix GetGeometryOffset(FbxNode* node)
+    FbxAMatrix GetGeometryOffset(const FbxNode* node)
     {
         const FbxVector4 translation = node->GetGeometricTranslation(FbxNode::eSourcePivot);
         const FbxVector4 rotation = node->GetGeometricRotation(FbxNode::eSourcePivot);
         const FbxVector4 scaling = node->GetGeometricScaling(FbxNode::eSourcePivot);
 
         return FbxAMatrix(translation, rotation, scaling);
+    }
+
+    void FbxMatrixScale(FbxAMatrix& m, double s)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                m[i][j] *= s;
+            }
+        }
+    }
+
+    void FbxMatrixAdd(FbxAMatrix& dst, FbxAMatrix& src)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                dst[i][j] += src[i][j];
+            }
+        }
+    }
+
+    void FbxMatrixAddDiagonal(FbxAMatrix& m, double d)
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            m[i][i] += d;
+        }
     }
 }
 
@@ -215,7 +245,7 @@ namespace AquaEngine {
         LoadIndices(mesh);
     }
 
-    void FBXModel::LoadVertices(FbxMesh *mesh)
+    void FBXModel::LoadVertices(const FbxMesh *mesh)
     {
         const int vertex_count = mesh->GetControlPointsCount();
         m_vertices.resize(vertex_count);
@@ -349,7 +379,7 @@ namespace AquaEngine {
     }
 
     // all same only
-    void FBXModel::LoadMaterial(FbxNode *node)
+    void FBXModel::LoadMaterial(const FbxNode *node)
     {
         const int material_count = node->GetMaterialCount();
 
@@ -530,11 +560,11 @@ namespace AquaEngine {
         FbxPose *pose = nullptr
     )
     {
-        FbxAMatrix global_position = GetGlobalPosition(node, time, pose);
+        const FbxAMatrix global_position = GetGlobalPosition(node, time, pose);
 
         if (const FbxNodeAttribute* node_attribute = node->GetNodeAttribute())
         {
-            FbxAMatrix geometry_offset = GetGeometryOffset(node);
+            const FbxAMatrix geometry_offset = GetGeometryOffset(node);
             FbxAMatrix global_offset_position = global_position * geometry_offset;
 
             if (node_attribute->GetAttributeType() == FbxNodeAttribute::eMesh)
@@ -561,7 +591,7 @@ namespace AquaEngine {
                             ComputeShapeDeformation(mesh, time, animLayer);
                         }
 
-                        int skin_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
+                        const int skin_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
                         int cluster_count = 0;
                         for (int i = 0; i < skin_count; ++i)
                         {
@@ -583,9 +613,9 @@ namespace AquaEngine {
         }
     }
 
-    void FBXModel::ReadVertexCache(FbxMesh *mesh, FbxTime &time)
+    void FBXModel::ReadVertexCache(const FbxMesh *mesh, const FbxTime &time)
     {
-        auto* deformer = dynamic_cast<FbxVertexCacheDeformer*>(mesh->GetDeformer(0, FbxDeformer::eVertexCache));
+        const auto* deformer = dynamic_cast<FbxVertexCacheDeformer*>(mesh->GetDeformer(0, FbxDeformer::eVertexCache));
 
         if (deformer->Type.Get() != FbxVertexCacheDeformer::eVertexCache)
         {
@@ -593,8 +623,8 @@ namespace AquaEngine {
         }
 
         FbxCache* cache = deformer->GetCache();
-        int channel_index = cache->GetChannelIndex(deformer->Channel.Get());
-        unsigned int vertex_count = mesh->GetControlPointsCount();
+        const int channel_index = cache->GetChannelIndex(deformer->Channel.Get());
+        const unsigned int vertex_count = mesh->GetControlPointsCount();
 
         unsigned int length = 0;
         cache->Read(nullptr, length, FBXSDK_TIME_ZERO, channel_index);
@@ -604,7 +634,7 @@ namespace AquaEngine {
         }
 
         float* buf;
-        bool res = cache->Read(&buf, length, time, channel_index);
+        const bool res = cache->Read(&buf, length, time, channel_index);
         if (res)
         {
             unsigned int index = 0;
@@ -617,16 +647,16 @@ namespace AquaEngine {
         }
     }
 
-    void FBXModel::ComputeShapeDeformation(FbxMesh *mesh, FbxTime &time, FbxAnimLayer *animLayer)
+    void FBXModel::ComputeShapeDeformation(FbxMesh *mesh, const FbxTime &time, FbxAnimLayer *animLayer)
     {
-        int vertex_count = mesh->GetControlPointsCount();
-        int blend_shape_count = mesh->GetDeformerCount(FbxDeformer::eBlendShape);
+        const int vertex_count = mesh->GetControlPointsCount();
+        const int blend_shape_count = mesh->GetDeformerCount(FbxDeformer::eBlendShape);
 
         for (int i = 0; i < blend_shape_count; ++i)
         {
             auto* blend_shape = reinterpret_cast<FbxBlendShape *>(mesh->GetDeformer(i, FbxDeformer::eBlendShape));
 
-            int blend_shape_channel_count = blend_shape->GetBlendShapeChannelCount();
+            const int blend_shape_channel_count = blend_shape->GetBlendShapeChannelCount();
             for (int j = 0; j < blend_shape_channel_count; ++j)
             {
                 FbxBlendShapeChannel* channel = blend_shape->GetBlendShapeChannel(j);
@@ -644,8 +674,8 @@ namespace AquaEngine {
 
                 double weight = curve->Evaluate(time);
 
-                int shape_count = channel->GetTargetShapeCount();
-                double* full_weights = channel->GetTargetShapeFullWeights();
+                const int shape_count = channel->GetTargetShapeCount();
+                const double* full_weights = channel->GetTargetShapeFullWeights();
 
                 // firstとsecondの間の補間を計算する
                 int first_index = -1;
@@ -666,8 +696,8 @@ namespace AquaEngine {
                     }
                 }
 
-                FbxShape* first_shape = nullptr;
-                FbxShape* second_shape = nullptr;
+                const FbxShape* first_shape = nullptr;
+                const FbxShape* second_shape = nullptr;
                 if (first_index >= 0)
                 {
                     first_shape = channel->GetTargetShape(first_index);
@@ -679,36 +709,36 @@ namespace AquaEngine {
 
                 if (first_index == -1 && second_shape != nullptr)
                 {
-                    double second_weight = full_weights[0];
+                    const double second_weight = full_weights[0];
                     weight = weight / second_weight * 100;
 
                     for (int k = 0; k < vertex_count; ++k)
                     {
-                        DirectX::XMFLOAT3 current = m_vertices[k].position;
+                        const DirectX::XMFLOAT3 current = m_vertices[k].position;
                         FbxVector4 second_fbx_vertex = second_shape->GetControlPoints()[k];
 
-                        float x = current.x + (second_fbx_vertex[0] - current.x) * weight / 100;
-                        float y = current.y + (second_fbx_vertex[1] - current.y) * weight / 100;
-                        float z = current.z + (second_fbx_vertex[2] - current.z) * weight / 100;
+                        const float x = current.x + (second_fbx_vertex[0] - current.x) * weight / 100;
+                        const float y = current.y + (second_fbx_vertex[1] - current.y) * weight / 100;
+                        const float z = current.z + (second_fbx_vertex[2] - current.z) * weight / 100;
 
                         m_vertices[k].position = DirectX::XMFLOAT3(x, y, z);
                     }
                 }
                 else if (first_index >= 0 && second_index >= 0)
                 {
-                    double first_weight = full_weights[first_index];
-                    double second_weight = full_weights[second_index];
+                    const double first_weight = full_weights[first_index];
+                    const double second_weight = full_weights[second_index];
                     weight = (weight - first_weight) / (second_weight - first_weight) * 100;
 
                     for (int k = 0; k < vertex_count; ++k)
                     {
-                        DirectX::XMFLOAT3 current = m_vertices[k].position;
+                        const DirectX::XMFLOAT3 current = m_vertices[k].position;
                         FbxVector4 first_fbx_vertex = first_shape->GetControlPoints()[k];
                         FbxVector4 second_fbx_vertex = second_shape->GetControlPoints()[k];
 
-                        float x = current.x + (second_fbx_vertex[0] - first_fbx_vertex[0]) * weight / 100;
-                        float y = current.y + (second_fbx_vertex[1] - first_fbx_vertex[1]) * weight / 100;
-                        float z = current.z + (second_fbx_vertex[2] - first_fbx_vertex[2]) * weight / 100;
+                        const float x = current.x + (second_fbx_vertex[0] - first_fbx_vertex[0]) * weight / 100;
+                        const float y = current.y + (second_fbx_vertex[1] - first_fbx_vertex[1]) * weight / 100;
+                        const float z = current.z + (second_fbx_vertex[2] - first_fbx_vertex[2]) * weight / 100;
 
                         m_vertices[k].position = DirectX::XMFLOAT3(x, y, z);
                     }
@@ -720,8 +750,8 @@ namespace AquaEngine {
     void FBXModel::ComputeSkinDeformation(
         FbxMesh *mesh, FbxTime &time, FbxAMatrix &global_position, FbxPose *pose)
     {
-        auto skin_deformer = reinterpret_cast<FbxSkin*>(mesh->GetDeformer(0, FbxDeformer::eSkin));
-        FbxSkin::EType type = skin_deformer->GetSkinningType();
+        const auto skin_deformer = reinterpret_cast<FbxSkin*>(mesh->GetDeformer(0, FbxDeformer::eSkin));
+        const FbxSkin::EType type = skin_deformer->GetSkinningType();
 
         switch (type)
         {
@@ -740,20 +770,21 @@ namespace AquaEngine {
     }
 
     void FBXModel::ComputeLinearDeformation(
-        FbxMesh *mesh,
+        const FbxMesh *mesh,
         FbxTime &time,
         FbxAMatrix &global_position,
         FbxPose *pose
     )
     {
-        FbxCluster::ELinkMode cluster_mode =
+        const FbxCluster::ELinkMode cluster_mode =
             reinterpret_cast<FbxSkin*>(mesh->GetDeformer(0, FbxDeformer::eSkin))
                 ->GetCluster(0)
                 ->GetLinkMode();
 
-        int vertex_count = mesh->GetControlPointsCount();
+        const int vertex_count = mesh->GetControlPointsCount();
 
         std::vector<FbxAMatrix> cluster_deformation(vertex_count);
+        std::vector<double> cluster_weights(vertex_count);
 
         if (cluster_mode == FbxCluster::eAdditive)
         {
@@ -763,12 +794,12 @@ namespace AquaEngine {
             }
         }
 
-        int skin_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
+        const int skin_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
         for (int i = 0; i < skin_count; ++i)
         {
             FbxSkin* skin_deformer = reinterpret_cast<FbxSkin*>(mesh->GetDeformer(i, FbxDeformer::eSkin));
 
-            int cluster_count = skin_deformer->GetClusterCount();
+            const int cluster_count = skin_deformer->GetClusterCount();
             for (int j = 0; j < cluster_count; ++j)
             {
                 FbxCluster* cluster = skin_deformer->GetCluster(j);
@@ -778,36 +809,243 @@ namespace AquaEngine {
                     continue;
                 }
 
+                FbxAMatrix vertex_trasnsform_matrix;
+                ComputeClusterDeformation(mesh, time, global_position, pose, cluster, vertex_trasnsform_matrix);
 
+                const int index_count = cluster->GetControlPointIndicesCount();
+                for (int k = 0; k < index_count; ++k)
+                {
+                    const int index = cluster->GetControlPointIndices()[k];
+
+                    if (index >= vertex_count)
+                    {
+                        continue;
+                    }
+
+                    const double weight = cluster->GetControlPointWeights()[k];
+
+                    if (weight == 0.0)
+                    {
+                        continue;
+                    }
+
+                    FbxAMatrix influence = vertex_trasnsform_matrix;
+                    FbxMatrixScale(influence, weight);
+
+                    if (cluster_mode == FbxCluster::eAdditive)
+                    {
+                        FbxMatrixAddDiagonal(influence, 1.0 - weight);
+                        cluster_deformation[index] = influence * cluster_deformation[index];
+                        cluster_weights[index] = index;
+                    }
+                    else
+                    {
+                        FbxMatrixAdd(cluster_deformation[index], influence);
+                        cluster_weights[index] += weight;
+                    }
+                }
             }
+        }
+
+        for (int i = 0; i < vertex_count; ++i)
+        {
+            const DirectX::XMFLOAT3 current = m_vertices[i].position;
+            FbxVector4 current_fbx = FbxVector4(current.x, current.y, current.z, 1.0);
+            FbxVector4 new_fbx = current_fbx;
+            const double weight = cluster_weights[i];
+
+            if (weight == 0.0)
+            {
+                continue;
+            }
+
+            new_fbx = cluster_deformation[i].MultT(current_fbx);
+            if (cluster_mode == FbxCluster::eNormalize)
+            {
+                new_fbx /= weight;
+            }
+            else if (cluster_mode == FbxCluster::eTotalOne)
+            {
+                current_fbx *= 1.0 - weight;
+                new_fbx += current_fbx;
+            }
+
+            m_vertices[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
         }
     }
 
     void FBXModel::ComputeDualQuaternionDeformation(
-        FbxMesh *mesh,
+        const FbxMesh *mesh,
         FbxTime &time,
         FbxAMatrix &global_position,
         FbxPose *pose
     )
     {
+        const FbxCluster::ELinkMode cluster_mode =
+            reinterpret_cast<FbxSkin*>(mesh->GetDeformer(0, FbxDeformer::eSkin))
+                ->GetCluster(0)
+                ->GetLinkMode();
+
+        const int vertex_count = mesh->GetControlPointsCount();
+        const int skin_count = mesh->GetDeformerCount(FbxDeformer::eSkin);
+
+        std::vector<FbxDualQuaternion> cluster_deformation(vertex_count);
+        std::vector<double> cluster_weights(vertex_count);
+
+        for (int i = 0; i < skin_count; ++i)
+        {
+            FbxSkin* skin_deformer = reinterpret_cast<FbxSkin*>(mesh->GetDeformer(i, FbxDeformer::eSkin));
+
+            const int cluster_count = skin_deformer->GetClusterCount();
+            for (int j = 0; j < cluster_count; ++j)
+            {
+                FbxCluster* cluster = skin_deformer->GetCluster(j);
+
+                if (!cluster->GetLink())
+                {
+                    continue;
+                }
+
+                FbxAMatrix vertex_trasnsform_matrix;
+                ComputeClusterDeformation(mesh, time, global_position, pose, cluster, vertex_trasnsform_matrix);
+
+                FbxQuaternion q = vertex_trasnsform_matrix.GetQ();
+                FbxVector4 t = vertex_trasnsform_matrix.GetT();
+                FbxDualQuaternion dq(q, t);
+
+                const int index_count = cluster->GetControlPointIndicesCount();
+                for (int k = 0; k < index_count; ++k)
+                {
+                    const int index = cluster->GetControlPointIndices()[k];
+
+                    if (index >= vertex_count)
+                    {
+                        continue;
+                    }
+
+                    const double weight = cluster->GetControlPointWeights()[k];
+
+                    if (weight == 0.0)
+                    {
+                        continue;
+                    }
+
+                    FbxDualQuaternion influence = dq * weight;
+
+                    if (cluster_mode == FbxCluster::eAdditive)
+                    {
+                        cluster_deformation[index] = influence;
+                        cluster_weights[index] = index;
+                    }
+                    else
+                    {
+                        if (j == 0)
+                        {
+                            cluster_deformation[index] = influence;
+                        }
+                        else
+                        {
+                            const double sign = cluster_deformation[index].GetFirstQuaternion().DotProduct(dq.GetFirstQuaternion());
+                            if (sign >= 0.0)
+                            {
+                                cluster_deformation[index] = cluster_deformation[index] + influence;
+                            }
+                            else
+                            {
+                                cluster_deformation[index] = cluster_deformation[index] - influence;
+                            }
+                        }
+
+                        cluster_weights[index] += weight;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < vertex_count; ++i)
+        {
+            const DirectX::XMFLOAT3 current = m_vertices[i].position;
+            FbxVector4 current_fbx = FbxVector4(current.x, current.y, current.z, 1.0);
+            FbxVector4 new_fbx = current_fbx;
+            const double weight = cluster_weights[i];
+
+            if (weight == 0.0)
+            {
+                continue;
+            }
+
+            cluster_deformation[i].Normalize();
+            new_fbx = cluster_deformation[i].Deform(new_fbx);
+
+            if (cluster_mode == FbxCluster::eNormalize)
+            {
+                new_fbx /= weight;
+            }
+            else if (cluster_mode == FbxCluster::eTotalOne)
+            {
+                current_fbx *= 1.0 - weight;
+                new_fbx += current_fbx;
+            }
+
+            m_vertices[i].position = DirectX::XMFLOAT3(new_fbx[0], new_fbx[1], new_fbx[2]);
+        }
     }
 
     void FBXModel::ComputeClusterDeformation(
-        FbxMesh *mesh,
-        FbxTime &time,
-        FbxAMatrix &global_position,
+        const FbxMesh *mesh,
+        const FbxTime &time,
+        const FbxAMatrix &global_position,
         FbxPose *pose,
         FbxCluster *cluster,
         FbxAMatrix &vertex_transform_matrix
     )
     {
-        FbxCluster::ELinkMode cluster_mode = cluster->GetLinkMode();
+        const FbxCluster::ELinkMode cluster_mode = cluster->GetLinkMode();
 
         if (cluster_mode == FbxCluster::eAdditive && cluster->GetAssociateModel())
         {
             FbxAMatrix associate_global_init_position;
             cluster->GetTransformAssociateModelMatrix(associate_global_init_position);
+            const FbxAMatrix associate_geometry_offset = GetGeometryOffset(cluster->GetAssociateModel());
+            associate_global_init_position *= associate_geometry_offset;
+            const FbxAMatrix associate_global_position = GetGlobalPosition(cluster->GetAssociateModel(), time, pose);
 
+            FbxAMatrix model_global_init_position;
+            cluster->GetTransformMatrix(model_global_init_position);
+            const FbxAMatrix model_geometry_offset = GetGeometryOffset(mesh->GetNode());
+            model_global_init_position *= model_geometry_offset;
+            FbxAMatrix model_global_position = global_position;
+
+            FbxAMatrix cluster_global_init_position;
+            cluster->GetTransformLinkMatrix(cluster_global_init_position);
+            const FbxAMatrix cluster_geometry_offset = GetGeometryOffset(cluster->GetLink());
+            cluster_global_init_position *= cluster_geometry_offset;
+            const FbxAMatrix cluster_global_position = cluster_global_init_position;
+
+            // M^{-1} * A * AC^{-1} * CC * C^{-1} * M
+            vertex_transform_matrix
+                = model_global_init_position.Inverse()
+                * associate_global_init_position
+                * associate_global_position.Inverse()
+                * cluster_global_position
+                * cluster_global_init_position
+                * model_global_init_position;
+        }
+        else
+        {
+            FbxAMatrix model_global_init_position;
+            cluster->GetTransformMatrix(model_global_init_position);
+            const FbxAMatrix model_global_position = global_position;
+            const FbxAMatrix model_geometry_offset = GetGeometryOffset(mesh->GetNode());
+            model_global_init_position *= model_geometry_offset;
+
+            FbxAMatrix cluster_global_init_position;
+            cluster->GetTransformLinkMatrix(cluster_global_init_position);
+            const FbxAMatrix cluster_global_position = GetGlobalPosition(cluster->GetLink(), time, pose);
+            const FbxAMatrix cluster_relative_init_position = cluster_global_init_position.Inverse() * model_global_init_position;
+            const FbxAMatrix cluster_relative_position_inverse = model_global_position.Inverse() * cluster_global_position;
+
+            vertex_transform_matrix = cluster_relative_position_inverse * cluster_relative_init_position;
         }
     }
 } // AquaEngine

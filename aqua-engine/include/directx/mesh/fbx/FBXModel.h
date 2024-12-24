@@ -124,9 +124,9 @@ namespace AquaEngine {
 
         void LoadContent(FbxNode* node);
         void LoadMesh(FbxNode* node);
-        void LoadMaterial(FbxNode *node);
+        void LoadMaterial(const FbxNode *node);
 
-        void LoadVertices(FbxMesh* mesh);
+        void LoadVertices(const FbxMesh* mesh);
         void LoadIndices(FbxMesh* mesh);
 
         void UpdateNode(
@@ -135,12 +135,13 @@ namespace AquaEngine {
             FbxAnimLayer *animLayer,
             FbxPose *pose
         );
-        void ReadVertexCache(FbxMesh* mesh, FbxTime &time);
-        void ComputeShapeDeformation(FbxMesh* mesh, FbxTime &time, FbxAnimLayer *animLayer);
+        void ReadVertexCache(const FbxMesh* mesh, const FbxTime &time);
+        void ComputeShapeDeformation(FbxMesh* mesh, const FbxTime &time, FbxAnimLayer *animLayer);
         void ComputeSkinDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
-        void ComputeLinearDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
-        void ComputeDualQuaternionDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
-        void ComputeClusterDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose, FbxCluster* cluster, FbxAMatrix& vertex_transform_matrix);
+        void ComputeLinearDeformation(const FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+        void ComputeDualQuaternionDeformation(const FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+
+        static void ComputeClusterDeformation(const FbxMesh* mesh, const FbxTime &time, const FbxAMatrix& global_position, FbxPose* pose, FbxCluster* cluster, FbxAMatrix& vertex_transform_matrix);
 
     };
 

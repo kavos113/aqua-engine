@@ -146,6 +146,9 @@ void Graphics::SetUp()
 
     OutputDebugString("[Message] Pipeline state created\n");
 
+    SetTimer(nullptr, 0, model->GetFrameCount(), nullptr);
+    SetTimer(nullptr, 1, model2->GetFrameCount(), nullptr);
+
     model->RotX(-DirectX::XM_PIDIV2);
     model2->RotX(-DirectX::XM_PIDIV2);
 
@@ -154,6 +157,8 @@ void Graphics::SetUp()
 
     model->Scale(2.0f, 2.0f, 2.0f);
     model2->Scale(2.0f, 2.0f, 2.0f);
+
+    model->SetCurrentAnimStack(0);
 }
 
 void Graphics::Render() const
@@ -179,4 +184,18 @@ void Graphics::Render() const
     if (FAILED(hr)) exit(-1);
 
     display->Present();
+}
+
+void Graphics::Timer(int id) const
+{
+    switch (id)
+    {
+    case 0:
+        model->Timer();
+        break;
+
+    case 1:
+        model2->Timer();
+        break;
+    }
 }

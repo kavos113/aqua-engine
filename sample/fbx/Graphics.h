@@ -20,6 +20,7 @@ public:
 
     void SetUp();
     void Render() const;
+    void Timer(int id) const;
 private:
     HWND hwnd;
     RECT rc;

@@ -26,6 +26,7 @@ namespace AquaEngine {
         )
             : Mesh(manager)
             , m_scene(nullptr)
+            , m_status(Status::MUST_BE_REFRESHED)
             , m_path(std::move(model_path))
         {
 
@@ -40,6 +41,7 @@ namespace AquaEngine {
             : Mesh(manager)
             , m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
             , m_scene(nullptr)
+            , m_status(Status::MUST_BE_REFRESHED)
             , m_path(std::move(model_path))
         {
 
@@ -102,18 +104,18 @@ namespace AquaEngine {
         Buffer m_texture;
         ShaderResourceView m_textureSRV;
 
-        FbxScene* m_scene;
-        FbxNode* m_selectedNode;
-        FbxAnimLayer* m_currentAnimLayer;
+        FbxScene* m_scene{};
+        FbxNode* m_selectedNode{};
+        FbxAnimLayer* m_currentAnimLayer{};
 
-        FbxArray<FbxString*> m_animStackNameArray;
-        FbxArray<FbxPose*> m_poseArray;
+        FbxArray<FbxString*> m_animStackNameArray{};
+        FbxArray<FbxPose*> m_poseArray{};
 
         FbxTime m_frameTime, m_startTime, m_stopTime, m_currentTime;
 
         Status m_status;
 
-        int m_poseIndex;
+        int m_poseIndex{};
 
         const std::string m_path;
 
@@ -137,9 +139,9 @@ namespace AquaEngine {
         );
         void ReadVertexCache(const FbxMesh* mesh, const FbxTime &time);
         void ComputeShapeDeformation(FbxMesh* mesh, const FbxTime &time, FbxAnimLayer *animLayer);
-        void ComputeSkinDeformation(FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
-        void ComputeLinearDeformation(const FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
-        void ComputeDualQuaternionDeformation(const FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+        void ComputeSkinDeformation(const FbxMesh* mesh, FbxTime &time, FbxAMatrix& global_position, FbxPose* pose);
+        void ComputeLinearDeformation(const FbxMesh* mesh, const FbxTime &time, const FbxAMatrix& global_position, FbxPose* pose, std::vector<FbxVector4> *dst = nullptr);
+        void ComputeDualQuaternionDeformation(const FbxMesh* mesh, const FbxTime &time, const FbxAMatrix& global_position, FbxPose* pose, std::vector<FbxVector4> *dst = nullptr);
 
         static void ComputeClusterDeformation(const FbxMesh* mesh, const FbxTime &time, const FbxAMatrix& global_position, FbxPose* pose, FbxCluster* cluster, FbxAMatrix& vertex_transform_matrix);
 

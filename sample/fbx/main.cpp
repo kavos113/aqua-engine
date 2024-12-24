@@ -46,6 +46,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
     while (GetMessage(&msg, nullptr, 0, 0))
     {
+        if (msg.message == WM_TIMER)
+        {
+            graphics.Timer(msg.wParam);
+        }
+
         TranslateMessage(&msg);
         DispatchMessage(&msg);
 
@@ -60,10 +65,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg == WM_DESTROY)
+    switch (uMsg)
+    {
+    case WM_DESTROY:
     {
         PostQuitMessage(0);
         return 0;
+    }
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);

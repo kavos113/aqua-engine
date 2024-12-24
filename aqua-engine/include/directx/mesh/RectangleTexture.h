@@ -41,7 +41,7 @@ namespace AquaEngine
         }
 
         void Create() override;
-        void Render(Command &command) const override;
+        void Render(Command &command) override;
         void CreateShaderResourceView(const D3D12_DESCRIPTOR_RANGE& texture_range);
 
     private:

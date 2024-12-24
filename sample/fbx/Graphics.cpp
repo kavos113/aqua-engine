@@ -146,7 +146,12 @@ void Graphics::SetUp()
 
     OutputDebugString("[Message] Pipeline state created\n");
 
+    model->SetCurrentAnimStack(0);
+    SetTimer(hwnd, 1, model->GetFrameCount(), nullptr);
+    SetTimer(hwnd, 2, model2->GetFrameCount(), nullptr);
+
     model->RotX(-DirectX::XM_PIDIV2);
+    model->RotY(DirectX::XM_PI);
     model2->RotX(-DirectX::XM_PIDIV2);
 
     model->Move(-1.5f, -1.0f, 0.0f);
@@ -154,13 +159,14 @@ void Graphics::SetUp()
 
     model->Scale(2.0f, 2.0f, 2.0f);
     model2->Scale(2.0f, 2.0f, 2.0f);
+
 }
 
 void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    model->RotY(0.01f);
+    // model->RotZ(0.01f);
     model2->RotY(-0.1f);
 
     display->BeginRender();
@@ -179,4 +185,18 @@ void Graphics::Render() const
     if (FAILED(hr)) exit(-1);
 
     display->Present();
+}
+
+void Graphics::Timer(int id) const
+{
+    switch (id)
+    {
+    case 1:
+        model->Timer();
+        break;
+
+    case 2:
+        model2->Timer();
+        break;
+    }
 }

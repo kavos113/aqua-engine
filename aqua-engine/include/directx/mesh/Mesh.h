@@ -23,7 +23,7 @@ namespace AquaEngine
         virtual ~Mesh() = default;
 
         virtual void Create() = 0;
-        virtual void Render(Command& command) const
+        virtual void Render(Command& command)
         {
             command.List()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             command.List()->IASetVertexBuffers(0, 1, &m_vertexBufferView);
@@ -152,7 +152,7 @@ namespace AquaEngine
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix * m_coordinateMatrix;
         }
 
-        DirectX::XMMATRIX GetCoordinate() const
+        [[nodiscard]] DirectX::XMMATRIX GetCoordinate() const
         {
             return m_coordinateMatrix;
         }

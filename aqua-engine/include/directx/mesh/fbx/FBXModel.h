@@ -25,7 +25,6 @@ namespace AquaEngine {
             std::string model_path
         )
             : Mesh(manager)
-            , m_scene(nullptr)
             , m_status(Status::MUST_BE_REFRESHED)
             , m_path(std::move(model_path))
         {
@@ -40,7 +39,6 @@ namespace AquaEngine {
         )
             : Mesh(manager)
             , m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
-            , m_scene(nullptr)
             , m_status(Status::MUST_BE_REFRESHED)
             , m_path(std::move(model_path))
         {
@@ -49,6 +47,7 @@ namespace AquaEngine {
 
         void Create() override;
         void Render(Command& command) override;
+        void Timer();
 
         void SetTexture(
             const D3D12_DESCRIPTOR_RANGE &texture_range
@@ -71,6 +70,11 @@ namespace AquaEngine {
         void SetCurrentPoseIndex(int index);
 
         void SetSelectedNode(FbxNode *node);
+
+        [[nodiscard]] unsigned int GetFrameCount() const
+        {
+            return static_cast<unsigned int>(m_frameTime.GetMilliSeconds());
+        }
 
     private:
         struct Vertex
@@ -115,7 +119,7 @@ namespace AquaEngine {
 
         Status m_status;
 
-        int m_poseIndex{};
+        int m_poseIndex = -1;
 
         const std::string m_path;
 

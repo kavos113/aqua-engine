@@ -160,8 +160,8 @@ void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    model->RotY(0.01f);
-    model2->RotY(-0.1f);
+    //model->RotY(0.01f);
+    //model2->RotY(-0.1f);
 
     display->BeginRender();
 

@@ -553,6 +553,24 @@ namespace AquaEngine {
         command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
     }
 
+    void FBXModel::Timer()
+    {
+        if (m_stopTime > m_startTime)
+        {
+            m_status = Status::MUST_BE_REFRESHED;
+            m_currentTime += m_frameTime;
+
+            if (m_currentTime > m_stopTime)
+            {
+                m_currentTime = m_startTime; // ループ再生
+            }
+        }
+        else
+        {
+            m_status = Status::REFRESHED;
+        }
+    }
+
     void FBXModel::UpdateNode(
         FbxNode *node,
         FbxTime &time,

@@ -3,10 +3,10 @@
 name: Build and Test
 
 on:
-  workflow_run:
-    workflows: [Upload data]
-    types:
-      - completed
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -22,15 +22,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Download FBXSDK Artifact
-      uses: actions/download-artifact@v4
-      id: fbxsdk
-      with:
-        name: 'FBXSDK-win'
-        path: artifacts
+    - name: Download FBXSDK
+      run: curl -L -o fbx202037_fbxsdk_vs2022_win.exe -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" "https://damassets.autodesk.net/content/dam/autodesk/www/files/fbx202037_fbxsdk_vs2022_win.exe"
 
     - name: Install FBXSDK
-      run: ${{steps.fbxsdk.outputs.download-path}}/fbx202037_fbxsdk_vs2022_win.exe /S /D=C:\FBXSDK
+      run: ./fbx202037_fbxsdk_vs2022_win.exe /S /D=C:\FBXSDK
       shell: cmd
 
     - name: Configure FBXSDK

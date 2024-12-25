@@ -22,6 +22,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Download FBXSDK Artifact
+      uses: actions/upload-artifacts@v4
+      id: fbxsdk
+      with:
+        name: 'FBXSDK-win'
+        path: artifacts
+
+    - name: Configure FBXSDK
+      run: ${{steps.fbxsdk.outputs.download-path}}/fbx202037_fbxsdk_vs2022_win.exe
+
     - name: Configure Vcpkg
       run: | 
         git clone https://github.com/microsoft/vcpkg.git

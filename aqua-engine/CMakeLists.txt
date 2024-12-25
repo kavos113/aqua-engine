@@ -86,6 +86,8 @@ set(INCLUDE
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
 
+message(STATUS "FBXSDK_DIR: $ENV{FBXSDK_DIR}")
+
 find_package(directxtex CONFIG REQUIRED)
 
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})

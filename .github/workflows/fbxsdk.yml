@@ -1,4 +1,4 @@
-name: FBX SDK
+name: Upload data
 
 on:
   push:

@@ -23,14 +23,20 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Download FBXSDK Artifact
-      uses: actions/upload-artifacts@v4
+      uses: actions/download-artifact@v4
       id: fbxsdk
       with:
         name: 'FBXSDK-win'
         path: artifacts
 
+    - name: Install FBXSDK
+      run: ${{steps.fbxsdk.outputs.download-path}}/fbx202037_fbxsdk_vs2022_win.exe /S /D=C:\FBXSDK
+      shell: cmd
+
     - name: Configure FBXSDK
-      run: ${{steps.fbxsdk.outputs.download-path}}/fbx202037_fbxsdk_vs2022_win.exe
+      run: |
+        dir C:\FBXSDK
+        echo "FBXSDK_DIR=C:\FBXSDK" >> $GITHUB_ENV
 
     - name: Configure Vcpkg
       run: | 

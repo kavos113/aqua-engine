@@ -25,7 +25,7 @@ jobs:
     - name: Configure Vcpkg
       run: | 
         git clone https://github.com/microsoft/vcpkg.git
-        ./vcpkg/bootstrap-vcpkg.sh
+        ./vcpkg/bootstrap-vcpkg.bat
         dir vcpkg
 
     - name: Install Dependencies

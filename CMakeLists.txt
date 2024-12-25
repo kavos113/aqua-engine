@@ -83,7 +83,7 @@ add_executable(sample-fbx WIN32 sample/fbx/main.cpp sample/fbx/Graphics.cpp samp
 add_dependencies(sample-fbx aqua-engine)
 target_include_directories(sample-fbx PUBLIC aqua-engine/include)
 target_link_libraries(sample-fbx aqua-engine)
-file(COPY sample/fbx/vs.hlsl sample/fbx/ps.hlsl sample/fbx/isu.fbx sample/fbx/isu.png sample/fbx/ninja.fbx sample/fbx/ninja.png sample/fbx/type.hlsli DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+file(COPY sample/fbx/vs.hlsl sample/fbx/ps.hlsl sample/fbx/type.hlsli DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 if (LOCAL_BUILD) # fbx and png: local only
     file(COPY sample/fbx/isu.fbx sample/fbx/isu.png sample/fbx/ninja.fbx sample/fbx/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     message(STATUS "copy fbx files.")

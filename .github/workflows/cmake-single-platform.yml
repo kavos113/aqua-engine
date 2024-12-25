@@ -26,7 +26,7 @@ jobs:
       run: curl -L -o fbx202037_fbxsdk_vs2022_win.exe -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" "https://damassets.autodesk.net/content/dam/autodesk/www/files/fbx202037_fbxsdk_vs2022_win.exe"
 
     - name: Install FBXSDK
-      run: ./fbx202037_fbxsdk_vs2022_win.exe /S /D=C:\FBXSDK
+      run: fbx202037_fbxsdk_vs2022_win.exe /S /D=C:\FBXSDK
       shell: cmd
 
     - name: Configure FBXSDK

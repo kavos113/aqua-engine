@@ -1,0 +1,18 @@
+{
+  "name" : "aqua",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "80d54ff62d528339c626a6fbc3489a7f25956ade",
+  "dependencies" : [ {
+    "name" : "directxmath",
+    "version>=" : "2024-12-02"
+  }, {
+    "name" : "directxtex",
+    "version>=" : "2024-10-28"
+  }, {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2024-05-23"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-23"
+  } ]
+}

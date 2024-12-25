@@ -86,15 +86,26 @@ set(INCLUDE
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
 
+message(STATUS "FBXSDK_DIR: $ENV{FBXSDK_DIR}")
+
+find_package(directxtex CONFIG REQUIRED)
+
 add_library(aqua-engine STATIC ${SRC} ${INCLUDE})
 target_include_directories(aqua-engine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(aqua-engine PUBLIC $ENV{DXTEX_DIR})
 target_include_directories(aqua-engine PUBLIC $ENV{FBXSDK_DIR}/include)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3d12.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/dxgi.lib)
 target_link_libraries(aqua-engine INTERFACE $ENV{Windows_SDK_Lib}/d3dcompiler.lib)
-target_link_libraries(aqua-engine INTERFACE $ENV{DXTEX_DIR}/Bin/Desktop_2022_Win10/x64/Debug/DirectXTex.lib)
-target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/libfbxsdk-md.lib)
-target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/libxml2-md.lib)
-target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/zlib-md.lib)
-set_property(TARGET aqua-engine PROPERTY MSVC-RUNTIME-LIBRARY "MultiThreadedDebugDLL")
+target_link_libraries(aqua-engine PRIVATE Microsoft::DirectXTex)
+
+if (LOCAL_BUILD)
+    target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/libfbxsdk-md.lib)
+    target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/libxml2-md.lib)
+    target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/debug/zlib-md.lib)
+    set_property(TARGET aqua-engine PROPERTY MSVC-RUNTIME-LIBRARY "MultiThreadedDebugDLL")
+else ()
+    target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/release/libfbxsdk-md.lib)
+    target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/release/libxml2-md.lib)
+    target_link_libraries(aqua-engine INTERFACE $ENV{FBXSDK_DIR}/lib/x64/release/zlib-md.lib)
+    set_property(TARGET aqua-engine PROPERTY MSVC-RUNTIME-LIBRARY "MultiThreadedDLL")
+endif ()

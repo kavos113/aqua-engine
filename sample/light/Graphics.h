@@ -3,7 +3,10 @@
 
 #include <windows.h>
 
-#include "../../aqua-engine/include/AquaEngine.h"
+#include "AquaEngine.h"
+
+#define TIMER_MODEL1 1
+#define TIMER_MODEL2 2
 
 class Graphics {
 public:
@@ -32,6 +35,7 @@ private:
     AquaEngine::RootSignature rootSignature;
     AquaEngine::PipelineState pipelineState;
     AquaEngine::Camera camera;
+    AquaEngine::DirectionLight directionLight;
 };
 
 

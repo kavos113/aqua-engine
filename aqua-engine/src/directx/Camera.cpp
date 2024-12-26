@@ -16,28 +16,6 @@ namespace AquaEngine {
         SetMatrixBuffer(eye, focus, up, matrix_range);
     }
 
-    // matrix buffer's range type : CBV (register b)
-    void Camera::Init(
-        DirectX::XMFLOAT3 eye,
-        DirectX::XMFLOAT3 focus,
-        DirectX::XMFLOAT3 up,
-        DescriptorHeapSegmentManager &model_heap,
-        unsigned int matrix_shader_register
-    )
-    {
-        m_manager = &model_heap;
-
-        D3D12_DESCRIPTOR_RANGE matrix_range = {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = matrix_shader_register,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        };
-
-        SetMatrixBuffer(eye, focus, up, matrix_range);
-    }
-
     void Camera::Render(Command &command) const
     {
         m_matrixCBV.SetGraphicsRootDescriptorTable(&command);

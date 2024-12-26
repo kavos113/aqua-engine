@@ -15,25 +15,6 @@ namespace AquaEngine
         SetBuffer(direction, color, matrix_range);
     }
 
-    void DirectionLight::Init(
-        DirectX::XMFLOAT3 direction,
-        DirectX::XMFLOAT3 color,
-        DescriptorHeapSegmentManager &model_heap,
-        unsigned int matrix_shader_register
-    )
-    {
-        m_manager = &model_heap;
-
-        D3D12_DESCRIPTOR_RANGE matrix_range = {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = matrix_shader_register,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        };
-        SetBuffer(direction, color, matrix_range);
-    }
-
     void DirectionLight::Render(Command &command) const
     {
         m_view.SetGraphicsRootDescriptorTable(&command);
@@ -47,6 +28,7 @@ namespace AquaEngine
     {
         m_light.direction = direction;
         m_light.color = color;
+        m_light.padding = 0.0f;
 
         m_buffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(Light), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
         m_buffer.GetMappedBuffer()->direction = m_light.direction;
@@ -63,5 +45,4 @@ namespace AquaEngine
         m_view.SetDescriptorHeapSegment(segment, 0);
         m_view.Create(m_buffer);
     }
-
 }

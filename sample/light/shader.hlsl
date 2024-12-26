@@ -7,13 +7,19 @@ struct Type {
 Texture2D tex : register(t0);
 SamplerState sam : register(s0);
 
-cbuffer SceneMatrix : register(b0)
+cbuffer Camera : register(b2)
 {
     matrix view;
     matrix projection;
 };
 
-cbuffer WorldMatrix : register(b1)
+cbuffer Light : register(b3)
+{
+    float3 lightDirection;
+    float3 lightColor;
+}
+
+cbuffer WorldMatrix : register(b0)
 {
     matrix world;
 };
@@ -34,8 +40,11 @@ Type vsMain(
 
 float4 psMain(Type input) : SV_TARGET
 {
-    float3 light = normalize(float3(-1.0, -1.0, -1.0));
-    float brightness = dot(input.normal.xyz, light);
+    float3 light = normalize(lightDirection);
+    float brightness = dot(input.normal.xyz, light) * -1.0f;
+    brightness = saturate(brightness);
 
-    return float4(brightness, brightness, brightness, 1.0) * tex.Sample(sam, input.uv);
+    float3 color = lightColor * brightness;
+
+    return tex.Sample(sam, input.uv) * float4(color, 1.0f);
 }

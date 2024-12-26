@@ -39,8 +39,6 @@ set(SRC
         src/fbx/FbxManager.cpp
         src/directx/mesh/fbx/FBXModel.cpp
         include/directx/mesh/fbx/FBXModel.h
-        src/directx/mesh/fbx/FBXSceneContext.cpp
-        include/directx/mesh/fbx/FBXSceneContext.h
 )
 
 set(INCLUDE
@@ -80,8 +78,6 @@ set(INCLUDE
         include/fbx/FbxManager.h
         src/directx/mesh/fbx/FBXModel.cpp
         include/directx/mesh/fbx/FBXModel.h
-        src/directx/mesh/fbx/FBXSceneContext.cpp
-        include/directx/mesh/fbx/FBXSceneContext.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

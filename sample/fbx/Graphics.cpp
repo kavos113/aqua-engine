@@ -1,5 +1,8 @@
 #include "Graphics.h"
 
+#include <iostream>
+#include <ostream>
+
 Graphics::Graphics(HWND hwnd, RECT rc)
     : hwnd(hwnd)
     , rc(rc)
@@ -146,7 +149,13 @@ void Graphics::SetUp()
 
     OutputDebugString("[Message] Pipeline state created\n");
 
-    model->SetCurrentAnimStack(0);
+    auto anims = model->GetAnimStackNames();
+    for (auto& anim : anims)
+    {
+        std::cout << anim << std::endl;
+    }
+
+    model->PlayAnimation("metarig|hirou", AquaEngine::FBXModel::AnimationMode::LOOP);
     SetTimer(hwnd, 1, model->GetFrameCount(), nullptr);
     SetTimer(hwnd, 2, model2->GetFrameCount(), nullptr);
 

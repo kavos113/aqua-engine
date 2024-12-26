@@ -31,9 +31,22 @@ set(TEST_SRC
         test/engine/directx/ShaderObject.cpp
         test/engine/directx/RootSignature.cpp
         test/engine/directx/PipelineState.cpp
+        test/engine/directx/mesh/Polygon.cpp
 )
 
-file(COPY test/engine/directx/ps.hlsl test/engine/directx/vs.hlsl DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+set(LOCAL_TEST_SRC
+        test/engine/directx/TextureManager.cpp
+        test/engine/directx/mesh/PolygonTexture.cpp
+        test/engine/directx/mesh/FBX.cpp
+)
+
+file(COPY
+        test/engine/directx/ps.hlsl
+        test/engine/directx/vs.hlsl
+        test/engine/directx/isu.png
+        test/engine/directx/isu.fbx
+        test/engine/directx/icon.png
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 include(FetchContent)
 FetchContent_Declare(
@@ -46,7 +59,11 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(aqua-test ${TEST_SRC})
+if (LOCAL_BUILD)
+    add_executable(aqua-test ${LOCAL_TEST_SRC} ${TEST_SRC})
+else ()
+    add_executable(aqua-test ${TEST_SRC})
+endif ()
 add_dependencies(aqua-test aqua-engine)
 target_link_libraries(aqua-test aqua-engine gtest_main)
 

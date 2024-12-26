@@ -35,10 +35,10 @@ void Graphics::SetUp()
     );
 
     camera.Init(
-        manager,
         {0.0f, 0.0f, -5.0f},
         {0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f},
+        manager,
         {
             .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
             .NumDescriptors = 1,

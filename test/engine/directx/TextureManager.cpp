@@ -24,7 +24,7 @@ protected:
         Factory::Shutdown();
     }
 
-    Command* command{};
+    Command *command{};
 };
 
 TEST_F(TextureManagerTest, LoadFile)

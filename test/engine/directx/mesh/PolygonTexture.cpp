@@ -24,7 +24,7 @@ protected:
         Factory::Shutdown();
     }
 
-    Command* command{};
+    Command *command{};
 };
 
 TEST_F(PolygonTextureTest, Texture)
@@ -39,18 +39,22 @@ TEST_F(PolygonTextureTest, Texture)
         *command
     );
     rectangle_texture.Create();
-    rectangle_texture.CreateShaderResourceView({
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
-    rectangle_texture.CreateMatrixBuffer({
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
+    rectangle_texture.CreateShaderResourceView(
+        {
+            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+            .NumDescriptors = 1,
+            .BaseShaderRegister = 0,
+            .RegisterSpace = 0,
+            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        }
+    );
+    rectangle_texture.CreateMatrixBuffer(
+        {
+            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+            .NumDescriptors = 1,
+            .BaseShaderRegister = 0,
+            .RegisterSpace = 0,
+            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        }
+    );
 }

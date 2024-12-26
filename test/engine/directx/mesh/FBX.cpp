@@ -26,7 +26,7 @@ protected:
         Factory::Shutdown();
     }
 
-    Command* command{};
+    Command *command{};
 };
 
 TEST_F(FBXTest, Init)
@@ -36,7 +36,7 @@ TEST_F(FBXTest, Init)
 
 TEST_F(FBXTest, Load)
 {
-    FbxScene* scene;
+    FbxScene *scene;
     int r = FBXManager::ReadFile("isu.fbx", &scene);
     ASSERT_EQ(r, 0);
     ASSERT_NE(scene, nullptr);
@@ -46,7 +46,8 @@ TEST_F(FBXTest, LoadModel)
 {
     FBXModel model(
         GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-        "isu.fbx");
+        "isu.fbx"
+    );
     model.Create();
 }
 
@@ -56,13 +57,16 @@ TEST_F(FBXTest, LoadModelTexture)
         GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
         "isu.fbx",
         "isu.png",
-        *command);
+        *command
+    );
     model.Create();
-    model.SetTexture({
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
+    model.SetTexture(
+        {
+            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+            .NumDescriptors = 1,
+            .BaseShaderRegister = 0,
+            .RegisterSpace = 0,
+            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        }
+    );
 }

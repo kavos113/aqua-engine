@@ -98,7 +98,7 @@ add_executable(sample-light WIN32 sample/light/main.cpp sample/light/Graphics.cp
 add_dependencies(sample-light aqua-engine)
 target_include_directories(sample-light PUBLIC aqua-engine/include)
 target_link_libraries(sample-light aqua-engine)
-file(COPY sample/light/vs.hlsl sample/light/ps.hlsl sample/light/type.hlsli DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+file(COPY sample/light/shader.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 if (LOCAL_BUILD) # fbx and png: local only
     file(COPY sample/light/isu.fbx sample/light/isu.png sample/light/ninja.fbx sample/light/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     message(STATUS "copy fbx files.")

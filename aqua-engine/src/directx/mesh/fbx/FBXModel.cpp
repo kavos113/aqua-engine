@@ -200,6 +200,8 @@ namespace AquaEngine {
             return;
         }
 
+        OutputDebugString("[FBX] Read FBX File.\n");
+
         m_scene->FillAnimStackNameArray(m_animStackNameArray);
         for (int i = 0; i < m_animStackNameArray.GetCount(); ++i)
         {

@@ -40,13 +40,20 @@ set(LOCAL_TEST_SRC
         test/engine/directx/mesh/FBX.cpp
 )
 
-file(COPY
+if (LOCAL_BUILD)
+    file(COPY
+            test/engine/directx/ps.hlsl
+            test/engine/directx/vs.hlsl
+            test/engine/directx/isu.png
+            test/engine/directx/isu.fbx
+            test/engine/directx/icon.png
+            DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+else()
+    file(COPY
         test/engine/directx/ps.hlsl
         test/engine/directx/vs.hlsl
-        test/engine/directx/isu.png
-        test/engine/directx/isu.fbx
-        test/engine/directx/icon.png
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 include(FetchContent)
 FetchContent_Declare(

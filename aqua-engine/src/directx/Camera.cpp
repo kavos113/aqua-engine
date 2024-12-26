@@ -4,10 +4,10 @@
 
 namespace AquaEngine {
     void Camera::Init(
-        DescriptorHeapSegmentManager &model_heap,
         DirectX::XMFLOAT3 eye,
         DirectX::XMFLOAT3 focus,
         DirectX::XMFLOAT3 up,
+        DescriptorHeapSegmentManager &model_heap,
         const D3D12_DESCRIPTOR_RANGE &matrix_range
     )
     {
@@ -18,10 +18,10 @@ namespace AquaEngine {
 
     // matrix buffer's range type : CBV (register b)
     void Camera::Init(
-        DescriptorHeapSegmentManager &model_heap,
         DirectX::XMFLOAT3 eye,
         DirectX::XMFLOAT3 focus,
         DirectX::XMFLOAT3 up,
+        DescriptorHeapSegmentManager &model_heap,
         unsigned int matrix_shader_register
     )
     {

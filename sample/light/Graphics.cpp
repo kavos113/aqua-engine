@@ -41,10 +41,10 @@ void Graphics::SetUp()
     );
 
     camera.Init(
-        manager,
         {0.0f, 0.0f, -2.0f},
         {0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f},
+        manager,
         0
     );
 

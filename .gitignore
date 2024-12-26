@@ -115,4 +115,7 @@ fabric.properties
 
 *.fbx
 log
-./Makefile
+/Makefile
+*.png
+*.pdb
+.vs

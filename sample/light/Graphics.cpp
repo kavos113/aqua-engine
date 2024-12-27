@@ -57,7 +57,7 @@ void Graphics::SetUp()
     OutputDebugString("[Message] Camera initialized\n");
 
     directionLight.Init(
-        {1.0f, -1.0f, 1.0f},
+        {-1.0f, -1.0f, 1.0f},
         {1.0f, 1.0f, 1.0f},
         manager,
         {

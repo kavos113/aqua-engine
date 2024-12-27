@@ -109,12 +109,12 @@ namespace AquaEngine {
         struct Material
         {
             DirectX::XMFLOAT3 ambient;
-            DirectX::XMFLOAT3 diffuse;
-            DirectX::XMFLOAT3 specular;
-            DirectX::XMFLOAT3 emissive;
             float opacity;
+            DirectX::XMFLOAT3 diffuse;
             float shininess;
+            DirectX::XMFLOAT3 specular;
             float reflectivity;
+            DirectX::XMFLOAT3 emissive;
         };
 
         std::vector<Vertex> m_vertices{};

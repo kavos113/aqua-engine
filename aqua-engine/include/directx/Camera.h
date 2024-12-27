@@ -35,6 +35,7 @@ namespace AquaEngine {
         {
             DirectX::XMMATRIX view;
             DirectX::XMMATRIX projection;
+            DirectX::XMFLOAT3 eye;
         };
 
         void SetMatrixBuffer(

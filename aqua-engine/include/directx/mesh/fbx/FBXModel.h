@@ -1,6 +1,7 @@
 #ifndef FBXMODEL_H
 #define FBXMODEL_H
 #include <fbxsdk.h>
+#include <unordered_map>
 
 #include <utility>
 
@@ -20,12 +21,19 @@ namespace AquaEngine {
             REFRESHED
         };
 
+        enum class AnimationMode
+        {
+            LOOP,
+            ONCE,
+        };
+
         FBXModel(
             DescriptorHeapSegmentManager& manager,
             std::string model_path
         )
             : Mesh(manager)
             , m_status(Status::MUST_BE_REFRESHED)
+            , m_animationMode(AnimationMode::ONCE)
             , m_path(std::move(model_path))
         {
 
@@ -40,6 +48,7 @@ namespace AquaEngine {
             : Mesh(manager)
             , m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
             , m_status(Status::MUST_BE_REFRESHED)
+            , m_animationMode(AnimationMode::ONCE)
             , m_path(std::move(model_path))
         {
 
@@ -65,7 +74,10 @@ namespace AquaEngine {
             int offset = 0
         );
 
+        HRESULT PlayAnimation(const std::string &name, AnimationMode mode = AnimationMode::ONCE);
+
         HRESULT SetCurrentAnimStack(int index);
+        HRESULT SetCurrentAnimStack(const std::string &name);
 
         void SetCurrentPoseIndex(int index);
 
@@ -74,6 +86,16 @@ namespace AquaEngine {
         [[nodiscard]] unsigned int GetFrameCount() const
         {
             return static_cast<unsigned int>(m_frameTime.GetMilliSeconds());
+        }
+
+        [[nodiscard]] std::vector<std::string> GetAnimStackNames() const
+        {
+            std::vector<std::string> names;
+            for (int i = 0; i < m_animStackNameArray.GetCount(); ++i)
+            {
+                names.emplace_back(m_animStackNameArray[i]->Buffer());
+            }
+            return names;
         }
 
     private:
@@ -87,12 +109,12 @@ namespace AquaEngine {
         struct Material
         {
             DirectX::XMFLOAT3 ambient;
-            DirectX::XMFLOAT3 diffuse;
-            DirectX::XMFLOAT3 specular;
-            DirectX::XMFLOAT3 emissive;
             float opacity;
+            DirectX::XMFLOAT3 diffuse;
             float shininess;
+            DirectX::XMFLOAT3 specular;
             float reflectivity;
+            DirectX::XMFLOAT3 emissive;
         };
 
         std::vector<Vertex> m_vertices{};
@@ -112,12 +134,14 @@ namespace AquaEngine {
         FbxNode* m_selectedNode{};
         FbxAnimLayer* m_currentAnimLayer{};
 
-        FbxArray<FbxString*> m_animStackNameArray{};
         FbxArray<FbxPose*> m_poseArray{};
+        FbxArray<FbxString*> m_animStackNameArray{};
+        std::unordered_map<std::string, int> m_animStackLayers{};
 
         FbxTime m_frameTime, m_startTime, m_stopTime, m_currentTime;
 
         Status m_status;
+        AnimationMode m_animationMode;
 
         int m_poseIndex = -1;
 

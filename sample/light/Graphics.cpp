@@ -48,7 +48,7 @@ void Graphics::SetUp()
         {
             .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
             .NumDescriptors = 1,
-            .BaseShaderRegister = 0,
+            .BaseShaderRegister = 2,
             .RegisterSpace = 0,
             .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
         }
@@ -56,11 +56,24 @@ void Graphics::SetUp()
 
     OutputDebugString("[Message] Camera initialized\n");
 
+    directionLight.Init(
+        {-1.0f, -1.0f, 1.0f},
+        {1.0f, 1.0f, 1.0f},
+        manager,
+        {
+            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+            .NumDescriptors = 1,
+            .BaseShaderRegister = 3,
+            .RegisterSpace = 0,
+            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        }
+    );
+
     auto matrix_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
     D3D12_DESCRIPTOR_RANGE matrix_range = {
         .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         .NumDescriptors = 1,
-        .BaseShaderRegister = 1,
+        .BaseShaderRegister = 0,
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     };
@@ -90,7 +103,7 @@ void Graphics::SetUp()
     D3D12_DESCRIPTOR_RANGE material_range = {
         .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         .NumDescriptors = 1,
-        .BaseShaderRegister = 2,
+        .BaseShaderRegister = 1,
         .RegisterSpace = 0,
         .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     };
@@ -117,27 +130,14 @@ void Graphics::SetUp()
 
     auto inputElement = model->GetInputElementDescs();
 
-    rootSignature.AddStaticSampler(
-        {
-            .Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,
-            .AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-            .AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-            .AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-            .ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
-            .MinLOD = 0.0f,
-            .MaxLOD = D3D12_FLOAT32_MAX,
-            .ShaderRegister = 0,
-            .RegisterSpace = 0,
-            .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
-        }
-    );
+    rootSignature.AddStaticSampler(AquaEngine::RootSignature::DefaultStaticSampler());
     rootSignature.SetDescriptorHeapSegmentManager(&manager);
     hr = rootSignature.Create();
     if (FAILED(hr)) exit(-1);
 
     AquaEngine::ShaderObject vs, ps;
-    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
-    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
+    vs.Load(L"shader.hlsl", "vsMain", "vs_5_0");
+    ps.Load(L"shader.hlsl", "psMain", "ps_5_0");
     OutputDebugString("[Message] Shader loaded\n");
 
     pipelineState.SetRootSignature(&rootSignature);
@@ -156,8 +156,8 @@ void Graphics::SetUp()
     }
 
     model->PlayAnimation("metarig|hirou", AquaEngine::FBXModel::AnimationMode::LOOP);
-    SetTimer(hwnd, 1, model->GetFrameCount(), nullptr);
-    SetTimer(hwnd, 2, model2->GetFrameCount(), nullptr);
+    SetTimer(hwnd, TIMER_MODEL1, model->GetFrameCount(), nullptr);
+    SetTimer(hwnd, TIMER_MODEL2, model2->GetFrameCount(), nullptr);
 
     model->RotX(-DirectX::XM_PIDIV2);
     model->RotY(DirectX::XM_PI);
@@ -185,6 +185,7 @@ void Graphics::Render() const
     display->SetViewports();
 
     camera.Render(*command);
+    directionLight.Render(*command);
     model->Render(*command);
     model2->Render(*command);
 
@@ -200,12 +201,14 @@ void Graphics::Timer(int id) const
 {
     switch (id)
     {
-    case 1:
+    case TIMER_MODEL1:
         model->Timer();
+        InvalidateRect(hwnd, &rc, false);
         break;
 
-    case 2:
+    case TIMER_MODEL2:
         model2->Timer();
+        InvalidateRect(hwnd, &rc, false);
         break;
     }
 }

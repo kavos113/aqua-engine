@@ -30,6 +30,23 @@ namespace AquaEngine
         {
             return m_rootSignature;
         }
+
+        static D3D12_STATIC_SAMPLER_DESC DefaultStaticSampler()
+        {
+            return D3D12_STATIC_SAMPLER_DESC{
+                .Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+                .AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+                .AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+                .AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+                .ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
+                .MinLOD = 0.0f,
+                .MaxLOD = D3D12_FLOAT32_MAX,
+                .ShaderRegister = 0,
+                .RegisterSpace = 0,
+                .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
+            };
+        }
+
     private:
         ID3D12RootSignature *m_rootSignature;
 

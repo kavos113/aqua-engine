@@ -31,9 +31,29 @@ set(TEST_SRC
         test/engine/directx/ShaderObject.cpp
         test/engine/directx/RootSignature.cpp
         test/engine/directx/PipelineState.cpp
+        test/engine/directx/mesh/Polygon.cpp
 )
 
-file(COPY test/engine/directx/ps.hlsl test/engine/directx/vs.hlsl DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+set(LOCAL_TEST_SRC
+        test/engine/directx/TextureManager.cpp
+        test/engine/directx/mesh/PolygonTexture.cpp
+        test/engine/directx/mesh/FBX.cpp
+)
+
+if (LOCAL_BUILD)
+    file(COPY
+            test/engine/directx/ps.hlsl
+            test/engine/directx/vs.hlsl
+            test/engine/directx/isu.png
+            test/engine/directx/isu.fbx
+            test/engine/directx/icon.png
+            DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+else()
+    file(COPY
+        test/engine/directx/ps.hlsl
+        test/engine/directx/vs.hlsl
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 include(FetchContent)
 FetchContent_Declare(
@@ -46,7 +66,11 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(aqua-test ${TEST_SRC})
+if (LOCAL_BUILD)
+    add_executable(aqua-test ${LOCAL_TEST_SRC} ${TEST_SRC})
+else ()
+    add_executable(aqua-test ${TEST_SRC})
+endif ()
 add_dependencies(aqua-test aqua-engine)
 target_link_libraries(aqua-test aqua-engine gtest_main)
 
@@ -86,6 +110,21 @@ target_link_libraries(sample-fbx aqua-engine)
 file(COPY sample/fbx/vs.hlsl sample/fbx/ps.hlsl sample/fbx/type.hlsli DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 if (LOCAL_BUILD) # fbx and png: local only
     file(COPY sample/fbx/isu.fbx sample/fbx/isu.png sample/fbx/ninja.fbx sample/fbx/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    message(STATUS "copy fbx files.")
+endif ()
+message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/light)
+add_executable(sample-light WIN32 sample/light/main.cpp sample/light/Graphics.cpp sample/light/Graphics.h
+        sample/light/BaseWindow.h
+        sample/light/MainWindow.cpp
+        sample/light/MainWindow.h)
+add_dependencies(sample-light aqua-engine)
+target_include_directories(sample-light PUBLIC aqua-engine/include)
+target_link_libraries(sample-light aqua-engine)
+file(COPY sample/light/shader.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+if (LOCAL_BUILD) # fbx and png: local only
+    file(COPY sample/light/isu.fbx sample/light/isu.png sample/light/ninja.fbx sample/light/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     message(STATUS "copy fbx files.")
 endif ()
 message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

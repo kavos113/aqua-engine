@@ -4,10 +4,10 @@
 
 namespace AquaEngine {
     void Camera::Init(
-        DescriptorHeapSegmentManager &model_heap,
         DirectX::XMFLOAT3 eye,
         DirectX::XMFLOAT3 focus,
         DirectX::XMFLOAT3 up,
+        DescriptorHeapSegmentManager &model_heap,
         const D3D12_DESCRIPTOR_RANGE &matrix_range
     )
     {
@@ -43,6 +43,7 @@ namespace AquaEngine {
         m_matrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(CameraMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
         m_matrixBuffer.GetMappedBuffer()->view = m_view;
         m_matrixBuffer.GetMappedBuffer()->projection = m_projection;
+        m_matrixBuffer.GetMappedBuffer()->eye = eye;
 
         auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
         segment->SetRootParameter(

@@ -38,9 +38,7 @@ set(SRC
         src/directx/Camera.cpp
         src/fbx/FbxManager.cpp
         src/directx/mesh/fbx/FBXModel.cpp
-        include/directx/mesh/fbx/FBXModel.h
-        src/directx/mesh/fbx/FBXSceneContext.cpp
-        include/directx/mesh/fbx/FBXSceneContext.h
+        src/directx/DirectionLight.cpp
 )
 
 set(INCLUDE
@@ -78,10 +76,8 @@ set(INCLUDE
         include/directx/mesh/Mesh.h
         include/directx/Camera.h
         include/fbx/FbxManager.h
-        src/directx/mesh/fbx/FBXModel.cpp
         include/directx/mesh/fbx/FBXModel.h
-        src/directx/mesh/fbx/FBXSceneContext.cpp
-        include/directx/mesh/fbx/FBXSceneContext.h
+        include/directx/DirectionLight.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

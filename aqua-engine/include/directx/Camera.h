@@ -13,10 +13,10 @@ namespace AquaEngine {
     class Camera {
     public:
         void Init(
-            DescriptorHeapSegmentManager &model_heap,
             DirectX::XMFLOAT3 eye,
             DirectX::XMFLOAT3 focus,
             DirectX::XMFLOAT3 up,
+            DescriptorHeapSegmentManager &model_heap,
             const
             D3D12_DESCRIPTOR_RANGE &matrix_range
         );
@@ -35,6 +35,7 @@ namespace AquaEngine {
         {
             DirectX::XMMATRIX view;
             DirectX::XMMATRIX projection;
+            DirectX::XMFLOAT3 eye;
         };
 
         void SetMatrixBuffer(

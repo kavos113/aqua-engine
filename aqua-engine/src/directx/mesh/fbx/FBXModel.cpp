@@ -200,7 +200,13 @@ namespace AquaEngine {
             return;
         }
 
+        OutputDebugString("[FBX] Read FBX File.\n");
+
         m_scene->FillAnimStackNameArray(m_animStackNameArray);
+        for (int i = 0; i < m_animStackNameArray.GetCount(); ++i)
+        {
+            m_animStackLayers[m_animStackNameArray[i]->Buffer()] = i;
+        }
 
         // pose
         const int pose_count = m_scene->GetPoseCount();
@@ -460,6 +466,27 @@ namespace AquaEngine {
         m_textureSRV.Create(m_texture);
     }
 
+    HRESULT FBXModel::PlayAnimation(const std::string &name, AnimationMode mode)
+    {
+        m_animationMode = mode;
+        HRESULT hr = SetCurrentAnimStack(name);
+        if (FAILED(hr))
+        {
+            OutputDebugString("[FBX] failed to find anim stack.\n");
+        }
+        return hr;
+    }
+
+    HRESULT FBXModel::SetCurrentAnimStack(const std::string &name)
+    {
+        HRESULT hr = SetCurrentAnimStack(m_animStackLayers[name]);
+        if (FAILED(hr))
+        {
+            OutputDebugString("[FBX] failed to find anim stack.\n");
+        }
+        return hr;
+    }
+
     HRESULT FBXModel::SetCurrentAnimStack(int index)
     {
         const int anim_stack_count = m_animStackNameArray.GetCount();
@@ -595,7 +622,15 @@ namespace AquaEngine {
 
             if (m_currentTime > m_stopTime)
             {
-                m_currentTime = m_startTime; // ループ再生
+                if (m_animationMode == AnimationMode::LOOP)
+                {
+                    m_currentTime = m_startTime; // ループ再生
+                }
+                else
+                {
+                    m_stopTime = m_startTime;
+                    m_currentTime = m_startTime;
+                }
             }
         }
         else

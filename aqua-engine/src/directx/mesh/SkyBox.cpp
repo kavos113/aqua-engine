@@ -1,5 +1,6 @@
 #include "../../../include/directx/mesh/SkyBox.h"
 
+#include <d3d12.h>
 #include <DirectXTex.h>
 #include <ranges>
 
@@ -27,7 +28,7 @@ namespace AquaEngine
             GlobalDescriptorHeapManager::CreateShaderManager("hdri", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
         );
         m_cubeMapManager = std::make_unique<DescriptorHeapSegmentManager>(
-            GlobalDescriptorHeapManager::CreateShaderManager("cube_map", 6, D3D12_DESCRIPTOR_HEAP_TYPE_RTV)
+            GlobalDescriptorHeapManager::CreateShaderManager("cube_map", 6, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
         );
 
         CreateVertexBuffer();
@@ -41,10 +42,7 @@ namespace AquaEngine
 
     void SkyBox::Render(Command &command)
     {
-        Mesh::Render(command);
 
-        m_hdriSrv.SetGraphicsRootDescriptorTable(&command);
-        command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
     }
 
     void SkyBox::CreateHDRIShaderResourceView()
@@ -73,6 +71,8 @@ namespace AquaEngine
     {
         D3D12_RESOURCE_DESC resourceDesc = Buffer::ResourceDesc::DepthStencil(cubeSize, cubeSize);
         resourceDesc.DepthOrArraySize = 6;
+        resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
+        resourceDesc.Format = DXGI_FORMAT_R32G32B32A32_TYPELESS;
 
         m_cubeMapBuffer.Create(
             Buffer::HeapProperties::Default(),
@@ -85,18 +85,31 @@ namespace AquaEngine
         auto &rtv_manager = GlobalDescriptorHeapManager::GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         auto rtv_segment = std::make_shared<DescriptorHeapSegment>(rtv_manager.Allocate(6));
 
+
+        D3D12_RENDER_TARGET_VIEW_DESC desc = {};
+        desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+        desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DARRAY;
+        desc.Texture2DArray.MipSlice = 0;
+        desc.Texture2DArray.ArraySize = 1;
         for (int i = 0; i < 6; ++i)
         {
             m_cubeMapRtv[i].SetDescriptorHeapSegment(rtv_segment, i);
-            m_cubeMapRtv[i].Create(m_cubeMapBuffer);
+            desc.Texture2DArray.FirstArraySlice = i;
+            m_cubeMapRtv[i].Create(m_cubeMapBuffer, desc);
         }
 
-        auto segment = std::make_shared<DescriptorHeapSegment>(m_cubeMapManager->Allocate(6));
-        for (int i = 0; i < 6; ++i)
-        {
-            m_cubeMapSrv[i].SetDescriptorHeapSegment(segment, i);
-            m_cubeMapSrv[i].Create(m_cubeMapBuffer);
-        }
+        auto segment = std::make_shared<DescriptorHeapSegment>(m_cubeMapManager->Allocate(1));
+        m_cubeMapSrv.SetDescriptorHeapSegment(segment, 0);
+        m_cubeMapSrv.Create(m_cubeMapBuffer, {
+            .Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+            .ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE,
+            .Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+            .TextureCube = {
+                .MostDetailedMip = 0,
+                .MipLevels = 1,
+                .ResourceMinLODClamp = 0.0f
+            }
+        });
         D3D12_DESCRIPTOR_RANGE range = {
             .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
             .NumDescriptors = 1,
@@ -216,6 +229,24 @@ namespace AquaEngine
             auto rtvHandle = m_cubeMapRtv[i].GetCPUHandle();
             command.List()->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
 
+            D3D12_VIEWPORT viewport = {
+                .TopLeftX = 0.0f,
+                .TopLeftY = 0.0f,
+                .Width = static_cast<float>(cubeSize),
+                .Height = static_cast<float>(cubeSize),
+                .MinDepth = 0.0f,
+                .MaxDepth = 1.0f
+            };
+            command.List()->RSSetViewports(1, &viewport);
+
+            D3D12_RECT scissor = {
+                .left = 0,
+                .top = 0,
+                .right = cubeSize,
+                .bottom = cubeSize
+            };
+            command.List()->RSSetScissorRects(1, &scissor);
+
             m_matrixCBV[i].SetGraphicsRootDescriptorTable(&command);
             command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
         }
@@ -224,6 +255,35 @@ namespace AquaEngine
         if (FAILED(hr))
         {
             OutputDebugString("Failed to execute command\n");
+            assert(false);
+        }
+    }
+
+    void SkyBox::SaveDDS(const Command &command) const
+    {
+        DirectX::ScratchImage image;
+        HRESULT hr = CaptureTexture(
+            command.Queue(),
+            m_cubeMapBuffer.GetBuffer(),
+            true,
+            image
+        );
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to capture texture\n");
+            assert(false);
+        }
+
+        hr = SaveToDDSFile(
+            image.GetImages(),
+            image.GetImageCount(),
+            image.GetMetadata(),
+            DirectX::DDS_FLAGS_NONE,
+            L"skybox.dds"
+        );
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to save to DDS file\n");
             assert(false);
         }
     }

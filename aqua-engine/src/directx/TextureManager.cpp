@@ -161,9 +161,19 @@ namespace AquaEngine
         );
         if (FAILED(hr))
         {
-            OutputDebugString(_T("Failed to load texture from file: "));
-            OutputDebugString(filename.c_str());
-            OutputDebugString("\n");
+            if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+            {
+                OutputDebugString(_T("file not found: "));
+                OutputDebugString(filename.c_str());
+                OutputDebugString("\n");
+                system("dir");
+            }
+            else
+            {
+                OutputDebugString(_T("Failed to load texture from file: "));
+                OutputDebugString(filename.c_str());
+                OutputDebugString("\n");
+            }
             return {};
         }
 

@@ -128,3 +128,9 @@ if (LOCAL_BUILD) # fbx and png: local only
     message(STATUS "copy fbx files.")
 endif ()
 message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/cubemap)
+add_executable(sample-cubemap WIN32 sample/cubemap/main.cpp)
+add_dependencies(sample-cubemap aqua-engine)
+target_include_directories(sample-cubemap PUBLIC aqua-engine/include)
+target_link_libraries(sample-cubemap aqua-engine)

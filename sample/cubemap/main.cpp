@@ -38,7 +38,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         return -1;
     }
 
-    // d3d init
     AquaEngine::Factory::Init(true);
     AquaEngine::Device::GetAdaptors();
     AquaEngine::Device::Init(0);
@@ -47,28 +46,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     AquaEngine::Command command;
     AquaEngine::Display display(hwnd, wr, command);
 
-    AquaEngine::Triangle triangle(
-        {0.0f, 0.5f, 0.0f},
-        {0.5f, -0.5f, 0.0f},
-        {-0.5f, -0.5f, 0.0f},
-        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager("triangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
-    triangle.Create();
-
-    std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs = AquaEngine::Triangle::GetInputElementDescs();
-
-    AquaEngine::ShaderObject vs, ps;
-    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
-    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
-
-    AquaEngine::RootSignature rootSignature;
-    rootSignature.Create();
-
-    AquaEngine::PipelineState pipelineState;
-    pipelineState.SetRootSignature(&rootSignature);
-    pipelineState.SetPixelShader(&ps);
-    pipelineState.SetVertexShader(&vs);
-    pipelineState.SetInputLayout(inputElementDescs.data(), inputElementDescs.size());
-    pipelineState.Create();
+    AquaEngine::SkyBox skyBox("goegap_road_4k.hdr", command, AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager("skybox", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+    skyBox.Create();
+    AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
+    skyBox.ConvertHDRIToCubeMap(command);
+    skyBox.SaveDDS(command);
 
     ShowWindow(hwnd, nCmdShow);
 
@@ -78,22 +60,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
-
-        AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
-
-        display.BeginRender();
-
-        pipelineState.SetToCommand(command);
-        rootSignature.SetToCommand(command);
-        display.SetViewports();
-
-        triangle.Render(command);
-
-        display.EndRender();
-
-        command.Execute();
-
-        display.Present();
     }
 
     AquaEngine::GlobalDescriptorHeapManager::Shutdown();

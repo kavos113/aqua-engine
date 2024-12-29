@@ -15,10 +15,10 @@ namespace AquaEngine
     {
     public:
         SkyBox(const std::string &hdriPath, Command &command, DescriptorHeapSegmentManager &manager)
-            : m_hdriPath(hdriPath)
+            : Mesh(manager)
+            , m_hdriPath(hdriPath)
             , m_hdriBuffer(TextureManager::LoadTextureFromHDRFile(hdriPath, command))
             , m_hdriSrv(ShaderResourceView())
-            , Mesh(manager)
             , m_vertices(
                 {
                     {{-1.0f, -1.0f, -1.0f}},
@@ -85,6 +85,8 @@ namespace AquaEngine
 
         void ConvertHDRIToCubeMap(Command &command);
 
+        void SaveDDS(const Command &command) const;
+
     private:
         struct Vertex
         {
@@ -106,7 +108,7 @@ namespace AquaEngine
         ShaderResourceView m_hdriSrv;
 
         Buffer m_cubeMapBuffer;
-        std::array<ShaderResourceView, 6> m_cubeMapSrv;
+        ShaderResourceView m_cubeMapSrv;
         std::array<RenderTargetView, 6> m_cubeMapRtv;
         std::unique_ptr<DescriptorHeapSegmentManager> m_cubeMapManager;
 
@@ -123,15 +125,11 @@ namespace AquaEngine
         const unsigned short cubeSize = 512;
 
         void CreateVertexBuffer();
-
         void CreateIndexBuffer();
-
         void CreateMatrixBuffer(const DirectX::XMFLOAT3 &eye);
-
         void CreateCubeMapBuffer();
 
         void CreateHDRIShaderResourceView();
-
         void CreateHDRIPipelineState();
     };
 } // AquaEngine

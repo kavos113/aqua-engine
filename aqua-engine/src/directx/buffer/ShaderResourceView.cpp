@@ -25,7 +25,7 @@ namespace AquaEngine
 
     }
 
-    void ShaderResourceView::Create(Buffer &buffer, D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc)
+    void ShaderResourceView::Create(const Buffer &buffer, const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc) const
     {
         if (CheckSegment() != 0) return;
 

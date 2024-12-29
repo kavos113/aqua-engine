@@ -39,6 +39,8 @@ set(SRC
         src/fbx/FbxManager.cpp
         src/directx/mesh/fbx/FBXModel.cpp
         src/directx/DirectionLight.cpp
+        src/directx/mesh/SkyBox.cpp
+        include/directx/mesh/SkyBox.h
 )
 
 set(INCLUDE
@@ -78,6 +80,8 @@ set(INCLUDE
         include/fbx/FbxManager.h
         include/directx/mesh/fbx/FBXModel.h
         include/directx/DirectionLight.h
+        src/directx/mesh/SkyBox.cpp
+        include/directx/mesh/SkyBox.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

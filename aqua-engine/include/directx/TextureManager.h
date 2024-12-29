@@ -12,6 +12,8 @@ namespace AquaEngine
     public:
         static ID3D12Resource* LoadTextureFromFile(const std::string &filename, Command &command);
 
+        static ID3D12Resource *LoadTextureFromHDRFile(const std::string &filename, Command &command);
+
     private:
         static std::map<std::string, ID3D12Resource*> m_resourceTable;
     };

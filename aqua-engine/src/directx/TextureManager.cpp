@@ -167,8 +167,7 @@ namespace AquaEngine
                 OutputDebugString(filename.c_str());
                 OutputDebugString("\n");
                 system("dir");
-            }
-            else
+            } else
             {
                 OutputDebugString(_T("Failed to load texture from file: "));
                 OutputDebugString(filename.c_str());

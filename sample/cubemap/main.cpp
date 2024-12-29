@@ -46,7 +46,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     AquaEngine::Command command;
     AquaEngine::Display display(hwnd, wr, command);
 
-    AquaEngine::SkyBox skyBox("goegap_road_4k.hdr", command, AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager("skybox", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+    AquaEngine::SkyBox skyBox(
+        "goegap_road_4k.hdr",
+        command,
+        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
+            "skybox",
+            10,
+            D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+        )
+    );
     skyBox.Create();
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
     skyBox.ConvertHDRIToCubeMap(command);

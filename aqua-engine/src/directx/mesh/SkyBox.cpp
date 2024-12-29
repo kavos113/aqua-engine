@@ -100,16 +100,19 @@ namespace AquaEngine
 
         auto segment = std::make_shared<DescriptorHeapSegment>(m_cubeMapManager->Allocate(1));
         m_cubeMapSrv.SetDescriptorHeapSegment(segment, 0);
-        m_cubeMapSrv.Create(m_cubeMapBuffer, {
-            .Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
-            .ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE,
-            .Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
-            .TextureCube = {
-                .MostDetailedMip = 0,
-                .MipLevels = 1,
-                .ResourceMinLODClamp = 0.0f
+        m_cubeMapSrv.Create(
+            m_cubeMapBuffer,
+            {
+                .Format = DXGI_FORMAT_R32G32B32A32_FLOAT,
+                .ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE,
+                .Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING,
+                .TextureCube = {
+                    .MostDetailedMip = 0,
+                    .MipLevels = 1,
+                    .ResourceMinLODClamp = 0.0f
+                }
             }
-        });
+        );
         D3D12_DESCRIPTOR_RANGE range = {
             .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
             .NumDescriptors = 1,

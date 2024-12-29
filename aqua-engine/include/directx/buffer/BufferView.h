@@ -40,6 +40,17 @@ namespace AquaEngine
     protected:
         std::shared_ptr<DescriptorHeapSegment> m_DescriptorHeapSegment;
         int m_offset = 0;
+
+        int CheckSegment() const
+        {
+            if (!m_DescriptorHeapSegment->IsEnable())
+            {
+                OutputDebugString("descriptor heap segment is not set\n");
+                return -1;
+            }
+
+            return 0;
+        }
     };
 }
 

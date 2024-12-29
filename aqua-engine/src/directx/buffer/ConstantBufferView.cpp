@@ -5,6 +5,8 @@ namespace AquaEngine
 {
     void ConstantBufferView::Create(Buffer &buffer)
     {
+        if (CheckSegment() != 0) return;
+
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
         cbvDesc.BufferLocation = buffer.GetBuffer()->GetGPUVirtualAddress();
         cbvDesc.SizeInBytes = static_cast<UINT>(buffer.GetBuffer()->GetDesc().Width);

@@ -7,8 +7,8 @@
 
 using DirectX::operator+;
 
-namespace AquaEngine {
-
+namespace AquaEngine
+{
     std::vector<D3D12_INPUT_ELEMENT_DESC> Mesh<SkyBox>::m_inputElementDescs = {
         {
             "POSITION",
@@ -68,6 +68,7 @@ namespace AquaEngine {
             1
         );
     }
+
     void SkyBox::CreateCubeMapBuffer()
     {
         D3D12_RESOURCE_DESC resourceDesc = Buffer::ResourceDesc::DepthStencil(cubeSize, cubeSize);
@@ -81,7 +82,7 @@ namespace AquaEngine {
             nullptr
         );
 
-        auto& rtv_manager = GlobalDescriptorHeapManager::GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        auto &rtv_manager = GlobalDescriptorHeapManager::GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         auto rtv_segment = std::make_shared<DescriptorHeapSegment>(rtv_manager.Allocate(6));
 
         for (int i = 0; i < 6; ++i)
@@ -115,17 +116,43 @@ namespace AquaEngine {
     {
         DirectX::XMVECTOR eyeVec = XMLoadFloat3(&eye);
         m_viewMatrices = {
-            DirectX::XMMatrixLookAtLH(eyeVec, eyeVec + DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
-            DirectX::XMMatrixLookAtLH(eyeVec, eyeVec + DirectX::XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
-            DirectX::XMMatrixLookAtLH(eyeVec, eyeVec + DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f), DirectX::XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f)),
-            DirectX::XMMatrixLookAtLH(eyeVec, eyeVec + DirectX::XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f), DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f)),
-            DirectX::XMMatrixLookAtLH(eyeVec, eyeVec + DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)),
-            DirectX::XMMatrixLookAtLH(eyeVec, eyeVec + DirectX::XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f), DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
+            DirectX::XMMatrixLookAtLH(
+                eyeVec,
+                eyeVec + DirectX::XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f),
+                DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+            ),
+            DirectX::XMMatrixLookAtLH(
+                eyeVec,
+                eyeVec + DirectX::XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f),
+                DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+            ),
+            DirectX::XMMatrixLookAtLH(
+                eyeVec,
+                eyeVec + DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f),
+                DirectX::XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f)
+            ),
+            DirectX::XMMatrixLookAtLH(
+                eyeVec,
+                eyeVec + DirectX::XMVectorSet(0.0f, -1.0f, 0.0f, 0.0f),
+                DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f)
+            ),
+            DirectX::XMMatrixLookAtLH(
+                eyeVec,
+                eyeVec + DirectX::XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f),
+                DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+            ),
+            DirectX::XMMatrixLookAtLH(
+                eyeVec,
+                eyeVec + DirectX::XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f),
+                DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)
+            )
         };
 
         for (int i = 0; i < 6; ++i)
         {
-            m_matrixBuffer[i].Create(BUFFER_DEFAULT(AlignmentSize(sizeof(Matrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
+            m_matrixBuffer[i].Create(
+                BUFFER_DEFAULT(AlignmentSize(sizeof(Matrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT))
+            );
             m_matrixBuffer[i].GetMappedBuffer()->view = m_viewMatrices[i];
         }
 
@@ -222,5 +249,4 @@ namespace AquaEngine {
         m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * 36;
     }
-
 } // AquaEngine

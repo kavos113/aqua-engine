@@ -39,6 +39,11 @@ namespace AquaEngine
                               const D3D12_DESCRIPTOR_RANGE* descriptorRanges,
                               int numDescriptorRanges);
 
+        bool IsEnable() const
+        {
+            return m_cpuHandle.ptr != 0;
+        }
+
     private:
         unsigned int m_numDescriptors;
 

@@ -145,7 +145,7 @@ namespace AquaEngine
         return texture;
     }
 
-    ID3D12Resource* TextureManager::LoadTextureFromHDRFile(const std::string &filename, Command &command)
+    ID3D12Resource *TextureManager::LoadTextureFromHDRFile(const std::string &filename, Command &command)
     {
         if (m_resourceTable.contains(filename))
         {
@@ -170,14 +170,16 @@ namespace AquaEngine
         const DirectX::Image *image = scratchImage.GetImage(0, 0, 0);
 
         GPUBuffer<uint8_t> upload_buffer;
-        hr = upload_buffer.Create(BUFFER_DEFAULT(AlignmentSize(image->rowPitch, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT) * image->height));
+        hr = upload_buffer.Create(
+            BUFFER_DEFAULT(AlignmentSize(image->rowPitch, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT) * image->height)
+        );
         if (FAILED(hr))
         {
             OutputDebugString(_T("Failed to create upload buffer\n"));
             return {};
         }
 
-        ID3D12Resource* texture = nullptr;
+        ID3D12Resource *texture = nullptr;
         D3D12_RESOURCE_DESC desc = {
             .Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension),
             .Alignment = 0,
@@ -208,9 +210,9 @@ namespace AquaEngine
             return {};
         }
 
-        uint8_t* src_addr = image->pixels;
+        uint8_t *src_addr = image->pixels;
         size_t row_pitch = AlignmentSize(image->rowPitch, D3D12_TEXTURE_DATA_PITCH_ALIGNMENT);
-        uint8_t* dst_addr = upload_buffer.GetMappedBuffer();
+        uint8_t *dst_addr = upload_buffer.GetMappedBuffer();
 
         for (size_t i = 0; i < image->height; ++i)
         {
@@ -235,7 +237,7 @@ namespace AquaEngine
             &num_rows,
             &row_size,
             &total_size
-            );
+        );
 
         D3D12_TEXTURE_COPY_LOCATION src = {
             .pResource = upload_buffer.GetBuffer(),

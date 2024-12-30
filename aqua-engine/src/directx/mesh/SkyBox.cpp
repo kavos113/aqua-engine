@@ -30,7 +30,7 @@ namespace AquaEngine
             GlobalDescriptorHeapManager::CreateShaderManager("hdri", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
         );
         m_cubeMapManager = std::make_unique<DescriptorHeapSegmentManager>(
-            GlobalDescriptorHeapManager::CreateShaderManager("cube_map", 6, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+            GlobalDescriptorHeapManager::CreateShaderManager("cube_map", 5, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
         );
 
         CreateVertexBuffer();
@@ -40,11 +40,6 @@ namespace AquaEngine
         CreateCubeMapBuffer();
         CreateHDRIShaderResourceView();
         CreateHDRIPipelineState();
-    }
-
-    void SkyBox::Render(Command &command)
-    {
-
     }
 
     void SkyBox::CreateHDRIShaderResourceView()
@@ -228,6 +223,7 @@ namespace AquaEngine
 
     void SkyBox::ConvertHDRIToCubeMap(Command &command)
     {
+        GlobalDescriptorHeapManager::SetToCommand(command);
         m_hdriRootSignature.SetToCommand(command);
         m_hdriPipelineState.SetToCommand(command);
         Mesh::Render(command);
@@ -332,6 +328,25 @@ namespace AquaEngine
             OutputDebugString("Failed to create pipeline state\n");
             assert(false);
         }
+    }
+
+    void SkyBox::Render(Command &command)
+    {
+        m_cubeMapRootSignature.SetToCommand(command);
+        m_cubeMapPipelineState.SetToCommand(command);
+        Mesh::Render(command);
+
+        Barrier::Transition(
+            &command,
+            m_cubeMapBuffer.GetBuffer().Get(),
+            D3D12_RESOURCE_STATE_RENDER_TARGET,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+        );
+
+        m_camera->Render(command, "cube_map");
+        m_cubeMapSrv.SetGraphicsRootDescriptorTable(&command);
+
+        command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
     }
 
     void SkyBox::CreateVertexBuffer()

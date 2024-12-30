@@ -89,7 +89,18 @@ namespace AquaEngine
         void SetCamera(std::shared_ptr<Camera> camera)
         {
             m_camera = std::move(camera);
+            m_camera->AddManager(
+                "cube_map",
+                std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+                    D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+                    1,
+                    0,
+                    0,
+                    D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+                )
+            );
         }
+        void CreateCubeMapPipelineState();
 
     private:
         struct Vertex
@@ -140,7 +151,6 @@ namespace AquaEngine
         void CreateHDRIShaderResourceView();
         void CreateHDRIPipelineState();
 
-        void CreateCubeMapPipelineState();
     };
 } // AquaEngine
 

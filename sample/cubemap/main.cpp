@@ -38,6 +38,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         return -1;
     }
 
+    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to initialize COM\n");
+        return -1;
+    }
+
     AquaEngine::Factory::Init(true);
     AquaEngine::Device::GetAdaptors();
     AquaEngine::Device::Init(0);
@@ -45,6 +52,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 
     AquaEngine::Command command;
     AquaEngine::Display display(hwnd, wr, command);
+
+    auto camera = std::make_shared<AquaEngine::Camera>(wr);
+    camera->Init(
+        {0.0f, 0.0f, -2.0f},
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 1.0f, 0.0f}
+    );
 
     AquaEngine::SkyBox skyBox(
         "goegap_road_4k.hdr",
@@ -56,9 +70,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         )
     );
     skyBox.Create();
-    AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
+    skyBox.SetCamera(camera);
     skyBox.ConvertHDRIToCubeMap(command);
-    skyBox.SaveDDS(command);
+    skyBox.CreateCubeMapPipelineState();
 
     ShowWindow(hwnd, nCmdShow);
 
@@ -68,6 +82,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        display.BeginRender();
+        display.SetViewports();
+        skyBox.Render(command);
+        display.EndRender();
+        HRESULT hr = command.Execute();
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to execute command\n");
+            return -1;
+        }
+
+        display.Present();
     }
 
     AquaEngine::GlobalDescriptorHeapManager::Shutdown();

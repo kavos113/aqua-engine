@@ -53,10 +53,7 @@ namespace AquaEngine
         m_psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
     }
 
-    PipelineState::~PipelineState()
-    {
-        SafeRelease(&m_pipelineState);
-    }
+    PipelineState::~PipelineState() = default;
 
     HRESULT PipelineState::Create()
     {
@@ -93,7 +90,7 @@ namespace AquaEngine
 
     void PipelineState::SetRootSignature(RootSignature *rootSignature)
     {
-        m_psoDesc.pRootSignature = rootSignature->GetRootSignature();
+        m_psoDesc.pRootSignature = rootSignature->GetRootSignature().Get();
     }
 
     void PipelineState::SetVertexShader(ShaderObject *vs)

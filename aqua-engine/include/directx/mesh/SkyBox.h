@@ -85,7 +85,7 @@ namespace AquaEngine
 
         void ConvertHDRIToCubeMap(Command &command);
 
-        void SaveDDS(const Command &command) const;
+        void SaveDDS(Command &command);
 
     private:
         struct Vertex

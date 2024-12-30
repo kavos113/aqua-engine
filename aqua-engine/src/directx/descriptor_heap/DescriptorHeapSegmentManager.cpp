@@ -126,7 +126,7 @@ namespace AquaEngine
     }
 
     void DescriptorHeapSegmentManager::SetGraphicsRootDescriptorTable(
-        const Command &command,
+        Command &command,
         GLOBAL_HEAP_ID id,
         unsigned int offset
     ) const

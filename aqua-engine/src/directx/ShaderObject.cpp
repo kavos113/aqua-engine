@@ -16,10 +16,7 @@ namespace AquaEngine
 
     }
 
-    ShaderObject::~ShaderObject()
-    {
-        SafeRelease(&m_blob);
-    }
+    ShaderObject::~ShaderObject() = default;
 
     HRESULT ShaderObject::Load(
         const wchar_t *filename,

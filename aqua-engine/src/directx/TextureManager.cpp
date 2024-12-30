@@ -10,9 +10,9 @@
 
 namespace AquaEngine
 {
-    std::map<std::string, ID3D12Resource*> TextureManager::m_resourceTable;
+    std::map<std::string, Microsoft::WRL::ComPtr<ID3D12Resource>> TextureManager::m_resourceTable;
 
-    ID3D12Resource* TextureManager::LoadTextureFromFile(const std::string &filename, Command &command)
+    Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::LoadTextureFromFile(const std::string &filename, Command &command)
     {
         if (m_resourceTable.contains(filename))
         {
@@ -60,7 +60,7 @@ namespace AquaEngine
             return {};
         }
 
-        ID3D12Resource* texture = nullptr;
+        Microsoft::WRL::ComPtr<ID3D12Resource> texture = nullptr;
         D3D12_RESOURCE_DESC desc = {
             .Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension),
             .Alignment = 0,
@@ -121,13 +121,13 @@ namespace AquaEngine
             );
 
         D3D12_TEXTURE_COPY_LOCATION src = {
-            .pResource = upload_buffer.GetBuffer(),
+            .pResource = upload_buffer.GetBuffer().Get(),
             .Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
             .PlacedFootprint = footprint
         };
 
         D3D12_TEXTURE_COPY_LOCATION dst = {
-            .pResource = texture,
+            .pResource = texture.Get(),
             .Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX,
             .SubresourceIndex = 0
         };
@@ -143,7 +143,7 @@ namespace AquaEngine
 
         Barrier::Transition(
             &command,
-            texture,
+            texture.Get(),
             D3D12_RESOURCE_STATE_COPY_DEST,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
         );
@@ -160,7 +160,7 @@ namespace AquaEngine
         return texture;
     }
 
-    ID3D12Resource *TextureManager::LoadTextureFromHDRFile(const std::string &filename, Command &command)
+    Microsoft::WRL::ComPtr<ID3D12Resource> TextureManager::LoadTextureFromHDRFile(const std::string &filename, Command &command)
     {
         if (m_resourceTable.contains(filename))
         {
@@ -203,7 +203,7 @@ namespace AquaEngine
             return {};
         }
 
-        ID3D12Resource *texture = nullptr;
+        Microsoft::WRL::ComPtr<ID3D12Resource> texture = nullptr;
         D3D12_RESOURCE_DESC desc = {
             .Dimension = static_cast<D3D12_RESOURCE_DIMENSION>(metadata.dimension),
             .Alignment = 0,
@@ -264,13 +264,13 @@ namespace AquaEngine
         );
 
         D3D12_TEXTURE_COPY_LOCATION src = {
-            .pResource = upload_buffer.GetBuffer(),
+            .pResource = upload_buffer.GetBuffer().Get(),
             .Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
             .PlacedFootprint = footprint
         };
 
         D3D12_TEXTURE_COPY_LOCATION dst = {
-            .pResource = texture,
+            .pResource = texture.Get(),
             .Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX,
             .SubresourceIndex = 0
         };
@@ -286,7 +286,7 @@ namespace AquaEngine
 
         Barrier::Transition(
             &command,
-            texture,
+            texture.Get(),
             D3D12_RESOURCE_STATE_COPY_DEST,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
         );

@@ -14,7 +14,7 @@ namespace AquaEngine
         rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
         Device::Get()->CreateRenderTargetView(
-            buffer.GetBuffer(),
+            buffer.GetBuffer().Get(),
             &rtvDesc,
             m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );
@@ -36,12 +36,12 @@ namespace AquaEngine
         );
     }
 
-    void RenderTargetView::Create(const Buffer &buffer, const D3D12_RENDER_TARGET_VIEW_DESC &rtvDesc) const
+    void RenderTargetView::Create(Buffer &buffer, const D3D12_RENDER_TARGET_VIEW_DESC &rtvDesc) const
     {
         if (CheckSegment() != 0) return;
 
         Device::Get()->CreateRenderTargetView(
-            buffer.GetBuffer(),
+            buffer.GetBuffer().Get(),
             &rtvDesc,
             m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );

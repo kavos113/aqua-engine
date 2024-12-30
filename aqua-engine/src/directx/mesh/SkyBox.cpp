@@ -233,7 +233,7 @@ namespace AquaEngine
 
         Barrier::Transition(
             &command,
-            m_cubeMapBuffer.GetBuffer(),
+            m_cubeMapBuffer.GetBuffer().Get(),
             D3D12_RESOURCE_STATE_GENERIC_READ,
             D3D12_RESOURCE_STATE_RENDER_TARGET
         );
@@ -274,12 +274,12 @@ namespace AquaEngine
         }
     }
 
-    void SkyBox::SaveDDS(const Command &command) const
+    void SkyBox::SaveDDS(Command &command)
     {
         DirectX::ScratchImage image;
         HRESULT hr = CaptureTexture(
-            command.Queue(),
-            m_cubeMapBuffer.GetBuffer(),
+            command.Queue().Get(),
+            m_cubeMapBuffer.GetBuffer().Get(),
             true,
             image
         );
@@ -305,8 +305,8 @@ namespace AquaEngine
 
         DirectX::ScratchImage image2;
         hr = CaptureTexture(
-            command.Queue(),
-            m_hdriBuffer.GetBuffer(),
+            command.Queue().Get(),
+            m_hdriBuffer.GetBuffer().Get(),
             true,
             image2,
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE

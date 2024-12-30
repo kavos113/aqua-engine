@@ -15,18 +15,18 @@ namespace AquaEngine
         dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 
         Device::Get()->CreateDepthStencilView(
-            buffer.GetBuffer(),
+            buffer.GetBuffer().Get(),
             &dsvDesc,
             m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );
     }
 
-    void DepthStencilView::Create(const Buffer &buffer, const D3D12_DEPTH_STENCIL_VIEW_DESC &dsvDesc) const
+    void DepthStencilView::Create(Buffer &buffer, const D3D12_DEPTH_STENCIL_VIEW_DESC &dsvDesc) const
     {
         if (CheckSegment() != 0) return;
 
         Device::Get()->CreateDepthStencilView(
-            buffer.GetBuffer(),
+            buffer.GetBuffer().Get(),
             &dsvDesc,
             m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );

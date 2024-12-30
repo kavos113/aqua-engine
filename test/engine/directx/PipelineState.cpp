@@ -36,8 +36,13 @@ TEST_F(PipelineStateTest, Create)
     ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
-    rootSignature.Create();
-    
+    HRESULT hr = rootSignature.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    EXPECT_EQ(hr, S_OK);
+
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
         {
             .SemanticName = "POSITION",
@@ -55,8 +60,8 @@ TEST_F(PipelineStateTest, Create)
     pipelineState.SetInputLayout(inputElementDescs, 1);
     pipelineState.SetPixelShader(&ps);
     pipelineState.SetVertexShader(&vs);
-    
-    HRESULT hr = pipelineState.Create();
+
+    hr = pipelineState.Create();
     if (FAILED(hr))
     {
         std::cout << std::hex << hr << std::endl;
@@ -131,8 +136,13 @@ TEST_F(PipelineStateTest, CreateWithNoPixelShader)
     vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
     
     RootSignature rootSignature;
-    rootSignature.Create();
-    
+    HRESULT hr = rootSignature.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    EXPECT_EQ(hr, S_OK);
+
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
         {
             .SemanticName = "POSITION",
@@ -150,8 +160,12 @@ TEST_F(PipelineStateTest, CreateWithNoPixelShader)
     pipelineState.SetInputLayout(inputElementDescs, 1);
     pipelineState.SetVertexShader(&vs);
     
-    HRESULT hr = pipelineState.Create();
-    
+    hr = pipelineState.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+
     EXPECT_EQ(hr, S_OK);
 }
 
@@ -164,15 +178,20 @@ TEST_F(PipelineStateTest, CreateWithNoInputLayout)
     ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
-    rootSignature.Create();
-    
+    HRESULT hr = rootSignature.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    EXPECT_EQ(hr, S_OK);
+
     PipelineState pipelineState;
     pipelineState.SetRootSignature(&rootSignature);
     pipelineState.SetPixelShader(&ps);
     pipelineState.SetVertexShader(&vs);
     
-    HRESULT hr = pipelineState.Create();
-    
+    hr = pipelineState.Create();
+
     EXPECT_EQ(hr, E_INVALIDARG);
 }
 
@@ -185,8 +204,13 @@ TEST_F(PipelineStateTest, Command)
     ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
     
     RootSignature rootSignature;
-    rootSignature.Create();
-    
+    HRESULT hr = rootSignature.Create();
+    if (FAILED(hr))
+    {
+        std::cout << std::hex << hr << std::endl;
+    }
+    EXPECT_EQ(hr, S_OK);
+
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
         {
             .SemanticName = "POSITION",
@@ -205,7 +229,7 @@ TEST_F(PipelineStateTest, Command)
     pipelineState.SetPixelShader(&ps);
     pipelineState.SetVertexShader(&vs);
     
-    HRESULT hr = pipelineState.Create();
+    hr = pipelineState.Create();
     if (FAILED(hr))
     {
         std::cout << std::hex << hr << std::endl;

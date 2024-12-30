@@ -3,6 +3,9 @@
 #endif
 
 #include "directx/wrapper/Command.h"
+
+#include <assert.h>
+
 #include "directx/Util.h"
 #include "directx/wrapper/Device.h"
 
@@ -15,29 +18,24 @@ namespace AquaEngine
         CreateCommandList();
     }
 
-    Command::~Command()
-    {
-        SafeRelease(&m_commandQueue);
-        SafeRelease(&m_commandAllocator);
-        SafeRelease(&m_commandList);
-    }
-
     HRESULT Command::Execute()
     {
         HRESULT hr = m_commandList->Close();
         if (FAILED(hr))
         {
             OutputDebugString(L"Failed to close command list.\n");
+            assert(false);
             return hr;
         }
 
-        ID3D12CommandList* commandLists[] = { m_commandList };
+        ID3D12CommandList *commandLists[] = {m_commandList.Get()};
         m_commandQueue->ExecuteCommandLists(1, commandLists);
 
-        hr = m_commandQueue->Signal(m_fence.Get(), m_fence.IncrementValue());
+        hr = m_commandQueue->Signal(m_fence.Get().Get(), m_fence.IncrementValue());
         if (FAILED(hr))
         {
             OutputDebugString(L"Failed to signal fence.\n");
+            assert(false);
             return hr;
         }
 
@@ -45,6 +43,7 @@ namespace AquaEngine
         if (FAILED(hr))
         {
             OutputDebugString(L"Failed to wait for fence.\n");
+            assert(false);
             return hr;
         }
 
@@ -52,13 +51,15 @@ namespace AquaEngine
         if (FAILED(hr))
         {
             OutputDebugString(L"Failed to reset command allocator.\n");
+            assert(false);
             return hr;
         }
 
-        hr = m_commandList->Reset(m_commandAllocator, nullptr);
+        hr = m_commandList->Reset(m_commandAllocator.Get(), nullptr);
         if (FAILED(hr))
         {
             OutputDebugString(L"Failed to reset command list.\n");
+            assert(false);
             return hr;
         }
 
@@ -117,7 +118,7 @@ namespace AquaEngine
         HRESULT hr = Device::Get()->CreateCommandList(
             0,
             D3D12_COMMAND_LIST_TYPE_DIRECT,
-            m_commandAllocator,
+            m_commandAllocator.Get(),
             nullptr,
             IID_PPV_ARGS(&m_commandList)
         );

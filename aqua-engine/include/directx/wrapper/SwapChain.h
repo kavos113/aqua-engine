@@ -29,9 +29,9 @@ namespace AquaEngine
             return m_swapChain->GetCurrentBackBufferIndex();
         }
 
-        [[nodiscard]] IDXGISwapChain4* Get() const { return m_swapChain; }
+        [[nodiscard]] Microsoft::WRL::ComPtr<IDXGISwapChain4> Get() const { return m_swapChain; }
     private:
-        IDXGISwapChain4* m_swapChain{};
+        Microsoft::WRL::ComPtr<IDXGISwapChain4> m_swapChain;
         RECT m_windowRect;
         HWND m_hwnd;
 

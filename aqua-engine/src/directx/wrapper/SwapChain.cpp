@@ -11,10 +11,7 @@ namespace AquaEngine
         CreateSwapChain();
     }
 
-    SwapChain::~SwapChain()
-    {
-        SafeRelease(&m_swapChain);
-    }
+    SwapChain::~SwapChain() = default;
 
     HRESULT SwapChain::CreateSwapChain()
     {
@@ -34,12 +31,12 @@ namespace AquaEngine
         desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
         HRESULT hr = Factory::Get()->CreateSwapChainForHwnd(
-            m_command->Queue(),
+            m_command->Queue().Get(),
             m_hwnd,
             &desc,
             nullptr,
             nullptr,
-            reinterpret_cast<IDXGISwapChain1**>(&m_swapChain)
+            reinterpret_cast<IDXGISwapChain1**>(m_swapChain.GetAddressOf())
         );
         if (FAILED(hr))
         {

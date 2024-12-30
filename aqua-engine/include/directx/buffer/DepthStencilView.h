@@ -10,7 +10,7 @@ namespace AquaEngine
     {
     public:
         void Create(Buffer &buffer) override;
-        void Create(const Buffer &buffer, const D3D12_DEPTH_STENCIL_VIEW_DESC &dsvDesc) const;
+        void Create(Buffer &buffer, const D3D12_DEPTH_STENCIL_VIEW_DESC &dsvDesc) const;
     };
 }
 

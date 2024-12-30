@@ -25,8 +25,8 @@ protected:
         Factory::Shutdown();
         delete command;
     }
-    
-    Command* command;
+
+    Command *command = nullptr;
 };
 
 TEST_F(BarrierTest, Transition)
@@ -34,8 +34,12 @@ TEST_F(BarrierTest, Transition)
     Buffer buffer;
     buffer.Create(BUFFER_DEFAULT(1));
 
-    Barrier barrier;
-    barrier.Transition(command, buffer.GetBuffer(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+    Barrier::Transition(
+        command,
+        buffer.GetBuffer().Get(),
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+    );
 
     command->Execute();
 }

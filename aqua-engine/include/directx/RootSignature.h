@@ -21,12 +21,12 @@ namespace AquaEngine
             m_samplers.push_back(sampler);
         }
 
-        void SetToCommand(const Command& command) const
+        void SetToCommand(Command &command) const
         {
-            command.List()->SetGraphicsRootSignature(m_rootSignature);
+            command.List()->SetGraphicsRootSignature(m_rootSignature.Get());
         }
 
-        [[nodiscard]] ID3D12RootSignature* GetRootSignature() const
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature() const
         {
             return m_rootSignature;
         }
@@ -48,7 +48,7 @@ namespace AquaEngine
         }
 
     private:
-        ID3D12RootSignature *m_rootSignature;
+        Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
 
         std::vector<D3D12_STATIC_SAMPLER_DESC> m_samplers;
 

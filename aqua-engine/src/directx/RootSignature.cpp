@@ -12,10 +12,7 @@ namespace AquaEngine
 
     }
 
-    RootSignature::~RootSignature()
-    {
-        SafeRelease(&m_rootSignature);
-    }
+    RootSignature::~RootSignature() = default;
 
     HRESULT RootSignature::Create()
     {

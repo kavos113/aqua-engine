@@ -25,18 +25,18 @@ namespace AquaEngine
             }
         }
 
-        static IDXGIFactory6* Get()
+        static Microsoft::WRL::ComPtr<IDXGIFactory6> Get()
         {
             return m_dxgiFactory;
         }
 
         static void Shutdown()
         {
-            SafeRelease(&m_dxgiFactory);
+            m_dxgiFactory.Reset();
         }
 
     private:
-        static IDXGIFactory6* m_dxgiFactory;
+        static Microsoft::WRL::ComPtr<IDXGIFactory6> m_dxgiFactory;
 
         static HRESULT CreateFactory()
         {

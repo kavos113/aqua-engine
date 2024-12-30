@@ -14,6 +14,7 @@ protected:
         Device::Init(0);
         GlobalDescriptorHeapManager::Init();
         command = new Command();
+        CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     }
 
     void TearDown() override

@@ -59,7 +59,7 @@ namespace AquaEngine {
         void Timer();
 
         void SetTexture(
-            const D3D12_DESCRIPTOR_RANGE &texture_range
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range
         );
 
         // if use shared segment

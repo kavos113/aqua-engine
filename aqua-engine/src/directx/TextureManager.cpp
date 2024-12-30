@@ -29,9 +29,24 @@ namespace AquaEngine
         );
         if (FAILED(hr))
         {
-            OutputDebugString(_T("Failed to load texture from file: "));
-            OutputDebugString(filename.c_str());
-            OutputDebugString("\n");
+            switch (hr)
+            {
+            case HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND):
+                OutputDebugString(_T("file not found: "));
+                OutputDebugString(filename.c_str());
+                OutputDebugString("\n");
+                break;
+
+            case E_NOINTERFACE:
+                OutputDebugString(_T("NOINTERFACE: probably forgot to run CoInitializeEx\n"));
+                break;
+
+            default:
+                OutputDebugString(_T("Failed to load texture from file: "));
+                OutputDebugString(filename.c_str());
+                OutputDebugString("\n");
+            }
+
             return {};
         }
 

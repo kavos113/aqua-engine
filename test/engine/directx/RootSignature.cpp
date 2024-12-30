@@ -49,7 +49,7 @@ TEST_F(RootSignatureTest, SetToCommand)
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
     segment->SetRootParameter(
-        D3D12_ROOT_PARAMETER_TYPE_CBV,
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
         D3D12_SHADER_VISIBILITY_ALL,
         std::move(range),
         1

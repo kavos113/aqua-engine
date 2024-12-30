@@ -109,7 +109,7 @@ namespace AquaEngine
         };
         root_parameter.DescriptorTable = {
             .NumDescriptorRanges = static_cast<UINT>(num_descriptor_ranges),
-            .pDescriptorRanges = descriptor_ranges.get()
+            .pDescriptorRanges = descriptor_ranges.release()
         };
 
         if (static_cast<GLOBAL_HEAP_ID>(m_rootParameters.size()) <= id)

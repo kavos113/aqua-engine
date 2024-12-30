@@ -19,7 +19,7 @@ public:
     }
 
     void SetUp();
-    void Render() const;
+    void Render();
     void Timer(int id) const;
 private:
     HWND hwnd;

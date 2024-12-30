@@ -44,10 +44,9 @@ void Graphics::SetUp()
     camera.Init(
         {0.0f, 0.0f, -5.0f},
         {0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f},
-        manager,
-        std::move(camera_range)
+        {0.0f, 1.0f, 0.0f}
     );
+    camera.AddManager("texture", std::move(camera_range));
 
     rectangle = std::make_unique<AquaEngine::RectangleTexture>(
         manager,
@@ -106,7 +105,7 @@ void Graphics::SetUp()
     pipelineState.Create();
 }
 
-void Graphics::Render() const
+void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
@@ -120,7 +119,7 @@ void Graphics::Render() const
     rootSignature.SetToCommand(*command);
     display->SetViewports();
 
-    camera.Render(*command);
+    camera.Render(*command, "texture");
     rectangle->Render(*command);
 
     display->EndRender();

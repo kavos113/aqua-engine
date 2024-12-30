@@ -50,10 +50,9 @@ void Graphics::SetUp()
     camera.Init(
         {0.0f, 0.0f, -2.0f},
         {0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f},
-        manager,
-        std::move(camera_range)
+        {0.0f, 1.0f, 0.0f}
     );
+    camera.AddManager("texture", std::move(camera_range));
 
     OutputDebugString("[Message] Camera initialized\n");
 
@@ -172,7 +171,7 @@ void Graphics::SetUp()
 
 }
 
-void Graphics::Render() const
+void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
@@ -185,7 +184,7 @@ void Graphics::Render() const
     rootSignature.SetToCommand(*command);
     display->SetViewports();
 
-    camera.Render(*command);
+    camera.Render(*command, "texture");
     model->Render(*command);
     model2->Render(*command);
 

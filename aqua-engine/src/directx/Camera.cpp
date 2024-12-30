@@ -1,31 +1,27 @@
 #include "../../include/directx/Camera.h"
 
 #include "directx/Util.h"
+#include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
 
 namespace AquaEngine {
     void Camera::Init(
         DirectX::XMFLOAT3 eye,
         DirectX::XMFLOAT3 focus,
-        DirectX::XMFLOAT3 up,
-        DescriptorHeapSegmentManager &model_heap,
-        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
+        DirectX::XMFLOAT3 up
     )
     {
-        m_manager = &model_heap;
-
-        SetMatrixBuffer(eye, focus, up, std::move(matrix_range));
+        SetMatrixBuffer(eye, focus, up);
     }
 
-    void Camera::Render(Command &command) const
+    void Camera::Render(Command &command, const std::string &manager_name)
     {
-        m_matrixCBV.SetGraphicsRootDescriptorTable(&command);
+        m_matrixCBV[manager_name].SetGraphicsRootDescriptorTable(&command);
     }
 
     void Camera::SetMatrixBuffer(
         DirectX::XMFLOAT3 eye,
         DirectX::XMFLOAT3 focus,
-        DirectX::XMFLOAT3 up,
-        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
+        DirectX::XMFLOAT3 up
     )
     {
         m_view = DirectX::XMMatrixLookAtLH(
@@ -44,8 +40,16 @@ namespace AquaEngine {
         m_matrixBuffer.GetMappedBuffer()->view = m_view;
         m_matrixBuffer.GetMappedBuffer()->projection = m_projection;
         m_matrixBuffer.GetMappedBuffer()->eye = eye;
+    }
 
-        auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+    void Camera::AddManager(const std::string &manager_name, std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range)
+    {
+        auto &manager = GlobalDescriptorHeapManager::GetShaderHeapManager(
+            D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+            manager_name
+        );
+
+        auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
@@ -53,7 +57,7 @@ namespace AquaEngine {
             1
         );
 
-        m_matrixCBV.SetDescriptorHeapSegment(segment, 0);
-        m_matrixCBV.Create(m_matrixBuffer);
+        m_matrixCBV[manager_name].SetDescriptorHeapSegment(segment, 0);
+        m_matrixCBV[manager_name].Create(m_matrixBuffer);
     }
 } // AquaEngine

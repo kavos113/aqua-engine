@@ -5,6 +5,7 @@
 #include <ranges>
 
 #include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
+#include "directx/wrapper/Barrier.h"
 
 using DirectX::operator+;
 
@@ -34,9 +35,9 @@ namespace AquaEngine
         CreateVertexBuffer();
         CreateIndexBuffer();
 
+        CreateMatrixBuffer({0.0f, 0.0f, 0.0f});
         CreateCubeMapBuffer();
         CreateHDRIShaderResourceView();
-        CreateMatrixBuffer({0.0f, 0.0f, 0.0f});
         CreateHDRIPipelineState();
     }
 
@@ -72,7 +73,7 @@ namespace AquaEngine
         D3D12_RESOURCE_DESC resourceDesc = Buffer::ResourceDesc::DepthStencil(cubeSize, cubeSize);
         resourceDesc.DepthOrArraySize = 6;
         resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
-        resourceDesc.Format = DXGI_FORMAT_R32G32B32A32_TYPELESS;
+        resourceDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 
         m_cubeMapBuffer.Create(
             Buffer::HeapProperties::Default(),
@@ -122,7 +123,7 @@ namespace AquaEngine
         );
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
-            D3D12_SHADER_VISIBILITY_PIXEL,
+            D3D12_SHADER_VISIBILITY_ALL,
             std::move(range),
             1
         );
@@ -182,7 +183,7 @@ namespace AquaEngine
         );
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
-            D3D12_SHADER_VISIBILITY_VERTEX,
+            D3D12_SHADER_VISIBILITY_ALL,
             std::move(range),
             1
         );
@@ -215,6 +216,7 @@ namespace AquaEngine
         m_hdriPipelineState.SetInputLayout(m_inputElementDescs.data(), m_inputElementDescs.size());
         m_hdriPipelineState.SetDepthEnable(false);
         m_hdriPipelineState.SetCullMode(D3D12_CULL_MODE_NONE);
+        m_hdriPipelineState.SetRTVFormat(DXGI_FORMAT_R32G32B32A32_FLOAT);
         hr = m_hdriPipelineState.Create();
         if (FAILED(hr))
         {
@@ -225,7 +227,16 @@ namespace AquaEngine
 
     void SkyBox::ConvertHDRIToCubeMap(Command &command)
     {
+        m_hdriRootSignature.SetToCommand(command);
+        m_hdriPipelineState.SetToCommand(command);
         Mesh::Render(command);
+
+        Barrier::Transition(
+            &command,
+            m_cubeMapBuffer.GetBuffer(),
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            D3D12_RESOURCE_STATE_RENDER_TARGET
+        );
 
         for (int i = 0; i < 6; ++i)
         {
@@ -251,6 +262,7 @@ namespace AquaEngine
             command.List()->RSSetScissorRects(1, &scissor);
 
             m_matrixCBV[i].SetGraphicsRootDescriptorTable(&command);
+            m_hdriSrv.SetGraphicsRootDescriptorTable(&command);
             command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
         }
 
@@ -289,6 +301,35 @@ namespace AquaEngine
             OutputDebugString("Failed to save to DDS file\n");
             assert(false);
         }
+        OutputDebugString("Saved to DDS File.\n");
+
+        DirectX::ScratchImage image2;
+        hr = CaptureTexture(
+            command.Queue(),
+            m_hdriBuffer.GetBuffer(),
+            true,
+            image2,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+        );
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to capture texture\n");
+            assert(false);
+        }
+
+        hr = SaveToDDSFile(
+            image2.GetImages(),
+            image2.GetImageCount(),
+            image2.GetMetadata(),
+            DirectX::DDS_FLAGS_NONE,
+            L"hdri.dds"
+        );
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to save to DDS file\n");
+            assert(false);
+        }
+        OutputDebugString("Saved to DDS File.\n");
     }
 
     void SkyBox::CreateVertexBuffer()

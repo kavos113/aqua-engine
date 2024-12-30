@@ -1,4 +1,4 @@
-const float PI = 3.14159265359f;
+static float PI = 3.14159265359f;
 
 cbuffer ViewMat : register(b0)
 {
@@ -12,12 +12,14 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
+    float4 position : SV_POSITION;
     float3 direction : TEXCOORD;
 };
 
 VS_OUTPUT vs(VS_INPUT input)
 {
     VS_OUTPUT output;
+    output.position = float4(input.position, 1.0f);
     output.direction = mul(float4(input.position, 1.0f), view).xyz;
     return output;
 }
@@ -28,7 +30,7 @@ SamplerState hdrSampler : register(s0);
 float2 EquirectangularToUV(float3 direction)
 {
     float phi = atan2(direction.z, direction.x);
-    float theta = asin(direction.y);
+    float theta = acos(direction.y);
 
     float u = (phi + PI) / (2 * PI);
     float v = theta / PI;

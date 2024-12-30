@@ -68,7 +68,7 @@ namespace AquaEngine
             return hr;
         }
 
-        for (const auto & root_parameter : rootParameters)
+        for (const auto &root_parameter: rootParameters)
         {
             if (root_parameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
             {

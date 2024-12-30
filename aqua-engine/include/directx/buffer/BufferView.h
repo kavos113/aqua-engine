@@ -3,6 +3,7 @@
 
 #include <d3d12.h>
 #include <memory>
+#include <utility>
 
 #include "directx/descriptor_heap/DescriptorHeapSegment.h"
 #include "Buffer.h"
@@ -18,7 +19,7 @@ namespace AquaEngine
 
         void SetDescriptorHeapSegment(std::shared_ptr<DescriptorHeapSegment> descriptorHeapSegment, int offset)
         {
-            m_DescriptorHeapSegment = descriptorHeapSegment;
+            m_DescriptorHeapSegment = std::move(descriptorHeapSegment);
             this->m_offset = offset;
         }
 

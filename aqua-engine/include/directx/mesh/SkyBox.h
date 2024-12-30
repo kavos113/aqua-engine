@@ -4,6 +4,7 @@
 #include <array>
 
 #include "Mesh.h"
+#include "directx/Camera.h"
 #include "directx/PipelineState.h"
 #include "directx/TextureManager.h"
 #include "directx/buffer/RenderTargetView.h"
@@ -80,12 +81,15 @@ namespace AquaEngine
         }
 
         void Create() override;
-
         void Render(Command &command) override;
 
         void ConvertHDRIToCubeMap(Command &command);
-
         void SaveDDS(Command &command);
+
+        void SetCamera(std::shared_ptr<Camera> camera)
+        {
+            m_camera = std::move(camera);
+        }
 
     private:
         struct Vertex
@@ -107,11 +111,6 @@ namespace AquaEngine
         Buffer m_hdriBuffer;
         ShaderResourceView m_hdriSrv;
 
-        Buffer m_cubeMapBuffer;
-        ShaderResourceView m_cubeMapSrv;
-        std::array<RenderTargetView, 6> m_cubeMapRtv;
-        std::unique_ptr<DescriptorHeapSegmentManager> m_cubeMapManager;
-
         std::array<Vertex, 8> m_vertices;
         std::array<unsigned short, 36> m_indices;
 
@@ -122,6 +121,15 @@ namespace AquaEngine
         RootSignature m_hdriRootSignature;
         PipelineState m_hdriPipelineState;
 
+        Buffer m_cubeMapBuffer;
+        ShaderResourceView m_cubeMapSrv;
+        std::array<RenderTargetView, 6> m_cubeMapRtv;
+        std::unique_ptr<DescriptorHeapSegmentManager> m_cubeMapManager;
+        RootSignature m_cubeMapRootSignature;
+        PipelineState m_cubeMapPipelineState;
+
+        std::shared_ptr<Camera> m_camera;
+
         const unsigned short cubeSize = 512;
 
         void CreateVertexBuffer();
@@ -131,6 +139,8 @@ namespace AquaEngine
 
         void CreateHDRIShaderResourceView();
         void CreateHDRIPipelineState();
+
+        void CreateCubeMapPipelineState();
     };
 } // AquaEngine
 

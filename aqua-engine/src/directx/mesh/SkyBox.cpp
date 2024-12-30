@@ -6,6 +6,7 @@
 
 #include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
 #include "directx/wrapper/Barrier.h"
+#include "directx/wrapper/Device.h"
 
 using DirectX::operator+;
 
@@ -207,8 +208,8 @@ namespace AquaEngine
         }
 
         ShaderObject vs, ps;
-        vs.Load(L"skybox.hlsl", "vs", "vs_5_0");
-        ps.Load(L"skybox.hlsl", "ps", "ps_5_0");
+        vs.Load(L"cubemap.hlsl", "vs", "vs_5_0");
+        ps.Load(L"cubemap.hlsl", "ps", "ps_5_0");
 
         m_hdriPipelineState.SetRootSignature(&m_hdriRootSignature);
         m_hdriPipelineState.SetVertexShader(&vs);
@@ -302,34 +303,35 @@ namespace AquaEngine
             assert(false);
         }
         OutputDebugString("Saved to DDS File.\n");
+    }
 
-        DirectX::ScratchImage image2;
-        hr = CaptureTexture(
-            command.Queue().Get(),
-            m_hdriBuffer.GetBuffer().Get(),
-            true,
-            image2,
-            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-        );
+    void SkyBox::CreateCubeMapPipelineState()
+    {
+        m_cubeMapRootSignature.AddStaticSampler(RootSignature::DefaultStaticSampler());
+        m_cubeMapRootSignature.SetDescriptorHeapSegmentManager(m_cubeMapManager.get());
+        HRESULT hr = m_cubeMapRootSignature.Create();
         if (FAILED(hr))
         {
-            OutputDebugString("Failed to capture texture\n");
+            OutputDebugString("Failed to create root signature\n");
             assert(false);
         }
 
-        hr = SaveToDDSFile(
-            image2.GetImages(),
-            image2.GetImageCount(),
-            image2.GetMetadata(),
-            DirectX::DDS_FLAGS_NONE,
-            L"hdri.dds"
-        );
+        ShaderObject vs, ps;
+        vs.Load(L"skybox.hlsl", "vs", "vs_5_0");
+        ps.Load(L"skybox.hlsl", "ps", "ps_5_0");
+
+        m_cubeMapPipelineState.SetRootSignature(&m_cubeMapRootSignature);
+        m_cubeMapPipelineState.SetVertexShader(&vs);
+        m_cubeMapPipelineState.SetPixelShader(&ps);
+        m_cubeMapPipelineState.SetInputLayout(m_inputElementDescs.data(), m_inputElementDescs.size());
+        m_cubeMapPipelineState.SetDepthEnable(false);
+        m_cubeMapPipelineState.SetCullMode(D3D12_CULL_MODE_FRONT);
+        hr = m_cubeMapPipelineState.Create();
         if (FAILED(hr))
         {
-            OutputDebugString("Failed to save to DDS file\n");
+            OutputDebugString("Failed to create pipeline state\n");
             assert(false);
         }
-        OutputDebugString("Saved to DDS File.\n");
     }
 
     void SkyBox::CreateVertexBuffer()

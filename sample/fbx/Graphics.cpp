@@ -40,64 +40,65 @@ void Graphics::SetUp()
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
     );
 
+    auto camera_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
     camera.Init(
         {0.0f, 0.0f, -2.0f},
         {0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f},
         manager,
-        {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = 0,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        }
+        std::move(camera_range)
     );
 
     OutputDebugString("[Message] Camera initialized\n");
 
     auto matrix_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
-    D3D12_DESCRIPTOR_RANGE matrix_range = {
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 1,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    };
+    auto matrix_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        1,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
     matrix_segment->SetRootParameter(
         D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
         D3D12_SHADER_VISIBILITY_ALL,
-        &matrix_range,
+        std::move(matrix_range),
         1
     );
 
     auto texture_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
-    D3D12_DESCRIPTOR_RANGE texture_range = {
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    };
+    auto texture_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
     texture_segment->SetRootParameter(
         D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
         D3D12_SHADER_VISIBILITY_ALL,
-        &texture_range,
+        std::move(texture_range),
         1
     );
 
     auto material_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
-    D3D12_DESCRIPTOR_RANGE material_range = {
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 2,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    };
+    auto material_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        2,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
     material_segment->SetRootParameter(
         D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
         D3D12_SHADER_VISIBILITY_ALL,
-        &material_range,
+        std::move(material_range),
         1
     );
 

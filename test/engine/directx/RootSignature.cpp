@@ -41,18 +41,17 @@ TEST_F(RootSignatureTest, SetToCommand)
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
     );
     auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
-    
-    D3D12_DESCRIPTOR_RANGE range = {
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    };
+    auto range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
     segment->SetRootParameter(
         D3D12_ROOT_PARAMETER_TYPE_CBV,
         D3D12_SHADER_VISIBILITY_ALL,
-        &range,
+        std::move(range),
         1
     );
     

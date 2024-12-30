@@ -68,7 +68,7 @@ namespace AquaEngine {
             int offset = 0
             );
 
-        void CreateMaterialBufferView(const D3D12_DESCRIPTOR_RANGE &material_range);
+        void CreateMaterialBufferView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range);
         void CreateMaterialBufferView(
             const std::shared_ptr<DescriptorHeapSegment>& segment,
             int offset = 0

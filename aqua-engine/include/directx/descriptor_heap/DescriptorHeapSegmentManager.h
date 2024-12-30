@@ -42,7 +42,7 @@ namespace AquaEngine
             GLOBAL_HEAP_ID id,
             D3D12_ROOT_PARAMETER_TYPE type,
             D3D12_SHADER_VISIBILITY visibility,
-            const D3D12_DESCRIPTOR_RANGE* descriptor_ranges,
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> descriptor_ranges,
             int num_descriptor_ranges
         );
 

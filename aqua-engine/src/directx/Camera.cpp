@@ -8,12 +8,12 @@ namespace AquaEngine {
         DirectX::XMFLOAT3 focus,
         DirectX::XMFLOAT3 up,
         DescriptorHeapSegmentManager &model_heap,
-        const D3D12_DESCRIPTOR_RANGE &matrix_range
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
     )
     {
         m_manager = &model_heap;
 
-        SetMatrixBuffer(eye, focus, up, matrix_range);
+        SetMatrixBuffer(eye, focus, up, std::move(matrix_range));
     }
 
     void Camera::Render(Command &command) const
@@ -25,7 +25,7 @@ namespace AquaEngine {
         DirectX::XMFLOAT3 eye,
         DirectX::XMFLOAT3 focus,
         DirectX::XMFLOAT3 up,
-        const D3D12_DESCRIPTOR_RANGE &matrix_range
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
     )
     {
         m_view = DirectX::XMMatrixLookAtLH(
@@ -49,7 +49,7 @@ namespace AquaEngine {
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
-            &matrix_range,
+            std::move(matrix_range),
             1
         );
 

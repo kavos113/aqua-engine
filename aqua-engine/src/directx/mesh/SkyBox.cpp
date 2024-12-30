@@ -52,17 +52,17 @@ namespace AquaEngine
         m_hdriSrv.SetDescriptorHeapSegment(segment, 0);
         m_hdriSrv.Create(m_hdriBuffer);
 
-        D3D12_DESCRIPTOR_RANGE range = {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = 0,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        };
+        auto range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+            D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+            1,
+            0,
+            0,
+            D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        );
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_PIXEL,
-            &range,
+            std::move(range),
             1
         );
     }
@@ -113,17 +113,17 @@ namespace AquaEngine
                 }
             }
         );
-        D3D12_DESCRIPTOR_RANGE range = {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = 0,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        };
+        auto range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+            D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+            1,
+            0,
+            0,
+            D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+        );
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_SRV,
             D3D12_SHADER_VISIBILITY_PIXEL,
-            &range,
+            std::move(range),
             1
         );
     }

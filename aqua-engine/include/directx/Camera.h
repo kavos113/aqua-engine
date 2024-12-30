@@ -17,8 +17,7 @@ namespace AquaEngine {
             DirectX::XMFLOAT3 focus,
             DirectX::XMFLOAT3 up,
             DescriptorHeapSegmentManager &model_heap,
-            const
-            D3D12_DESCRIPTOR_RANGE &matrix_range
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
         void Render(Command &command) const;
 
@@ -42,7 +41,7 @@ namespace AquaEngine {
             DirectX::XMFLOAT3 eye,
             DirectX::XMFLOAT3 focus,
             DirectX::XMFLOAT3 up,
-            const D3D12_DESCRIPTOR_RANGE &matrix_range
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
 
         DirectX::XMMATRIX m_view;

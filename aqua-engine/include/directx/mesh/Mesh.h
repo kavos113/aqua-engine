@@ -50,7 +50,7 @@ namespace AquaEngine
             return m_inputElementDescs;
         }
 
-        void CreateMatrixBuffer(const D3D12_DESCRIPTOR_RANGE &matrix_range)
+        void CreateMatrixBuffer(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range)
         {
             m_matrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(TransformMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
             m_matrixBuffer.GetMappedBuffer()->world = m_transformMatrix;
@@ -62,7 +62,7 @@ namespace AquaEngine
             segment->SetRootParameter(
                 D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
                 D3D12_SHADER_VISIBILITY_VERTEX,
-                &matrix_range,
+                std::move(matrix_range),
                 1
             );
         }

@@ -8,11 +8,11 @@ namespace AquaEngine
         DirectX::XMFLOAT3 direction,
         DirectX::XMFLOAT3 color,
         DescriptorHeapSegmentManager &model_heap,
-        const D3D12_DESCRIPTOR_RANGE &matrix_range
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
     )
     {
         m_manager = &model_heap;
-        SetBuffer(direction, color, matrix_range);
+        SetBuffer(direction, color, std::move(matrix_range));
     }
 
     void DirectionLight::Render(Command &command) const
@@ -23,7 +23,7 @@ namespace AquaEngine
     void DirectionLight::SetBuffer(
         DirectX::XMFLOAT3 direction,
         DirectX::XMFLOAT3 color,
-        const D3D12_DESCRIPTOR_RANGE &matrix_range
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
     )
     {
         m_light.direction = direction;
@@ -38,7 +38,7 @@ namespace AquaEngine
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
-            &matrix_range,
+            std::move(matrix_range),
             1
         );
 

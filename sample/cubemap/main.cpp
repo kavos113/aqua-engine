@@ -1,5 +1,7 @@
+#include <iostream>
 #include <windows.h>
 #include <tchar.h>
+#include <windowsx.h>
 
 #include "AquaEngine.h"
 
@@ -76,6 +78,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
 
     ShowWindow(hwnd, nCmdShow);
 
+    float mouseX = 0.0f;
+    float mouseY = 0.0f;
+
     MSG msg = {};
 
     while (GetMessage(&msg, nullptr, 0, 0))
@@ -83,20 +88,59 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
 
-        AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
-
-        display.BeginRender();
-        display.SetViewports();
-        skyBox.Render(command);
-        display.EndRender();
-        HRESULT hr = command.Execute();
-        if (FAILED(hr))
+        switch (msg.message)
         {
-            OutputDebugString("Failed to execute command\n");
-            return -1;
+        case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+
+            AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
+
+            display.BeginRender();
+            display.SetViewports();
+            skyBox.Render(command);
+            display.EndRender();
+            HRESULT hr = command.Execute();
+            if (FAILED(hr))
+            {
+                OutputDebugString("Failed to execute command\n");
+                return -1;
+            }
+
+            display.Present();
+
+            EndPaint(hwnd, &ps);
+            break;
         }
 
-        display.Present();
+        case WM_MOUSEMOVE:
+        {
+            if (mouseX == 0.0f && mouseY == 0.0f)
+            {
+                mouseX = GET_X_LPARAM(msg.lParam);
+                mouseY = GET_Y_LPARAM(msg.lParam);
+                break;
+            }
+
+            float x = GET_X_LPARAM(msg.lParam);
+            float y = GET_Y_LPARAM(msg.lParam);
+
+            float dx = x - mouseX;
+            float dy = y - mouseY;
+
+            std::cout << "dx: " << dx << ", dy: " << dy << std::endl;
+
+            mouseX = x;
+            mouseY = y;
+
+            camera->RotX(dx * 0.01f);
+            camera->RotY(dy * 0.01f);
+            InvalidateRect(hwnd, &wr, false);
+            break;
+        }
+
+        }
     }
 
     AquaEngine::GlobalDescriptorHeapManager::Shutdown();

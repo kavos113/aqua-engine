@@ -213,3 +213,10 @@ void Graphics::Timer(int id) const
         break;
     }
 }
+
+void Graphics::MoveCamera(float dx, float dy)
+{
+    camera.RotX(dy * 0.01f);
+    camera.RotY(dx * 0.01f);
+    InvalidateRect(hwnd, &rc, false);
+}

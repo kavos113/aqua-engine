@@ -29,8 +29,51 @@ namespace AquaEngine {
         explicit Camera(RECT wr)
             : m_view()
             , m_projection()
+            , m_focusDistance(0)
             , wr(wr)
         {
+        }
+
+        void RotX(float angle)
+        {
+            DirectX::XMVECTOR focus_new = DirectX::XMVector3TransformCoord(
+                DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
+                DirectX::XMMatrixRotationX(angle)
+            );
+            m_focus = DirectX::XMFLOAT3(
+                m_eye.x + DirectX::XMVectorGetX(focus_new),
+                m_eye.y + DirectX::XMVectorGetY(focus_new),
+                m_eye.z + DirectX::XMVectorGetZ(focus_new)
+            );
+            UpdateMatrixBuffer();
+        }
+
+        void RotY(float angle)
+        {
+            DirectX::XMVECTOR focus_new = DirectX::XMVector3TransformCoord(
+                DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
+                DirectX::XMMatrixRotationY(angle)
+            );
+            m_focus = DirectX::XMFLOAT3(
+                m_eye.x + DirectX::XMVectorGetX(focus_new),
+                m_eye.y + DirectX::XMVectorGetY(focus_new),
+                m_eye.z + DirectX::XMVectorGetZ(focus_new)
+            );
+            UpdateMatrixBuffer();
+        }
+
+        void RotZ(float angle)
+        {
+            DirectX::XMVECTOR focus_new = DirectX::XMVector3TransformCoord(
+                DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
+                DirectX::XMMatrixRotationZ(angle)
+            );
+            m_focus = DirectX::XMFLOAT3(
+                m_eye.x + DirectX::XMVectorGetX(focus_new),
+                m_eye.y + DirectX::XMVectorGetY(focus_new),
+                m_eye.z + DirectX::XMVectorGetZ(focus_new)
+            );
+            UpdateMatrixBuffer();
         }
 
     private:
@@ -47,11 +90,19 @@ namespace AquaEngine {
             DirectX::XMFLOAT3 up
         );
 
+        void UpdateMatrixBuffer();
+
         DirectX::XMMATRIX m_view;
         DirectX::XMMATRIX m_projection;
 
+        DirectX::XMFLOAT3 m_eye{};
+        DirectX::XMFLOAT3 m_focus{};
+        DirectX::XMFLOAT3 m_up{};
+
         GPUBuffer<CameraMatrix> m_matrixBuffer;
         std::unordered_map<std::string, ConstantBufferView> m_matrixCBV{};
+
+        float m_focusDistance;
 
         RECT wr;
 

@@ -17,6 +17,7 @@ namespace AquaEngine
     public:
         SkyBox(const std::string &hdriPath, Command &command, DescriptorHeapSegmentManager &manager)
             : Mesh(manager)
+            , m_viewMatrices()
             , m_hdriPath(hdriPath)
             , m_hdriBuffer(TextureManager::LoadTextureFromHDRFile(hdriPath, command))
             , m_hdriSrv(ShaderResourceView())
@@ -128,7 +129,7 @@ namespace AquaEngine
         GPUBuffer<Vertex> m_vertexBuffer;
         GPUBuffer<unsigned short> m_indexBuffer;
 
-        std::unique_ptr<DescriptorHeapSegmentManager> m_hdriManager;
+        std::unique_ptr<DescriptorHeapSegmentManager> m_hdriManager{};
         RootSignature m_hdriRootSignature;
         PipelineState m_hdriPipelineState;
 

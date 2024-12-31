@@ -29,9 +29,6 @@ namespace AquaEngine
         m_hdriManager = std::make_unique<DescriptorHeapSegmentManager>(
             GlobalDescriptorHeapManager::CreateShaderManager("hdri", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
         );
-        m_cubeMapManager = std::make_unique<DescriptorHeapSegmentManager>(
-            GlobalDescriptorHeapManager::CreateShaderManager("cube_map", 5, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
-        );
 
         CreateVertexBuffer();
         CreateIndexBuffer();
@@ -95,7 +92,7 @@ namespace AquaEngine
             m_cubeMapRtv[i].Create(m_cubeMapBuffer, desc);
         }
 
-        auto segment = std::make_shared<DescriptorHeapSegment>(m_cubeMapManager->Allocate(1));
+        auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
         m_cubeMapSrv.SetDescriptorHeapSegment(segment, 0);
         m_cubeMapSrv.Create(
             m_cubeMapBuffer,
@@ -263,6 +260,13 @@ namespace AquaEngine
             command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
         }
 
+        Barrier::Transition(
+            &command,
+            m_cubeMapBuffer.GetBuffer().Get(),
+            D3D12_RESOURCE_STATE_RENDER_TARGET,
+            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
+        );
+
         HRESULT hr = command.Execute();
         if (FAILED(hr))
         {
@@ -304,7 +308,7 @@ namespace AquaEngine
     void SkyBox::CreateCubeMapPipelineState()
     {
         m_cubeMapRootSignature.AddStaticSampler(RootSignature::DefaultStaticSampler());
-        m_cubeMapRootSignature.SetDescriptorHeapSegmentManager(m_cubeMapManager.get());
+        m_cubeMapRootSignature.SetDescriptorHeapSegmentManager(m_manager);
         HRESULT hr = m_cubeMapRootSignature.Create();
         if (FAILED(hr))
         {
@@ -336,14 +340,7 @@ namespace AquaEngine
         m_cubeMapPipelineState.SetToCommand(command);
         Mesh::Render(command);
 
-        Barrier::Transition(
-            &command,
-            m_cubeMapBuffer.GetBuffer().Get(),
-            D3D12_RESOURCE_STATE_RENDER_TARGET,
-            D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE
-        );
-
-        m_camera->Render(command, "cube_map");
+        m_camera->Render(command, m_manager->GetName());
         m_cubeMapSrv.SetGraphicsRootDescriptorTable(&command);
 
         command.List()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);

@@ -38,6 +38,11 @@ namespace AquaEngine
         [[nodiscard]] UINT GetIncrementSize() const;
         [[nodiscard]] std::vector<D3D12_ROOT_PARAMETER> GetRootParameters() const;
 
+        [[nodiscard]] std::string GetName() const
+        {
+            return m_name;
+        }
+
         void SetRootParameter(
             GLOBAL_HEAP_ID id,
             D3D12_ROOT_PARAMETER_TYPE type,

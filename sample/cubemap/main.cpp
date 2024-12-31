@@ -83,6 +83,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
 
+        AquaEngine::GlobalDescriptorHeapManager::SetToCommand(command);
+
         display.BeginRender();
         display.SetViewports();
         skyBox.Render(command);

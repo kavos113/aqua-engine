@@ -90,7 +90,7 @@ namespace AquaEngine
         {
             m_camera = std::move(camera);
             m_camera->AddManager(
-                "cube_map",
+                m_manager->GetName(),
                 std::make_unique<D3D12_DESCRIPTOR_RANGE>(
                     D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
                     1,
@@ -135,7 +135,6 @@ namespace AquaEngine
         Buffer m_cubeMapBuffer;
         ShaderResourceView m_cubeMapSrv;
         std::array<RenderTargetView, 6> m_cubeMapRtv;
-        std::unique_ptr<DescriptorHeapSegmentManager> m_cubeMapManager;
         RootSignature m_cubeMapRootSignature;
         PipelineState m_cubeMapPipelineState;
 

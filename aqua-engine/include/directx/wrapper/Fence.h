@@ -3,6 +3,7 @@
 
 
 #include <d3d12.h>
+#include <wrl/client.h>
 
 namespace AquaEngine
 {
@@ -24,12 +25,12 @@ namespace AquaEngine
             return ++m_fenceValue;
         }
 
-        [[nodiscard]] ID3D12Fence* Get() const
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Fence> Get() const
         {
             return m_fence;
         }
     private:
-        ID3D12Fence* m_fence{};
+        Microsoft::WRL::ComPtr<ID3D12Fence> m_fence;
         UINT64 m_fenceValue{};
         HANDLE m_fenceEvent{};
 

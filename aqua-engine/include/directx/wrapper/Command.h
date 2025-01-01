@@ -2,6 +2,8 @@
 #define AQUA_COMMAND_H
 
 #include <d3d12.h>
+#include <wrl/client.h>
+
 #include "Fence.h"
 
 namespace AquaEngine
@@ -10,28 +12,28 @@ namespace AquaEngine
     {
     public:
         Command();
-        ~Command();
+        ~Command() = default;
 
         HRESULT Execute();
 
-        [[nodiscard]] ID3D12CommandQueue* Queue() const
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12CommandQueue> Queue()
         {
             return m_commandQueue;
         }
 
-        [[nodiscard]] ID3D12CommandAllocator* Allocator() const
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12CommandAllocator> Allocator()
         {
             return m_commandAllocator;
         }
 
-        [[nodiscard]] ID3D12GraphicsCommandList* List() const
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> List()
         {
             return m_commandList;
         }
     private:
-        ID3D12CommandQueue* m_commandQueue{};
-        ID3D12CommandAllocator* m_commandAllocator{};
-        ID3D12GraphicsCommandList* m_commandList{};
+        Microsoft::WRL::ComPtr<ID3D12CommandQueue> m_commandQueue{};
+        Microsoft::WRL::ComPtr<ID3D12CommandAllocator> m_commandAllocator{};
+        Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> m_commandList{};
 
         Fence m_fence;
 

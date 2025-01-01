@@ -17,7 +17,7 @@ public:
     }
 
     void SetUp();
-    void Render() const;
+    void Render();
 private:
     HWND hwnd;
     RECT rc;

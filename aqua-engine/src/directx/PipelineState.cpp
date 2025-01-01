@@ -8,16 +8,6 @@ namespace AquaEngine
         : m_pipelineState(nullptr)
         , m_psoDesc()
     {
-
-    }
-
-    PipelineState::~PipelineState()
-    {
-        SafeRelease(&m_pipelineState);
-    }
-
-    HRESULT PipelineState::Create()
-    {
         m_psoDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 
         m_psoDesc.BlendState.AlphaToCoverageEnable = FALSE;
@@ -61,7 +51,12 @@ namespace AquaEngine
 
         m_psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
         m_psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
+    }
 
+    PipelineState::~PipelineState() = default;
+
+    HRESULT PipelineState::Create()
+    {
         HRESULT hr = Device::Get()->CreateGraphicsPipelineState(
             &m_psoDesc,
             IID_PPV_ARGS(&m_pipelineState)
@@ -95,7 +90,7 @@ namespace AquaEngine
 
     void PipelineState::SetRootSignature(RootSignature *rootSignature)
     {
-        m_psoDesc.pRootSignature = rootSignature->GetRootSignature();
+        m_psoDesc.pRootSignature = rootSignature->GetRootSignature().Get();
     }
 
     void PipelineState::SetVertexShader(ShaderObject *vs)
@@ -108,4 +103,18 @@ namespace AquaEngine
         m_psoDesc.PS = ps->Bytecode();
     }
 
+    void PipelineState::SetCullMode(D3D12_CULL_MODE cullMode)
+    {
+        m_psoDesc.RasterizerState.CullMode = cullMode;
+    }
+
+    void PipelineState::SetDepthEnable(bool enable)
+    {
+        m_psoDesc.DepthStencilState.DepthEnable = enable;
+    }
+
+    void PipelineState::SetRTVFormat(DXGI_FORMAT format)
+    {
+        m_psoDesc.RTVFormats[0] = format;
+    }
 }

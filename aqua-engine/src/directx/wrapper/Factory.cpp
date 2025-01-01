@@ -2,6 +2,6 @@
 
 namespace AquaEngine
 {
-    IDXGIFactory6* Factory::m_dxgiFactory = nullptr;
+    Microsoft::WRL::ComPtr<IDXGIFactory6> Factory::m_dxgiFactory = nullptr;
 
 }

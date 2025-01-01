@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "directx/buffer/Buffer.h"
 
 #include "directx/Util.h"
@@ -11,14 +13,9 @@ namespace AquaEngine
 
     }
 
-    Buffer::Buffer(ID3D12Resource *buffer)
+    Buffer::Buffer(Microsoft::WRL::ComPtr<ID3D12Resource> buffer)
     {
-        m_Buffer = buffer;
-    }
-
-    Buffer::~Buffer()
-    {
-        SafeRelease(&m_Buffer);
+        m_Buffer = std::move(buffer);
     }
 
     HRESULT Buffer::Create(D3D12_HEAP_PROPERTIES heapProperties,
@@ -44,7 +41,7 @@ namespace AquaEngine
         return S_OK;
     }
 
-    ID3D12Resource *Buffer::GetBuffer() const
+    Microsoft::WRL::ComPtr<ID3D12Resource> Buffer::GetBuffer()
     {
         return m_Buffer;
     }

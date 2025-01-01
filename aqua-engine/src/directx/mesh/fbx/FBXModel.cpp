@@ -172,13 +172,13 @@ namespace AquaEngine {
         m_materialBuffer.Unmap();
     }
 
-    void FBXModel::CreateMaterialBufferView(const D3D12_DESCRIPTOR_RANGE &material_range)
+    void FBXModel::CreateMaterialBufferView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range)
     {
         const auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
-            &material_range,
+            std::move(material_range),
             1
         );
 
@@ -442,7 +442,7 @@ namespace AquaEngine {
         }
     }
 
-    void FBXModel::SetTexture(const D3D12_DESCRIPTOR_RANGE &texture_range)
+    void FBXModel::SetTexture(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range)
     {
         const auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
 
@@ -452,7 +452,7 @@ namespace AquaEngine {
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
-            &texture_range,
+            std::move(texture_range),
             1
         );
     }

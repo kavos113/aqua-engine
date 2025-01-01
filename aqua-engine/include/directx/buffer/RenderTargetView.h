@@ -11,7 +11,8 @@ namespace AquaEngine
     {
     public:
         void Create(Buffer &buffer) override;
-        void Create(ID3D12Resource* resource);
+        void Create(ID3D12Resource* resource) const;
+        void Create(Buffer &buffer, const D3D12_RENDER_TARGET_VIEW_DESC &rtvDesc) const;
     };
 
 }

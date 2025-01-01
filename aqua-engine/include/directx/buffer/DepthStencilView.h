@@ -6,10 +6,11 @@
 
 namespace AquaEngine
 {
-    class DepthStencilView : public BufferView
+    class DepthStencilView final : public BufferView
     {
     public:
         void Create(Buffer &buffer) override;
+        void Create(Buffer &buffer, const D3D12_DEPTH_STENCIL_VIEW_DESC &dsvDesc) const;
     };
 }
 

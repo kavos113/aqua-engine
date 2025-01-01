@@ -59,7 +59,7 @@ namespace AquaEngine {
         void Timer();
 
         void SetTexture(
-            const D3D12_DESCRIPTOR_RANGE &texture_range
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range
         );
 
         // if use shared segment
@@ -68,7 +68,7 @@ namespace AquaEngine {
             int offset = 0
             );
 
-        void CreateMaterialBufferView(const D3D12_DESCRIPTOR_RANGE &material_range);
+        void CreateMaterialBufferView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range);
         void CreateMaterialBufferView(
             const std::shared_ptr<DescriptorHeapSegment>& segment,
             int offset = 0

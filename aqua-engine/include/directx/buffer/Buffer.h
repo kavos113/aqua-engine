@@ -2,6 +2,7 @@
 #define AQUA_BUFFER_H
 
 #include <d3d12.h>
+#include <wrl/client.h>
 
 namespace AquaEngine
 {
@@ -9,8 +10,8 @@ namespace AquaEngine
     {
     public:
         Buffer();
-        explicit Buffer(ID3D12Resource* buffer);
-        virtual ~Buffer();
+        explicit Buffer(Microsoft::WRL::ComPtr<ID3D12Resource> buffer);
+        virtual ~Buffer() = default;
 
         virtual HRESULT Create(
             D3D12_HEAP_PROPERTIES heapProperties,
@@ -19,7 +20,7 @@ namespace AquaEngine
             D3D12_RESOURCE_STATES resourceState,
             D3D12_CLEAR_VALUE* clearValue);
 
-        [[nodiscard]] ID3D12Resource* GetBuffer() const;
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> GetBuffer();
 
         bool IsActive() const
         {
@@ -93,7 +94,7 @@ namespace AquaEngine
         };
 
     protected:
-        ID3D12Resource* m_Buffer;
+        Microsoft::WRL::ComPtr<ID3D12Resource> m_Buffer;
     };
 
     #define BUFFER_DEFAULT(size) Buffer::HeapProperties::Upload(), D3D12_HEAP_FLAG_NONE, Buffer::ResourceDesc::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr

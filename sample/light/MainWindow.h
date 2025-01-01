@@ -17,7 +17,7 @@ public:
         DWORD dwExStyle = 0,
         HWND hWndParent = nullptr,
         HMENU hMenu = nullptr
-    )
+    ) override
     {
         HRESULT hr = BaseWindow::Create(dwStyle, lpWindowName, x, y, nWidth, nHeight, dwExStyle, hWndParent, hMenu);
         if (FAILED(hr))
@@ -40,6 +40,9 @@ private:
     LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) override;
 
     std::unique_ptr<Graphics> m_graphics;
+
+    float mouseX = 0.0f;
+    float mouseY = 0.0f;
 };
 
 

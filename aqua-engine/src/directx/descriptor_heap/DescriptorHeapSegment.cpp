@@ -60,11 +60,13 @@ namespace AquaEngine
         m_manager->SetGraphicsRootDescriptorTable(*command, m_segmentId, offset);
     }
 
-    void DescriptorHeapSegment::SetRootParameter(D3D12_ROOT_PARAMETER_TYPE type,
-                                                 D3D12_SHADER_VISIBILITY visibility,
-                                                 const D3D12_DESCRIPTOR_RANGE* descriptorRanges,
-                                                 int numDescriptorRanges)
+    void DescriptorHeapSegment::SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE type,
+        D3D12_SHADER_VISIBILITY visibility,
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> descriptorRanges,
+        int numDescriptorRanges
+    ) const
     {
-        m_manager->SetRootParameter(m_segmentId, type, visibility, descriptorRanges, numDescriptorRanges);
+        m_manager->SetRootParameter(m_segmentId, type, visibility, std::move(descriptorRanges), numDescriptorRanges);
     }
 }

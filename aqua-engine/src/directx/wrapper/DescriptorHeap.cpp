@@ -11,11 +11,6 @@ namespace AquaEngine
 
     }
 
-    DescriptorHeap::~DescriptorHeap()
-    {
-        SafeRelease(&m_descriptorHeap);
-    }
-
     HRESULT DescriptorHeap::Create(const D3D12_DESCRIPTOR_HEAP_DESC *desc)
     {
         HRESULT hr = Device::Get()->CreateDescriptorHeap(
@@ -50,12 +45,7 @@ namespace AquaEngine
 
     void DescriptorHeap::SetToCommand(Command *command) const
     {
-        command->List()->SetDescriptorHeaps(1, &m_descriptorHeap);
-    }
-
-    void DescriptorHeap::Release()
-    {
-        SafeRelease(&m_descriptorHeap);
+        command->List()->SetDescriptorHeaps(1, m_descriptorHeap.GetAddressOf());
     }
 
 }

@@ -2,6 +2,7 @@
 #define AQUA_SHADEROBJECT_H
 
 #include <d3d12.h>
+#include <wrl/client.h>
 
 namespace AquaEngine
 {
@@ -16,7 +17,7 @@ namespace AquaEngine
 
         [[nodiscard]] D3D12_SHADER_BYTECODE Bytecode() const;
     private:
-        ID3D10Blob* m_blob;
+        Microsoft::WRL::ComPtr<ID3D10Blob> m_blob;
     };
 }
 

@@ -13,10 +13,7 @@ namespace AquaEngine
         m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
     }
 
-    Fence::~Fence()
-    {
-        SafeRelease(&m_fence);
-    }
+    Fence::~Fence() = default;
 
     HRESULT Fence::Wait()
     {

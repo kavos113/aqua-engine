@@ -1,4 +1,7 @@
 #include "directx/ShaderObject.h"
+
+#include <assert.h>
+
 #include "directx/Util.h"
 
 #include <d3dcompiler.h>
@@ -13,10 +16,7 @@ namespace AquaEngine
 
     }
 
-    ShaderObject::~ShaderObject()
-    {
-        SafeRelease(&m_blob);
-    }
+    ShaderObject::~ShaderObject() = default;
 
     HRESULT ShaderObject::Load(
         const wchar_t *filename,
@@ -49,6 +49,7 @@ namespace AquaEngine
 
             if (errorBlob == nullptr)
             {
+                assert(false);
                 return hr;
             }
 
@@ -57,6 +58,7 @@ namespace AquaEngine
             std::copy_n(reinterpret_cast<char*>(errorBlob->GetBufferPointer()), errorBlob->GetBufferSize(), errStr.begin());
 
             OutputDebugStringA(errStr.c_str());
+            assert(false);
             return hr;
         }
 

@@ -22,8 +22,9 @@ public:
     }
 
     void SetUp();
-    void Render() const;
+    void Render();
     void Timer(int id) const;
+    void MoveCamera(float dx, float dy);
 private:
     HWND hwnd;
     RECT rc;

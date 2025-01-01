@@ -21,14 +21,14 @@ namespace AquaEngine
             CreateDevice(adaptor_index);
         }
 
-        static ID3D12Device* Get()
+        static Microsoft::WRL::ComPtr<ID3D12Device> Get()
         {
             return m_device;
         }
 
         static void Shutdown()
         {
-            SafeRelease(&m_device);
+            m_device.Reset();
         }
 
         static std::vector<std::wstring> GetAdaptors()
@@ -56,7 +56,7 @@ namespace AquaEngine
         }
 
     private:
-        static ID3D12Device* m_device;
+        static Microsoft::WRL::ComPtr<ID3D12Device> m_device;
         static std::vector<IDXGIAdapter*> m_adaptors;
 
         static HRESULT CreateDevice(int adaptor_index)

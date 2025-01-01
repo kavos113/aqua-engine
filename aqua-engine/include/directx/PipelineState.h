@@ -21,13 +21,20 @@ namespace AquaEngine
         void SetVertexShader(ShaderObject* vs);
         void SetPixelShader(ShaderObject* ps);
 
+        void SetCullMode(D3D12_CULL_MODE cullMode);
+
+        void SetDepthEnable(bool enable);
+
+        void SetRTVFormat(DXGI_FORMAT format);
+
+
         void SetToCommand(Command& command) const
         {
-            command.List()->SetPipelineState(m_pipelineState);
+            command.List()->SetPipelineState(m_pipelineState.Get());
         }
 
     private:
-        ID3D12PipelineState* m_pipelineState;
+        Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;
 
         D3D12_GRAPHICS_PIPELINE_STATE_DESC m_psoDesc;
     };

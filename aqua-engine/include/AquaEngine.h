@@ -20,6 +20,7 @@
 #include "directx/mesh/Rectangle.h"
 #include "directx/mesh/RectangleTexture.h"
 #include "directx/mesh/fbx/FBXModel.h"
+#include "directx/mesh/SkyBox.h"
 
 #include "fbx/FBXManager.h"
 

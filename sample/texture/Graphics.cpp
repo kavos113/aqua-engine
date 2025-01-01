@@ -34,19 +34,19 @@ void Graphics::SetUp()
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
     );
 
+    auto camera_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
     camera.Init(
         {0.0f, 0.0f, -5.0f},
         {0.0f, 0.0f, 0.0f},
-        {0.0f, 1.0f, 0.0f},
-        manager,
-        {
-            .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-            .NumDescriptors = 1,
-            .BaseShaderRegister = 0,
-            .RegisterSpace = 0,
-            .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-        }
+        {0.0f, 1.0f, 0.0f}
     );
+    camera.AddManager("texture", std::move(camera_range));
 
     rectangle = std::make_unique<AquaEngine::RectangleTexture>(
         manager,
@@ -58,20 +58,22 @@ void Graphics::SetUp()
         *command
     );
     rectangle->Create();
-    rectangle->CreateShaderResourceView({
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 0,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
-    rectangle->CreateMatrixBuffer({
-        .RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
-        .NumDescriptors = 1,
-        .BaseShaderRegister = 1,
-        .RegisterSpace = 0,
-        .OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
-    });
+    auto texture_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    rectangle->CreateShaderResourceView(std::move(texture_range));
+    auto range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        1,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    rectangle->CreateMatrixBuffer(std::move(range));
     auto inputElement = rectangle->GetInputElementDescs();
 
     rootSignature.AddStaticSampler({
@@ -103,7 +105,7 @@ void Graphics::SetUp()
     pipelineState.Create();
 }
 
-void Graphics::Render() const
+void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
@@ -117,7 +119,7 @@ void Graphics::Render() const
     rootSignature.SetToCommand(*command);
     display->SetViewports();
 
-    camera.Render(*command);
+    camera.Render(*command, "texture");
     rectangle->Render(*command);
 
     display->EndRender();

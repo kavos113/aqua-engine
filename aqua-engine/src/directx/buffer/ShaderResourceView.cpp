@@ -5,6 +5,8 @@ namespace AquaEngine
 {
     void ShaderResourceView::Create(Buffer &buffer)
     {
+        if (CheckSegment() != 0) return;
+
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
         D3D12_RESOURCE_DESC desc = buffer.GetBuffer()->GetDesc();
@@ -16,11 +18,21 @@ namespace AquaEngine
         srvDesc.Texture2D.MipLevels = 1;
 
         Device::Get()->CreateShaderResourceView(
-            buffer.GetBuffer(),
+            buffer.GetBuffer().Get(),
             &srvDesc,
             m_DescriptorHeapSegment->GetCPUHandle(m_offset)
         );
 
     }
 
+    void ShaderResourceView::Create(Buffer &buffer, const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc) const
+    {
+        if (CheckSegment() != 0) return;
+
+        Device::Get()->CreateShaderResourceView(
+            buffer.GetBuffer().Get(),
+            &srvDesc,
+            m_DescriptorHeapSegment->GetCPUHandle(m_offset)
+        );
+    }
 }

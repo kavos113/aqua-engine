@@ -38,16 +38,21 @@ namespace AquaEngine
         [[nodiscard]] UINT GetIncrementSize() const;
         [[nodiscard]] std::vector<D3D12_ROOT_PARAMETER> GetRootParameters() const;
 
+        [[nodiscard]] std::string GetName() const
+        {
+            return m_name;
+        }
+
         void SetRootParameter(
             GLOBAL_HEAP_ID id,
             D3D12_ROOT_PARAMETER_TYPE type,
             D3D12_SHADER_VISIBILITY visibility,
-            const D3D12_DESCRIPTOR_RANGE* descriptor_ranges,
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> descriptor_ranges,
             int num_descriptor_ranges
         );
 
         void SetFirstGPUHandle(D3D12_GPU_DESCRIPTOR_HANDLE handle);
-        void SetGraphicsRootDescriptorTable(const Command &command, GLOBAL_HEAP_ID id, unsigned int offset = 0) const;
+        void SetGraphicsRootDescriptorTable(Command &command, GLOBAL_HEAP_ID id, unsigned int offset = 0) const;
 
     private:
         std::string m_name;

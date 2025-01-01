@@ -12,10 +12,7 @@ namespace AquaEngine
 
     }
 
-    RootSignature::~RootSignature()
-    {
-        SafeRelease(&m_rootSignature);
-    }
+    RootSignature::~RootSignature() = default;
 
     HRESULT RootSignature::Create()
     {
@@ -68,8 +65,13 @@ namespace AquaEngine
             return hr;
         }
 
-        auto p = signature->GetBufferPointer();
-        auto s = signature->GetBufferSize();
+        for (const auto &root_parameter: rootParameters)
+        {
+            if (root_parameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
+            {
+                delete root_parameter.DescriptorTable.pDescriptorRanges;
+            }
+        }
 
         hr = Device::Get()->CreateRootSignature(
             0,

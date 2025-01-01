@@ -34,48 +34,12 @@ namespace AquaEngine
                 }
             )
             , m_indices(
-                {
-                    0,
-                    1,
-                    2,
-                    1,
-                    3,
-                    2,
-                    // Front face
-                    4,
-                    6,
-                    5,
-                    5,
-                    6,
-                    7,
-                    // Back face
-                    0,
-                    2,
-                    6,
-                    0,
-                    6,
-                    4,
-                    // Bottom face
-                    1,
-                    5,
-                    3,
-                    3,
-                    5,
-                    7,
-                    // Top face
-                    0,
-                    4,
-                    1,
-                    1,
-                    4,
-                    5,
-                    // Left face
-                    2,
-                    3,
-                    6,
-                    3,
-                    7,
-                    6 // Right face
+                {0, 1, 2,  1, 3, 2, // Front face
+                    4, 6, 5,  5, 6, 7, // Back face
+                    0, 2, 6,  0, 6, 4, // Bottom face
+                    1, 5, 3,  3, 5, 7, // Top face
+                    0, 4, 1,  1, 4, 5, // Left face
+                    2, 3, 6,  3, 7, 6  // Right face
                 }
             )
         {

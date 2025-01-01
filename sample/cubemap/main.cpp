@@ -63,7 +63,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     );
 
     AquaEngine::SkyBox skyBox(
-        "goegap_road_4k.hdr",
+        "sample1.hdr",
         command,
         AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
             "skybox",
@@ -129,17 +129,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
             float dx = x - mouseX;
             float dy = y - mouseY;
 
-            std::cout << "dx: " << dx << ", dy: " << dy << std::endl;
-
             mouseX = x;
             mouseY = y;
 
-            camera->RotX(dx * 0.01f);
-            camera->RotY(dy * 0.01f);
+            camera->RotY(dx * -0.005f);
+            camera->RotX(dy * -0.005f);
             InvalidateRect(hwnd, &wr, false);
             break;
         }
-
         }
     }
 

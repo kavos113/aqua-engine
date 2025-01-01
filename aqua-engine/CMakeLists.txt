@@ -40,7 +40,6 @@ set(SRC
         src/directx/mesh/fbx/FBXModel.cpp
         src/directx/DirectionLight.cpp
         src/directx/mesh/SkyBox.cpp
-        include/directx/mesh/SkyBox.h
 )
 
 set(INCLUDE
@@ -80,7 +79,6 @@ set(INCLUDE
         include/fbx/FbxManager.h
         include/directx/mesh/fbx/FBXModel.h
         include/directx/DirectionLight.h
-        src/directx/mesh/SkyBox.cpp
         include/directx/mesh/SkyBox.h
 )
 
@@ -96,9 +94,7 @@ target_include_directories(aqua-engine PUBLIC $ENV{FBXSDK_DIR}/include)
 target_link_libraries(aqua-engine PUBLIC $ENV{Windows_SDK_Lib}/d3d12.lib)
 target_link_libraries(aqua-engine PUBLIC $ENV{Windows_SDK_Lib}/dxgi.lib)
 target_link_libraries(aqua-engine PUBLIC $ENV{Windows_SDK_Lib}/d3dcompiler.lib)
-#target_link_libraries(aqua-engine PUBLIC Microsoft::DirectXTex)
-target_include_directories(aqua-engine PUBLIC $ENV{DXTEX_DIR})
-target_link_libraries(aqua-engine PUBLIC $ENV{DXTEX_DIR}/Bin/Desktop_2022_Win10/x64/Debug/DirectXTex.lib)
+target_link_libraries(aqua-engine PUBLIC Microsoft::DirectXTex)
 
 if (LOCAL_BUILD)
     target_link_libraries(aqua-engine PUBLIC $ENV{FBXSDK_DIR}/lib/x64/debug/libfbxsdk-md.lib)

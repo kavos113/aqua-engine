@@ -49,7 +49,6 @@ namespace AquaEngine
         void Render(Command &command) override;
 
         void ConvertHDRIToCubeMap(Command &command);
-        void SaveDDS(Command &command);
 
         void SetCamera(std::shared_ptr<Camera> camera)
         {

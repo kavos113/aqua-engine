@@ -275,36 +275,6 @@ namespace AquaEngine
         }
     }
 
-    void SkyBox::SaveDDS(Command &command)
-    {
-        DirectX::ScratchImage image;
-        HRESULT hr = CaptureTexture(
-            command.Queue().Get(),
-            m_cubeMapBuffer.GetBuffer().Get(),
-            true,
-            image
-        );
-        if (FAILED(hr))
-        {
-            OutputDebugString("Failed to capture texture\n");
-            assert(false);
-        }
-
-        hr = SaveToDDSFile(
-            image.GetImages(),
-            image.GetImageCount(),
-            image.GetMetadata(),
-            DirectX::DDS_FLAGS_NONE,
-            L"skybox.dds"
-        );
-        if (FAILED(hr))
-        {
-            OutputDebugString("Failed to save to DDS file\n");
-            assert(false);
-        }
-        OutputDebugString("Saved to DDS File.\n");
-    }
-
     void SkyBox::CreateCubeMapPipelineState()
     {
         m_cubeMapRootSignature.AddStaticSampler(RootSignature::DefaultStaticSampler());

@@ -36,42 +36,41 @@ namespace AquaEngine {
 
         void RotX(float angle)
         {
-            DirectX::XMVECTOR focus_new = DirectX::XMVector3TransformCoord(
-                DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
-                DirectX::XMMatrixRotationX(angle)
-            );
-            m_focus = DirectX::XMFLOAT3(
-                m_eye.x + DirectX::XMVectorGetX(focus_new),
-                m_eye.y + DirectX::XMVectorGetY(focus_new),
-                m_eye.z + DirectX::XMVectorGetZ(focus_new)
-            );
-            UpdateMatrixBuffer();
+            Rotate(angle, 0.0f, 0.0f);
         }
 
+        // 水平回転
         void RotY(float angle)
         {
-            DirectX::XMVECTOR focus_new = DirectX::XMVector3TransformCoord(
-                DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
-                DirectX::XMMatrixRotationY(angle)
-            );
-            m_focus = DirectX::XMFLOAT3(
-                m_eye.x + DirectX::XMVectorGetX(focus_new),
-                m_eye.y + DirectX::XMVectorGetY(focus_new),
-                m_eye.z + DirectX::XMVectorGetZ(focus_new)
-            );
-            UpdateMatrixBuffer();
+            Rotate(0.0f, angle, 0.0f);
         }
 
         void RotZ(float angle)
         {
-            DirectX::XMVECTOR focus_new = DirectX::XMVector3TransformCoord(
+            Rotate(0.0f, 0.0f, angle);
+        }
+
+        void Rotate(float x = 0.0f, float y = 0.0f, float z = 0.0f)
+        {
+            DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(x, y, z);
+            DirectX::XMVECTOR focus_new = XMVector3TransformCoord(
                 DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
-                DirectX::XMMatrixRotationZ(angle)
+                rot
             );
             m_focus = DirectX::XMFLOAT3(
                 m_eye.x + DirectX::XMVectorGetX(focus_new),
                 m_eye.y + DirectX::XMVectorGetY(focus_new),
                 m_eye.z + DirectX::XMVectorGetZ(focus_new)
+            );
+
+            DirectX::XMVECTOR up_new = XMVector3TransformCoord(
+                XMLoadFloat3(&m_up),
+                rot
+            );
+            m_up = DirectX::XMFLOAT3(
+                DirectX::XMVectorGetX(up_new),
+                DirectX::XMVectorGetY(up_new),
+                DirectX::XMVectorGetZ(up_new)
             );
             UpdateMatrixBuffer();
         }

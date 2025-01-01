@@ -71,10 +71,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
             D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
         )
     );
+    auto world_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        1,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    skyBox.CreateMatrixBuffer(std::move(world_range));
     skyBox.Create();
     skyBox.SetCamera(camera);
     skyBox.ConvertHDRIToCubeMap(command);
     skyBox.CreateCubeMapPipelineState();
+    skyBox.Scale(1000.0f, 1000.0f, 1000.0f);
 
     ShowWindow(hwnd, nCmdShow);
 
@@ -132,8 +141,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
             mouseX = x;
             mouseY = y;
 
-            camera->RotY(dx * -0.005f);
-            camera->RotX(dy * -0.005f);
+            camera->Rotate(dy * -0.005f, dx * -0.005f);
             InvalidateRect(hwnd, &wr, false);
             break;
         }

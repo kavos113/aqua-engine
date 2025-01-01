@@ -33,7 +33,7 @@ namespace AquaEngine
         CreateVertexBuffer();
         CreateIndexBuffer();
 
-        CreateMatrixBuffer({0.0f, 0.0f, 0.0f});
+        CreateHDRIMatrixBuffer({0.0f, 0.0f, 0.0f});
         CreateCubeMapBuffer();
         CreateHDRIShaderResourceView();
         CreateHDRIPipelineState();
@@ -122,7 +122,7 @@ namespace AquaEngine
         );
     }
 
-    void SkyBox::CreateMatrixBuffer(const DirectX::XMFLOAT3 &eye)
+    void SkyBox::CreateHDRIMatrixBuffer(const DirectX::XMFLOAT3 &eye)
     {
         DirectX::XMVECTOR eyeVec = XMLoadFloat3(&eye);
         m_viewMatrices = {

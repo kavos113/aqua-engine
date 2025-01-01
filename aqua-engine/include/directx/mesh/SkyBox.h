@@ -109,7 +109,9 @@ namespace AquaEngine
 
         void CreateVertexBuffer();
         void CreateIndexBuffer();
-        void CreateMatrixBuffer(const DirectX::XMFLOAT3 &eye);
+
+        void CreateHDRIMatrixBuffer(const DirectX::XMFLOAT3 &eye);
+
         void CreateCubeMapBuffer();
 
         void CreateHDRIShaderResourceView();

@@ -28,14 +28,19 @@ namespace AquaEngine
             CreateRenderTargetViews();
         }
 
-        void Present()
+        void Present() const
         {
             m_swapChain.Present();
         }
 
-        void GetDesc(DXGI_SWAP_CHAIN_DESC1* desc)
+        void GetDesc(DXGI_SWAP_CHAIN_DESC1 *desc) const
         {
             m_swapChain.GetDesc(desc);
+        }
+
+        [[nodiscard]] D3D12_RESOURCE_DESC GetBackBufferDesc(UINT index = 0) const
+        {
+            return m_backBuffers[index]->GetDesc();
         }
 
         [[nodiscard]] UINT GetCurrentBackBufferIndex() const

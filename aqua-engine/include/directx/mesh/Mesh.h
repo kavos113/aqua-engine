@@ -80,6 +80,23 @@ namespace AquaEngine
             m_matrixCBV.Create(m_matrixBuffer);
         }
 
+        bool IsHit(const Mesh &mesh)
+        {
+            return DirectX::XMVectorGetX(
+                       DirectX::XMVector3Length(DirectX::XMVectorSubtract(GetPos(), mesh.GetPos()))
+                   ) < m_radius + mesh.m_radius;
+        }
+
+        [[nodiscard]] DirectX::XMVECTOR GetPos() const
+        {
+            DirectX::XMFLOAT3 pos = {
+                m_coordinateMatrix.r[3].m128_f32[0],
+                m_coordinateMatrix.r[3].m128_f32[1],
+                m_coordinateMatrix.r[3].m128_f32[2]
+            };
+            return DirectX::XMLoadFloat3(&pos);
+        }
+
         void RotX(float angle)
         {
             m_transformMatrix *= DirectX::XMMatrixRotationX(angle);
@@ -171,9 +188,11 @@ namespace AquaEngine
         
         DirectX::XMMATRIX m_transformMatrix = DirectX::XMMatrixIdentity();
         DirectX::XMMATRIX m_coordinateMatrix = DirectX::XMMatrixIdentity();
-        DescriptorHeapSegmentManager* m_manager{};
+        DescriptorHeapSegmentManager *m_manager{};
         GPUBuffer<TransformMatrix> m_matrixBuffer;
         ConstantBufferView m_matrixCBV;
+
+        float m_radius = 0.0f;
 
     };
 }

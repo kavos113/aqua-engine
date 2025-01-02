@@ -25,6 +25,8 @@ namespace AquaEngine {
         {
             LOOP,
             ONCE,
+            INVERSE,
+            INVERSE_LOOP
         };
 
         FBXModel(

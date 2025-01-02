@@ -517,8 +517,17 @@ namespace AquaEngine {
         {
             FbxTimeSpan time_span;
             m_scene->GetGlobalSettings().GetTimelineDefaultTimeSpan(time_span);
+
             m_startTime = time_span.GetStart();
             m_stopTime = time_span.GetStop();
+        }
+
+        if (m_animationMode == AnimationMode::INVERSE || m_animationMode == AnimationMode::INVERSE_LOOP)
+        {
+            m_currentTime = m_stopTime;
+        } else
+        {
+            m_currentTime = m_startTime;
         }
 
         FbxPose* pose = nullptr;
@@ -616,7 +625,29 @@ namespace AquaEngine {
 
     void FBXModel::Timer()
     {
-        if (m_stopTime > m_startTime)
+        if (m_startTime > m_stopTime)
+        {
+            m_status = Status::REFRESHED;
+            return;
+        }
+
+        if (m_animationMode == AnimationMode::INVERSE || m_animationMode == AnimationMode::INVERSE_LOOP)
+        {
+            m_status = Status::MUST_BE_REFRESHED;
+            m_currentTime -= m_frameTime;
+
+            if (m_currentTime < m_startTime)
+            {
+                if (m_animationMode == AnimationMode::INVERSE_LOOP)
+                {
+                    m_currentTime = m_stopTime; // ループ再生
+                } else
+                {
+                    m_startTime = m_stopTime;
+                    m_currentTime = m_stopTime;
+                }
+            }
+        } else
         {
             m_status = Status::MUST_BE_REFRESHED;
             m_currentTime += m_frameTime;
@@ -633,10 +664,6 @@ namespace AquaEngine {
                     m_currentTime = m_startTime;
                 }
             }
-        }
-        else
-        {
-            m_status = Status::REFRESHED;
         }
 
 

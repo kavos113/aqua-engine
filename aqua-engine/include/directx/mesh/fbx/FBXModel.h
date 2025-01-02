@@ -25,6 +25,8 @@ namespace AquaEngine {
         {
             LOOP,
             ONCE,
+            INVERSE,
+            INVERSE_LOOP
         };
 
         FBXModel(
@@ -78,6 +80,11 @@ namespace AquaEngine {
 
         HRESULT SetCurrentAnimStack(int index);
         HRESULT SetCurrentAnimStack(const std::string &name);
+
+        void SetCurrentTime(int time)
+        {
+            m_currentTime.SetTime(0, 0, 0, time, 0, m_scene->GetGlobalSettings().GetTimeMode());
+        }
 
         void SetCurrentPoseIndex(int index);
 

@@ -11,6 +11,8 @@ set sample_2=triangle
 set sample_3=texture
 set sample_4=fbx
 set sample_5=light
+set sample_6=cubemap
+set sample_7=collision
 
 set i=1
 :SAMPLE_LOOP

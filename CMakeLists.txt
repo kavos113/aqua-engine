@@ -134,3 +134,18 @@ add_executable(sample-cubemap WIN32 sample/cubemap/main.cpp)
 add_dependencies(sample-cubemap aqua-engine)
 target_include_directories(sample-cubemap PUBLIC aqua-engine/include)
 target_link_libraries(sample-cubemap aqua-engine)
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/collision)
+add_executable(sample-collision WIN32 sample/collision/main.cpp sample/collision/Graphics.cpp sample/collision/Graphics.h
+        sample/collision/BaseWindow.h
+        sample/collision/MainWindow.cpp
+        sample/collision/MainWindow.h)
+add_dependencies(sample-collision aqua-engine)
+target_include_directories(sample-collision PUBLIC aqua-engine/include)
+target_link_libraries(sample-collision aqua-engine)
+file(COPY sample/collision/shader.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+if (LOCAL_BUILD) # fbx and png: local only
+    file(COPY sample/collision/isu.fbx sample/collision/isu.png sample/collision/ninja.fbx sample/collision/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    message(STATUS "copy fbx files.")
+endif ()
+message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

@@ -260,6 +260,7 @@ namespace AquaEngine {
         for (int i = 0; i < vertex_count; ++i)
         {
             m_vertices[i].position = DirectX::XMFLOAT3(control_points[i][0], control_points[i][1], control_points[i][2]);
+            m_radius = max(m_radius, std::sqrt(control_points[i][0] * control_points[i][0] + control_points[i][1] * control_points[i][1] + control_points[i][2] * control_points[i][2]));
         }
     }
 

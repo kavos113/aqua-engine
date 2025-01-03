@@ -175,7 +175,7 @@ void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    // model->RotZ(0.01f);
+    // models->RotZ(0.01f);
     model2->RotY(-0.1f);
 
     display->BeginRender();

@@ -15,6 +15,7 @@
 #include "directx/ShaderObject.h"
 #include "directx/Camera.h"
 #include "directx/DirectionLight.h"
+#include "directx/MultiPassRenderer.h"
 
 #include "directx/mesh/Triangle.h"
 #include "directx/mesh/Rectangle.h"

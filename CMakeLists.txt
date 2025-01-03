@@ -47,12 +47,14 @@ if (LOCAL_BUILD)
             test/engine/directx/isu.png
             test/engine/directx/isu.fbx
             test/engine/directx/icon.png
-            DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+            DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+    )
 else()
     file(COPY
         test/engine/directx/ps.hlsl
         test/engine/directx/vs.hlsl
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+            DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+    )
 endif()
 
 include(FetchContent)
@@ -78,74 +80,114 @@ include(GoogleTest)
 
 gtest_discover_tests(aqua-test)
 
-# sample
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/display)
-add_executable(sample-display WIN32 sample/display/main.cpp)
-add_dependencies(sample-display aqua-engine)
-target_include_directories(sample-display PUBLIC aqua-engine/include)
-target_link_libraries(sample-display aqua-engine)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/triangle)
-add_executable(sample-triangle WIN32 sample/triangle/main.cpp)
-add_dependencies(sample-triangle aqua-engine)
-target_include_directories(sample-triangle PUBLIC aqua-engine/include)
-target_link_libraries(sample-triangle aqua-engine)
-file(COPY sample/triangle/vs.hlsl sample/triangle/ps.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+function(create_sample name files)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/${name})
+    set(exe_name sample-${name})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/texture)
-add_executable(sample-texture WIN32 sample/texture/Graphics.cpp sample/texture/Graphics.h
-        sample/texture/main.cpp)
-add_dependencies(sample-texture aqua-engine)
-target_include_directories(sample-texture PUBLIC aqua-engine/include)
-target_link_libraries(sample-texture aqua-engine)
-file(COPY sample/texture/vs.hlsl sample/texture/ps.hlsl sample/texture/type.hlsli sample/texture/icon.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    set(src_files ${ARGV})
+    list(REMOVE_AT src_files 0)
+    foreach (src_file IN LISTS src_files)
+        if (src_file MATCHES ".*\\.(cpp|c|cc|cxx|h|hpp)$")
+            list(APPEND src_list ${src_file})
+        endif ()
+        if (src_file MATCHES ".*\\.(hlsl|hlsli)$")
+            file(COPY ${src_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        endif ()
+        if (LOCAL_BUILD)
+            if (src_file MATCHES ".*\\.(fbx|png|hdr)$")
+                file(COPY ${src_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+            endif ()
+        endif ()
+    endforeach ()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/fbx)
-add_executable(sample-fbx WIN32 sample/fbx/main.cpp sample/fbx/Graphics.cpp sample/fbx/Graphics.h)
-add_dependencies(sample-fbx aqua-engine)
-target_include_directories(sample-fbx PUBLIC aqua-engine/include)
-target_link_libraries(sample-fbx aqua-engine)
-file(COPY sample/fbx/vs.hlsl sample/fbx/ps.hlsl sample/fbx/type.hlsli DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-if (LOCAL_BUILD) # fbx and png: local only
-    file(COPY sample/fbx/isu.fbx sample/fbx/isu.png sample/fbx/ninja.fbx sample/fbx/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    message(STATUS "copy fbx files.")
-endif ()
-message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+    add_executable(${exe_name} WIN32 ${src_list})
+    add_dependencies(${exe_name} aqua-engine)
+    target_include_directories(${exe_name} PUBLIC aqua-engine/include)
+    target_link_libraries(${exe_name} aqua-engine)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/light)
-add_executable(sample-light WIN32 sample/light/main.cpp sample/light/Graphics.cpp sample/light/Graphics.h
+    message(STATUS "Successfully created sample: ${name}")
+endfunction()
+
+create_sample(display sample/display/main.cpp)
+
+create_sample(triangle
+        sample/triangle/main.cpp
+        sample/triangle/vs.hlsl
+        sample/triangle/ps.hlsl
+)
+
+create_sample(texture
+        sample/texture/main.cpp
+        sample/texture/Graphics.cpp
+        sample/texture/Graphics.h
+        sample/texture/vs.hlsl
+        sample/texture/ps.hlsl
+        sample/texture/type.hlsli
+        resources/models/icon.png
+)
+
+create_sample(fbx
+        sample/fbx/main.cpp
+        sample/fbx/Graphics.cpp
+        sample/fbx/Graphics.h
+        sample/fbx/vs.hlsl
+        sample/fbx/ps.hlsl
+        sample/fbx/type.hlsli
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)
+
+create_sample(light
+        sample/light/main.cpp
+        sample/light/Graphics.cpp
+        sample/light/Graphics.h
         sample/light/BaseWindow.h
         sample/light/MainWindow.cpp
-        sample/light/MainWindow.h)
-add_dependencies(sample-light aqua-engine)
-target_include_directories(sample-light PUBLIC aqua-engine/include)
-target_link_libraries(sample-light aqua-engine)
-file(COPY sample/light/shader.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-if (LOCAL_BUILD) # fbx and png: local only
-    file(COPY sample/light/isu.fbx sample/light/isu.png sample/light/ninja.fbx sample/light/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    message(STATUS "copy fbx files.")
-endif ()
-message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+        sample/light/MainWindow.h
+        sample/light/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/cubemap)
-add_executable(sample-cubemap WIN32 sample/cubemap/main.cpp)
-add_dependencies(sample-cubemap aqua-engine)
-target_include_directories(sample-cubemap PUBLIC aqua-engine/include)
-target_link_libraries(sample-cubemap aqua-engine)
+create_sample(cubemap
+        sample/cubemap/main.cpp
+        aqua-engine/src/directx/mesh/skybox.hlsl
+        aqua-engine/src/directx/mesh/cubemap.hlsl
+        resources/hdrs/sample1.hdr
+)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/collision)
-add_executable(sample-collision WIN32 sample/collision/main.cpp sample/collision/Graphics.cpp sample/collision/Graphics.h
+create_sample(collision
+        sample/collision/main.cpp
+        sample/collision/Graphics.cpp
+        sample/collision/Graphics.h
         sample/collision/BaseWindow.h
         sample/collision/MainWindow.cpp
-        sample/collision/MainWindow.h)
-add_dependencies(sample-collision aqua-engine)
-target_include_directories(sample-collision PUBLIC aqua-engine/include)
-target_link_libraries(sample-collision aqua-engine)
-file(COPY sample/collision/shader.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-if (LOCAL_BUILD) # fbx and png: local only
-    file(COPY sample/collision/isu.fbx sample/collision/isu.png sample/collision/ninja.fbx sample/collision/ninja.png DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    message(STATUS "copy fbx files.")
-endif ()
-message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+        sample/collision/MainWindow.h
+        sample/collision/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)
+
+create_sample(background
+        sample/background/main.cpp
+        sample/background/Graphics.cpp
+        sample/background/Graphics.h
+        sample/background/BaseWindow.h
+        sample/background/MainWindow.cpp
+        sample/background/MainWindow.h
+        sample/background/shader.hlsl
+        aqua-engine/src/directx/mesh/skybox.hlsl
+        aqua-engine/src/directx/mesh/cubemap.hlsl
+        resources/hdrs/sample1.hdr
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)

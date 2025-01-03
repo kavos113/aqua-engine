@@ -6,10 +6,6 @@
 Graphics::Graphics(HWND hwnd, RECT rc)
     : hwnd(hwnd)
     , rc(rc)
-    , command(nullptr)
-    , display(nullptr)
-    , model(nullptr)
-    , camera(rc)
 {
     AquaEngine::Factory::Init(true);
     AquaEngine::Device::GetAdaptors();
@@ -34,7 +30,7 @@ void Graphics::SetUp()
     display = std::make_unique<AquaEngine::Display>(hwnd, rc, *command);
     display->SetBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-    auto& manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
+    auto &manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
         "texture",
         10,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
@@ -43,23 +39,47 @@ void Graphics::SetUp()
     auto camera_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
-        2,
+        0,
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    camera.Init(
+    camera = std::make_shared<AquaEngine::Camera>(rc);
+    camera->Init(
         {0.0f, 0.0f, -2.0f},
         {0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f}
     );
-    camera.AddManager("texture", std::move(camera_range));
+    camera->AddManager("texture", std::move(camera_range));
 
     OutputDebugString("[Message] Camera initialized\n");
+
+    skyBox = std::make_unique<AquaEngine::SkyBox>(
+        "sample1.hdr",
+        *command,
+        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
+            "skybox",
+            10,
+            D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+        )
+    );
+    auto world_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        1,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    skyBox->CreateMatrixBuffer(std::move(world_range));
+    skyBox->Create();
+    skyBox->SetCamera(camera);
+    skyBox->ConvertHDRIToCubeMap(*command);
+    skyBox->CreateCubeMapPipelineState();
+    skyBox->Scale(1000.0f, 1000.0f, 1000.0f);
 
     auto light_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
-        3,
+        1,
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
@@ -74,7 +94,7 @@ void Graphics::SetUp()
     auto matrix_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
-        0,
+        2,
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
@@ -104,7 +124,7 @@ void Graphics::SetUp()
     auto material_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
-        1,
+        3,
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
@@ -117,12 +137,12 @@ void Graphics::SetUp()
 
     model = std::make_unique<AquaEngine::FBXModel>(manager, "ninja.fbx", "ninja.png", *command);
     model->Create();
-    model->CreateMatrixBuffer(matrix_segment,0);
+    model->CreateMatrixBuffer(matrix_segment, 0);
     model->SetTexture(texture_segment, 0);
     model->CreateMaterialBufferView(material_segment, 0);
     OutputDebugString("[Message] Model loaded\n");
 
-    model2 = std::make_unique<AquaEngine::FBXModel>(manager,"isu.fbx", "isu.png", *command);
+    model2 = std::make_unique<AquaEngine::FBXModel>(manager, "isu.fbx", "isu.png", *command);
     model2->Create();
     model2->CreateMatrixBuffer(matrix_segment, 1);
     model2->SetTexture(texture_segment, 1);
@@ -151,7 +171,7 @@ void Graphics::SetUp()
     OutputDebugString("[Message] Pipeline state created\n");
 
     auto anims = model->GetAnimStackNames();
-    for (auto& anim : anims)
+    for (auto &anim: anims)
     {
         std::cout << anim << std::endl;
     }
@@ -169,10 +189,9 @@ void Graphics::SetUp()
 
     model->Scale(2.0f, 2.0f, 2.0f);
     model2->Scale(2.0f, 2.0f, 2.0f);
-
 }
 
-void Graphics::Render()
+void Graphics::Render() const
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
@@ -181,11 +200,13 @@ void Graphics::Render()
 
     display->BeginRender();
 
+    display->SetViewports();
+    skyBox->Render(*command);
+
     pipelineState.SetToCommand(*command);
     rootSignature.SetToCommand(*command);
-    display->SetViewports();
 
-    camera.Render(*command, "texture");
+    camera->Render(*command, "texture");
     directionLight.Render(*command);
     model->Render(*command);
     model2->Render(*command);
@@ -214,9 +235,8 @@ void Graphics::Timer(int id) const
     }
 }
 
-void Graphics::MoveCamera(float dx, float dy)
+void Graphics::MoveCamera(float dx, float dy) const
 {
-    camera.RotX(dy * -0.01f);
-    camera.RotY(dx * -0.01f);
+    camera->Rotate(dy * -0.005f, dx * -0.005f);
     InvalidateRect(hwnd, &rc, false);
 }

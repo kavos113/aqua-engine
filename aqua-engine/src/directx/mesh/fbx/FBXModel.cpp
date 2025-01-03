@@ -398,7 +398,7 @@ namespace AquaEngine {
         {
             FbxSurfaceMaterial* material = node->GetMaterial(i);
 
-            // phong model
+            // phong models
             if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
             {
                 const auto phong_material = reinterpret_cast<FbxSurfacePhong *>(material);

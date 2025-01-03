@@ -25,6 +25,11 @@ namespace AquaEngine
             return m_backBuffers.GetCurrentRTVHandle();
         }
 
+        [[nodiscard]] D3D12_RESOURCE_DESC GetBackBufferResourceDesc() const
+        {
+            return m_backBuffers.GetBackBufferDesc();
+        }
+
         void SetBackgroundColor(float r, float g, float b, float a)
         {
             m_clearColor[0] = r;

@@ -101,7 +101,7 @@ function(create_sample name files)
         endif ()
     endforeach ()
 
-    add_executable(${exe_name} ${src_list})
+    add_executable(${exe_name} WIN32 ${src_list})
     add_dependencies(${exe_name} aqua-engine)
     target_include_directories(${exe_name} PUBLIC aqua-engine/include)
     target_link_libraries(${exe_name} aqua-engine)

@@ -121,3 +121,4 @@ log
 .vs
 *.hdr
 vcpkg_installed
+resources

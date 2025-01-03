@@ -149,3 +149,18 @@ if (LOCAL_BUILD) # fbx and png: local only
     message(STATUS "copy fbx files.")
 endif ()
 message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sample/background)
+add_executable(sample-background WIN32 sample/background/main.cpp sample/background/Graphics.cpp sample/background/Graphics.h
+        sample/background/BaseWindow.h
+        sample/background/MainWindow.cpp
+        sample/background/MainWindow.h)
+add_dependencies(sample-background aqua-engine)
+target_include_directories(sample-background PUBLIC aqua-engine/include)
+target_link_libraries(sample-background aqua-engine)
+file(COPY sample/background/shader.hlsl sample/background/skybox.hlsl sample/background/cubemap.hlsl DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+if (LOCAL_BUILD) # fbx and png: local only
+    file(COPY sample/background/isu.fbx sample/background/isu.png sample/background/ninja.fbx sample/background/ninja.png sample/background/sample1.hdr DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    message(STATUS "copy fbx files.")
+endif ()
+message(STATUS "copy vs.hlsl and ps.hlsl to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")

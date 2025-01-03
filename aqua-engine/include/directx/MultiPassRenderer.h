@@ -14,9 +14,8 @@ namespace AquaEngine
     class MultiPassRenderer
     {
     public:
-        explicit MultiPassRenderer(const std::shared_ptr<DescriptorHeapSegmentManager> &manager)
+        MultiPassRenderer()
             : m_vertexBufferView()
-            , m_manager(manager)
         {
         }
 
@@ -30,7 +29,9 @@ namespace AquaEngine
 
         void EndRender(Command &command);
 
-        void UseAsTexture(Command &command);
+        void UseAsTexture(Command &command) const;
+
+        HRESULT CreateShaderResourceView(std::shared_ptr<DescriptorHeapSegment> segment, int offset = 0);
 
         void SetBackgroundColor(float r, float g, float b, float a)
         {
@@ -52,7 +53,6 @@ namespace AquaEngine
 
         HRESULT CreateRenderTargetView();
 
-        HRESULT CreateShaderResourceView(std::shared_ptr<DescriptorHeapSegment> segment, int offset = 0);
 
         HRESULT CreateDepthStencilView(float width, float height);
 
@@ -71,7 +71,6 @@ namespace AquaEngine
         GPUBuffer<Vertex> m_vertexBuffer;
         D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView;
 
-        std::shared_ptr<DescriptorHeapSegmentManager> m_manager;
 
         std::array<float, 4> m_clearColor = {1.0f, 1.0f, 1.0f, 1.0f};
 

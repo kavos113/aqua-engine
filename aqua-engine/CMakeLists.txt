@@ -40,8 +40,7 @@ set(SRC
         src/directx/mesh/fbx/FBXModel.cpp
         src/directx/DirectionLight.cpp
         src/directx/mesh/SkyBox.cpp
-        include/directx/MultiPassRenderer.cpp
-        include/directx/MultiPassRenderer.h
+        src/directx/MultiPassRenderer.cpp
 )
 
 set(INCLUDE
@@ -82,7 +81,6 @@ set(INCLUDE
         include/directx/mesh/fbx/FBXModel.h
         include/directx/DirectionLight.h
         include/directx/mesh/SkyBox.h
-        include/directx/MultiPassRenderer.cpp
         include/directx/MultiPassRenderer.h
 )
 

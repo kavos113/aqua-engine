@@ -1,10 +1,10 @@
-#include "MultiPassRenderer.h"
+#include "../../include/directx/MultiPassRenderer.h"
 
 #include <array>
 
-#include "Util.h"
-#include "descriptor_heap/GlobalDescriptorHeapManager.h"
-#include "wrapper/Barrier.h"
+#include "../../include/directx/Util.h"
+#include "../../include/directx/descriptor_heap/GlobalDescriptorHeapManager.h"
+#include "../../include/directx/wrapper/Barrier.h"
 
 namespace AquaEngine
 {
@@ -73,7 +73,7 @@ namespace AquaEngine
         );
     }
 
-    void MultiPassRenderer::UseAsTexture(Command &command)
+    void MultiPassRenderer::UseAsTexture(Command &command) const
     {
         m_srv.SetGraphicsRootDescriptorTable(&command);
     }
@@ -107,14 +107,12 @@ namespace AquaEngine
     HRESULT MultiPassRenderer::CreateRenderBuffer(const D3D12_RESOURCE_DESC &desc)
     {
         D3D12_CLEAR_VALUE clear_value = {
-            .Format = DXGI_FORMAT_R8G8B8A8_UNORM,
-            .Color = {
-                .r = m_clearColor[0],
-                .g = m_clearColor[1],
-                .b = m_clearColor[2],
-                .a = m_clearColor[3]
-            }
+            .Format = DXGI_FORMAT_R8G8B8A8_UNORM
         };
+        for (int i = 0; i < 4; ++i)
+        {
+            clear_value.Color[i] = m_clearColor[i];
+        }
 
         HRESULT hr = m_buffer.Create(
             Buffer::HeapProperties::Default(),

@@ -119,3 +119,5 @@ log
 *.png
 *.pdb
 .vs
+*.hdr
+vcpkg_installed

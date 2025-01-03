@@ -89,7 +89,6 @@ HRESULT MainWindow::CreateDeviceResources()
     if (m_d2dRenderTarget != nullptr)
     {
         long right = (m_progressBarBorder.right - m_progressBarBorder.left) * m_progress + m_progressBarBorder.left;
-        std::cout << "right: " << right << std::endl;
         HRESULT hr = m_d2dFactory->CreateRectangleGeometry(
             D2D1::RectF(m_progressBarBorder.left, m_progressBarBorder.top, right, m_progressBarBorder.bottom),
             m_finishedProgressBarGeometry.GetAddressOf()

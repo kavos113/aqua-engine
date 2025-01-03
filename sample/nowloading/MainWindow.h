@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <d2d1.h>
+#include <dwrite.h>
 
 #include "BaseWindow.h"
 #include "Graphics.h"
@@ -52,7 +53,14 @@ private:
     float m_progress = 0.0f;
 
     HRESULT CreateDeviceResources();
+
+    HRESULT CreateD2D1Resources();
+
+    HRESULT CreateDWriteResources();
+
     HRESULT OnPaint();
+
+    void PaintText() const;
 
     void OnResize();
 
@@ -62,9 +70,15 @@ private:
     Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_d2dBlackBrush = nullptr;
     Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> m_progressBarGeometry = nullptr;
     Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> m_finishedProgressBarGeometry = nullptr;
-    RECT m_progressBarBorder = {0, 0, 0, 0};
-};
+    Microsoft::WRL::ComPtr<IDWriteFactory> m_dwriteFactory = nullptr;
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> m_dwriteTextFormat = nullptr;
 
+    RECT m_progressBarBorder = {0, 0, 0, 0};
+    RECT m_textBorder = {0, 0, 0, 0};
+
+    const wchar_t *m_loadingText = nullptr;
+    UINT32 m_loadingTextLength = 0;
+};
 
 
 #endif //MAINWINDOW_H

@@ -106,6 +106,7 @@ function(create_sample name files)
     target_include_directories(${exe_name} PUBLIC aqua-engine/include)
     target_link_libraries(${exe_name} aqua-engine)
     target_link_libraries(${exe_name} d2d1.lib)
+    target_link_libraries(${exe_name} dwrite.lib)
 
     message(STATUS "Successfully created sample: ${name}")
 endfunction()

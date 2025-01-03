@@ -12,7 +12,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     auto r = window.Create(
         WS_OVERLAPPEDWINDOW,
         "Aqua Engine Sample",
-        200, 200, 800, 600
+        200,
+        200,
+        800,
+        600
     );
     if (r != 0)
     {

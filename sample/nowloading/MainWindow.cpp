@@ -16,12 +16,24 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
             return -1;
         }
 
+        hr = CreateDWriteResources();
+        if (FAILED(hr))
+        {
+            OutputDebugString("failed to create DWrite resources\n");
+            return -1;
+        }
+
         long width = wr.right - wr.left;
         long height = wr.bottom - wr.top;
         m_progressBarBorder.left = width / 6;
         m_progressBarBorder.right = width - m_progressBarBorder.left;
         m_progressBarBorder.top = height / 2;
         m_progressBarBorder.bottom = m_progressBarBorder.top + 20;
+
+        m_textBorder.left = m_progressBarBorder.left;
+        m_textBorder.right = m_progressBarBorder.right;
+        m_textBorder.top = m_progressBarBorder.top - 50;
+        m_textBorder.bottom = m_progressBarBorder.top;
 
         return 0;
     }
@@ -42,8 +54,7 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
         if (!m_isInitialized)
         {
             OnPaint();
-        }
-        else
+        } else
         {
             m_graphics->Render();
         }
@@ -64,7 +75,6 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
     {
         auto *p = reinterpret_cast<Graphics::Progress *>(lParam);
         m_progress = p->progress;
-        std::cout << "loading: " << m_progress << std::endl;
         SendMessage(m_hwnd, WM_PAINT, 0, 0);
         return 0;
     }
@@ -93,6 +103,18 @@ HRESULT MainWindow::CreateDeviceResources()
         return S_OK;
     }
 
+    HRESULT hr = CreateD2D1Resources();
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to create D2D1 resources\n");
+        return hr;
+    }
+
+    return S_OK;
+}
+
+HRESULT MainWindow::CreateD2D1Resources()
+{
     RECT rc;
     GetClientRect(m_hwnd, &rc);
 
@@ -126,9 +148,14 @@ HRESULT MainWindow::CreateDeviceResources()
     }
 
     hr = m_d2dFactory->CreateRectangleGeometry(
-        D2D1::RectF(m_progressBarBorder.left - 1, m_progressBarBorder.top - 1, m_progressBarBorder.right + 1, m_progressBarBorder.bottom + 1),
+        D2D1::RectF(
+            m_progressBarBorder.left - 1,
+            m_progressBarBorder.top - 1,
+            m_progressBarBorder.right + 1,
+            m_progressBarBorder.bottom + 1
+        ),
         m_progressBarGeometry.GetAddressOf()
-        );
+    );
     if (FAILED(hr))
     {
         OutputDebugString("failed to create D2D rectangle geometry\n");
@@ -136,7 +163,6 @@ HRESULT MainWindow::CreateDeviceResources()
     }
 
     long right = (m_progressBarBorder.right - m_progressBarBorder.left) * m_progress + m_progressBarBorder.left;
-    std::cout << "right: " << right << std::endl;
     hr = m_d2dFactory->CreateRectangleGeometry(
         D2D1::RectF(m_progressBarBorder.left, m_progressBarBorder.top, right, m_progressBarBorder.bottom),
         m_finishedProgressBarGeometry.GetAddressOf()
@@ -144,6 +170,51 @@ HRESULT MainWindow::CreateDeviceResources()
     if (FAILED(hr))
     {
         OutputDebugString("failed to create D2D rectangle geometry\n");
+        return hr;
+    }
+
+    return S_OK;
+}
+
+HRESULT MainWindow::CreateDWriteResources()
+{
+    HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), &m_dwriteFactory);
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to create DWrite factory\n");
+        return hr;
+    }
+
+    m_loadingText = L"Now Loading...";
+    m_loadingTextLength = static_cast<UINT32>(wcslen(m_loadingText));
+
+    hr = m_dwriteFactory->CreateTextFormat(
+        L"Arial",
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        24.0f,
+        L"en-us",
+        &m_dwriteTextFormat
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to create DWrite text format\n");
+        return hr;
+    }
+
+    hr = m_dwriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to set text alignment\n");
+        return hr;
+    }
+
+    hr = m_dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to set paragraph alignment\n");
         return hr;
     }
 
@@ -163,6 +234,7 @@ HRESULT MainWindow::OnPaint()
     m_d2dRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
     m_d2dRenderTarget->DrawGeometry(m_progressBarGeometry.Get(), m_d2dBlackBrush.Get(), 2.0f);
     m_d2dRenderTarget->FillGeometry(m_finishedProgressBarGeometry.Get(), m_d2dGreenBrush.Get());
+    PaintText();
     hr = m_d2dRenderTarget->EndDraw();
     if (FAILED(hr))
     {
@@ -171,6 +243,24 @@ HRESULT MainWindow::OnPaint()
     }
 
     return S_OK;
+}
+
+void MainWindow::PaintText() const
+{
+    D2D1_RECT_F textRect = D2D1::RectF(
+        static_cast<FLOAT>(m_textBorder.left),
+        static_cast<FLOAT>(m_textBorder.top),
+        static_cast<FLOAT>(m_textBorder.right),
+        static_cast<FLOAT>(m_textBorder.bottom)
+    );
+
+    m_d2dRenderTarget->DrawText(
+        m_loadingText,
+        m_loadingTextLength,
+        m_dwriteTextFormat.Get(),
+        textRect,
+        m_d2dBlackBrush.Get()
+    );
 }
 
 void MainWindow::OnResize()

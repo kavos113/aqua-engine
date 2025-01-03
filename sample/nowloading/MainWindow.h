@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <d2d1.h>
+
 #include "BaseWindow.h"
 #include "Graphics.h"
 
@@ -25,10 +27,15 @@ public:
             return hr;
         }
 
+        return S_OK;
+    }
+
+    void SetUp()
+    {
         m_graphics = std::make_unique<Graphics>(m_hwnd, wr);
         m_graphics->SetUp();
 
-        return S_OK;
+        m_isInitialized = true;
     }
 
 private:
@@ -40,12 +47,24 @@ private:
     LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) override;
 
     std::unique_ptr<Graphics> m_graphics;
+    bool m_isInitialized = false;
 
-    float mouseX = 0.0f;
-    float mouseY = 0.0f;
+    float m_progress = 0.0f;
 
-    bool isDrag = false;
+    HRESULT CreateDeviceResources();
+    HRESULT OnPaint();
+
+    void OnResize();
+
+    Microsoft::WRL::ComPtr<ID2D1Factory> m_d2dFactory = nullptr;
+    Microsoft::WRL::ComPtr<ID2D1HwndRenderTarget> m_d2dRenderTarget = nullptr;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_d2dGreenBrush = nullptr;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_d2dBlackBrush = nullptr;
+    Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> m_progressBarGeometry = nullptr;
+    Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> m_finishedProgressBarGeometry = nullptr;
+    RECT m_progressBarBorder = {0, 0, 0, 0};
 };
+
 
 
 #endif //MAINWINDOW_H

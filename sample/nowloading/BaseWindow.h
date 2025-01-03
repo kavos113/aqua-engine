@@ -19,8 +19,7 @@ public:
             SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
 
             pThis->m_hwnd = hWnd;
-        }
-        else
+        } else
         {
             pThis = reinterpret_cast<BaseWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
         }
@@ -60,6 +59,7 @@ public:
         HMENU hMenu = nullptr
     )
     {
+        wr = {0, 0, nWidth, nHeight};
 
         WNDCLASSEX wc = {};
 
@@ -95,23 +95,19 @@ public:
             return HRESULT_FROM_WIN32(GetLastError());
         }
 
-        wr = {0, 0, nWidth, nHeight};
-
         return S_OK;
     }
 
     [[nodiscard]] HWND GetWindow() const { return m_hwnd; }
 
 protected:
-
     [[nodiscard]] virtual LPCSTR ClassName() const = 0;
+
     virtual LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) = 0;
 
     HWND m_hwnd;
     RECT wr;
-
 };
-
 
 
 #endif //BASEWINDOW_H

@@ -38,8 +38,6 @@ namespace AquaEngine {
 
             FbxImporter* lImporter = FbxImporter::Create(lSdkManager, "");
 
-            OutputDebugString("[FBX] FBX Objects Initialized\n");
-
             if (!lImporter->Initialize(filename, -1, lSdkManager->GetIOSettings()))
             {
                 std::println("Failed to initialize FBX importer: {}", filename);
@@ -47,15 +45,9 @@ namespace AquaEngine {
                 return -1;
             }
 
-            OutputDebugString("[FBX] Load:");
-            OutputDebugString(filename);
-            OutputDebugString("\n");
-
             *scene = FbxScene::Create(lSdkManager, filename);
             lImporter->Import(*scene);
             lImporter->Destroy();
-
-            OutputDebugString("[FBX] FBX Objects Loaded\n");
 
             FbxGeometryConverter lGeomConverter(lSdkManager);
             lGeomConverter.Triangulate(*scene, true);
@@ -66,8 +58,6 @@ namespace AquaEngine {
             {
                 directXAxisSystem.ConvertScene(*scene);
             }
-
-            OutputDebugString("[FBX] FBX Objects Converted\n");
 
             return 0;
         }

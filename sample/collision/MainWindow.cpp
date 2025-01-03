@@ -15,11 +15,11 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
     {
         PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(m_hWnd, &ps);
+        HDC hdc = BeginPaint(m_hwnd, &ps);
 
         m_graphics->Render();
 
-        EndPaint(m_hWnd, &ps);
+        EndPaint(m_hwnd, &ps);
         return 0;
     }
 
@@ -34,7 +34,7 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
             m_graphics->Move(0.1f);
             break;
         }
-        InvalidateRect(m_hWnd, &wr, false);
+        InvalidateRect(m_hwnd, &wr, false);
         return 0;
 
     case WM_TIMER:
@@ -42,6 +42,6 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
         return 0;
 
     default:
-        return DefWindowProc(m_hWnd, message, wParam, lParam);
+        return DefWindowProc(m_hwnd, message, wParam, lParam);
     }
 }

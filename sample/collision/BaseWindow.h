@@ -18,7 +18,7 @@ public:
             pThis = static_cast<BaseWindow *>(pCreateStruct->lpCreateParams);
             SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
 
-            pThis->m_hWnd = hWnd;
+            pThis->m_hwnd = hWnd;
         }
         else
         {
@@ -34,18 +34,18 @@ public:
     }
 
     BaseWindow()
-        : m_hWnd(nullptr)
+        : m_hwnd(nullptr)
         , wr()
     {
     }
 
     virtual ~BaseWindow()
     {
-        if (m_hWnd)
+        if (m_hwnd)
         {
-            DestroyWindow(m_hWnd);
+            DestroyWindow(m_hwnd);
         }
-        m_hWnd = nullptr;
+        m_hwnd = nullptr;
     }
 
     virtual HRESULT Create(
@@ -75,7 +75,7 @@ public:
             return HRESULT_FROM_WIN32(GetLastError());
         }
 
-        m_hWnd = CreateWindowEx(
+        m_hwnd = CreateWindowEx(
             dwExStyle,
             ClassName(),
             lpWindowName,
@@ -90,7 +90,7 @@ public:
             this
         );
 
-        if (m_hWnd == nullptr)
+        if (m_hwnd == nullptr)
         {
             return HRESULT_FROM_WIN32(GetLastError());
         }
@@ -100,14 +100,14 @@ public:
         return S_OK;
     }
 
-    [[nodiscard]] HWND GetWindow() const { return m_hWnd; }
+    [[nodiscard]] HWND GetWindow() const { return m_hwnd; }
 
 protected:
 
     [[nodiscard]] virtual LPCSTR ClassName() const = 0;
     virtual LRESULT HandleMessage(UINT message, WPARAM wParam, LPARAM lParam) = 0;
 
-    HWND m_hWnd;
+    HWND m_hwnd;
     RECT wr;
 
 };

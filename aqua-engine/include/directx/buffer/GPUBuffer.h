@@ -1,6 +1,10 @@
 #ifndef AQUA_GPUBUFFER_H
 #define AQUA_GPUBUFFER_H
 
+#include <d3d12.h>
+#include <wrl.h>
+
+#include "Buffer.h"
 
 namespace AquaEngine
 {

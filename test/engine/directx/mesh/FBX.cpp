@@ -45,17 +45,14 @@ TEST_F(FBXTest, Load)
 
 TEST_F(FBXTest, LoadModel)
 {
-    FBXModel model(
-        GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
-        "isu.fbx"
-    );
+    FBXModel model("isu.fbx");
     model.Create();
 }
 
 TEST_F(FBXTest, LoadModelTexture)
 {
+    auto& manager = GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     FBXModel model(
-        GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
         "isu.fbx",
         "isu.png",
         *command
@@ -68,5 +65,5 @@ TEST_F(FBXTest, LoadModelTexture)
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    model.SetTexture(std::move(range), TODO);
+    model.SetTexture(std::move(range), manager);
 }

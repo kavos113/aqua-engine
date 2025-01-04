@@ -30,8 +30,8 @@ protected:
 
 TEST_F(PolygonTextureTest, Texture)
 {
+    auto& manager = GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     RectangleTexture rectangle_texture = RectangleTexture(
-        GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV),
         DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),
         DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),
         DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),
@@ -47,7 +47,7 @@ TEST_F(PolygonTextureTest, Texture)
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    rectangle_texture.CreateShaderResourceView(std::move(range), TODO);
+    rectangle_texture.CreateShaderResourceView(std::move(range), manager);
     range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
@@ -55,5 +55,5 @@ TEST_F(PolygonTextureTest, Texture)
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    rectangle_texture.CreateMatrixBuffer(std::move(range));
+    rectangle_texture.CreateMatrixBuffer(std::move(range), manager);
 }

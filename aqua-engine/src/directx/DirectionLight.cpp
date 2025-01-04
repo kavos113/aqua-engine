@@ -43,6 +43,6 @@ namespace AquaEngine
         );
 
         m_view.SetDescriptorHeapSegment(segment, 0);
-        m_view.Create(m_buffer);
+        m_view.Create(m_buffer.GetBuffer());
     }
 }

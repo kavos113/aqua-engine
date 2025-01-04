@@ -19,13 +19,14 @@ namespace AquaEngine
     void PointLight::Render(Command &command) const
     {
         m_view.SetGraphicsRootDescriptorTable(&command);
+        m_matrix.SetToCommand(command);
     }
 
     void PointLight::SetBuffer(
         const DirectX::XMFLOAT3 &position,
         const DirectX::XMFLOAT3 &color,
         const float range,
-        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> light_range
     )
     {
         m_light.position = position;
@@ -42,11 +43,11 @@ namespace AquaEngine
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
-            std::move(matrix_range),
+            std::move(light_range),
             1
         );
 
         m_view.SetDescriptorHeapSegment(segment, 0);
-        m_view.Create(m_buffer);
+        m_view.Create(m_buffer.GetBuffer());
     }
 } // AquaEngine

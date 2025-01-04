@@ -2,6 +2,7 @@
 #define POINTLIGHT_H
 #include <DirectXMath.h>
 
+#include "TransformMatrix.h"
 #include "buffer/ConstantBufferView.h"
 #include "buffer/GPUBuffer.h"
 
@@ -26,6 +27,22 @@ namespace AquaEngine
 
         void Render(Command &command) const;
 
+        void CreateMatrixBuffer(
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range,
+            DescriptorHeapSegmentManager &manager
+        )
+        {
+            m_matrix.CreateMatrixBuffer(std::move(matrix_range), manager);
+        }
+
+        void CreateMatrixBuffer(
+            const std::shared_ptr<DescriptorHeapSegment> &segment,
+            const int offset = 0
+        )
+        {
+            m_matrix.CreateMatrixBuffer(segment, offset);
+        }
+
     private:
         struct Light
         {
@@ -35,12 +52,9 @@ namespace AquaEngine
             float range;
         };
 
-        struct TransformMatrix
-        {
-            DirectX::XMMATRIX world;
-        };
-
         Light m_light;
+
+        TransformMatrix m_matrix;
 
         GPUBuffer<Light> m_buffer;
         ConstantBufferView m_view;
@@ -51,7 +65,7 @@ namespace AquaEngine
             const DirectX::XMFLOAT3 &position,
             const DirectX::XMFLOAT3 &color,
             float range,
-            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> light_range
         );
     };
 } // AquaEngine

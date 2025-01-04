@@ -207,3 +207,17 @@ create_sample(nowloading
         resources/models/ninja.fbx
         resources/models/ninja.png
 )
+
+create_sample(point-light
+        sample/point-light/main.cpp
+        sample/point-light/Graphics.cpp
+        sample/point-light/Graphics.h
+        sample/point-light/BaseWindow.h
+        sample/point-light/MainWindow.cpp
+        sample/point-light/MainWindow.h
+        sample/point-light/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)

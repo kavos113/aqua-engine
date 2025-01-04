@@ -41,6 +41,8 @@ set(SRC
         src/directx/DirectionLight.cpp
         src/directx/mesh/SkyBox.cpp
         src/directx/MultiPassRenderer.cpp
+        src/directx/PointLight.cpp
+        src/directx/PointLight.cpp
 )
 
 set(INCLUDE
@@ -82,6 +84,8 @@ set(INCLUDE
         include/directx/DirectionLight.h
         include/directx/mesh/SkyBox.h
         include/directx/MultiPassRenderer.h
+        include/directx/PointLight.h
+        include/directx/PointLight.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

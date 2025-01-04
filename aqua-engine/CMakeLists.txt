@@ -17,7 +17,7 @@ set(SRC
         src/directx/descriptor_heap/ShaderGlobalDescriptorHeap.cpp
         src/directx/descriptor_heap/GlobalDescriptorHeapManager.cpp
         src/directx/buffer/Buffer.cpp
-        src/directx/buffer/BufferView.cpp
+        src/directx/buffer/IBufferView.cpp
         src/directx/buffer/RenderTargetView.cpp
         src/directx/BackBuffers.cpp
         src/directx/wrapper/Barrier.cpp
@@ -60,7 +60,7 @@ set(INCLUDE
         include/directx/descriptor_heap/GlobalDescriptorHeapManager.h
         include/directx/descriptor_heap/HeapID.h
         include/directx/buffer/Buffer.h
-        include/directx/buffer/BufferView.h
+        include/directx/buffer/IBufferView.h
         include/directx/buffer/RenderTargetView.h
         include/directx/BackBuffers.h
         include/directx/wrapper/Barrier.h

@@ -2,12 +2,12 @@
 #define AQUA_RENDERTARGETVIEW_H
 
 
-#include "BufferView.h"
+#include "IBufferView.h"
 #include "Buffer.h"
 
 namespace AquaEngine
 {
-    class RenderTargetView : public BufferView
+    class RenderTargetView : public IBufferView
     {
     public:
         void Create(Buffer &buffer) override;

@@ -10,10 +10,10 @@
 
 namespace AquaEngine
 {
-    class BufferView
+    class IBufferView
     {
     public:
-        virtual ~BufferView() = default;
+        virtual ~IBufferView() = default;
 
         virtual void Create(Buffer &buffer) = 0;
 

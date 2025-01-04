@@ -14,8 +14,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         "Aqua Engine Sample",
         200,
         200,
-        800,
-        600
+        1920,
+        1080
     );
     if (r != 0)
     {

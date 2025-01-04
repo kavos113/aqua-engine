@@ -1,11 +1,11 @@
 #ifndef AQUA_CONSTANTBUFFERVIEW_H
 #define AQUA_CONSTANTBUFFERVIEW_H
 
-#include "BufferView.h"
+#include "IBufferView.h"
 
 namespace AquaEngine
 {
-    class ConstantBufferView : public BufferView
+    class ConstantBufferView : public IBufferView
     {
     public:
         void Create(Buffer &buffer) override;

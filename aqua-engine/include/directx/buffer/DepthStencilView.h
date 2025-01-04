@@ -2,11 +2,11 @@
 #define AQUA_DEPTHSTENCILVIEW_H
 
 
-#include "BufferView.h"
+#include "IBufferView.h"
 
 namespace AquaEngine
 {
-    class DepthStencilView final : public BufferView
+    class DepthStencilView final : public IBufferView
     {
     public:
         void Create(Buffer &buffer) override;

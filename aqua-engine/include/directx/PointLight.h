@@ -35,6 +35,11 @@ namespace AquaEngine
             float range;
         };
 
+        struct TransformMatrix
+        {
+            DirectX::XMMATRIX world;
+        };
+
         Light m_light;
 
         GPUBuffer<Light> m_buffer;

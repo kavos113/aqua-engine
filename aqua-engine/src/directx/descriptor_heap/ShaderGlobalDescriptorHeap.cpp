@@ -38,12 +38,6 @@ namespace AquaEngine
 
     DescriptorHeapSegmentManager& ShaderGlobalDescriptorHeap::GetHeapManager(const std::string& name)
     {
-        for (const auto key: m_heapManagers | std::views::keys)
-        {
-            OutputDebugString(key.c_str());
-            OutputDebugString("\n");
-        }
-        OutputDebugString("\n");
         return m_heapManagers[name];
     }
 

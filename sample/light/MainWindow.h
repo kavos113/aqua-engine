@@ -25,7 +25,7 @@ public:
             return hr;
         }
 
-        m_graphics = std::make_unique<Graphics>(m_hWnd, wr);
+        m_graphics = std::make_unique<Graphics>(m_hwnd, wr);
         m_graphics->SetUp();
 
         return S_OK;

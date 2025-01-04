@@ -135,13 +135,9 @@ namespace AquaEngine {
     void FBXModel::Create()
     {
         LoadFBX();
-        OutputDebugString("[FBX] Load FBX file.\n");
         CreateVertexBuffer();
-        OutputDebugString("[FBX] Create vertex buffer.\n");
         CreateIndexBuffer();
-        OutputDebugString("[FBX] Create index buffer.\n");
         CreateMaterialBuffer();
-        OutputDebugString("[FBX] Create material buffer.\n");
     }
 
     void FBXModel::CreateVertexBuffer()
@@ -199,8 +195,6 @@ namespace AquaEngine {
             OutputDebugString("Failed to load FBX file.\n");
             return;
         }
-
-        OutputDebugString("[FBX] Read FBX File.\n");
 
         m_scene->FillAnimStackNameArray(m_animStackNameArray);
         for (int i = 0; i < m_animStackNameArray.GetCount(); ++i)

@@ -105,6 +105,8 @@ function(create_sample name files)
     add_dependencies(${exe_name} aqua-engine)
     target_include_directories(${exe_name} PUBLIC aqua-engine/include)
     target_link_libraries(${exe_name} aqua-engine)
+    target_link_libraries(${exe_name} d2d1.lib)
+    target_link_libraries(${exe_name} dwrite.lib)
 
     message(STATUS "Successfully created sample: ${name}")
 endfunction()
@@ -186,6 +188,20 @@ create_sample(background
         aqua-engine/src/directx/mesh/skybox.hlsl
         aqua-engine/src/directx/mesh/cubemap.hlsl
         resources/hdrs/sample1.hdr
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)
+
+create_sample(nowloading
+        sample/nowloading/main.cpp
+        sample/nowloading/Graphics.cpp
+        sample/nowloading/Graphics.h
+        sample/nowloading/BaseWindow.h
+        sample/nowloading/MainWindow.cpp
+        sample/nowloading/MainWindow.h
+        sample/nowloading/shader.hlsl
         resources/models/isu.fbx
         resources/models/isu.png
         resources/models/ninja.fbx

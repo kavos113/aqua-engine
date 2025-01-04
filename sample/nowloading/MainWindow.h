@@ -72,12 +72,17 @@ private:
     Microsoft::WRL::ComPtr<ID2D1RectangleGeometry> m_finishedProgressBarGeometry = nullptr;
     Microsoft::WRL::ComPtr<IDWriteFactory> m_dwriteFactory = nullptr;
     Microsoft::WRL::ComPtr<IDWriteTextFormat> m_dwriteTextFormat = nullptr;
+    Microsoft::WRL::ComPtr<IDWriteTextFormat> m_progressTextFormat = nullptr;
 
     RECT m_progressBarBorder = {0, 0, 0, 0};
     RECT m_textBorder = {0, 0, 0, 0};
+    RECT m_progressTextBorder = {0, 0, 0, 0};
 
     const wchar_t *m_loadingText = nullptr;
     UINT32 m_loadingTextLength = 0;
+
+    const wchar_t *m_progressText = nullptr;
+    UINT32 m_progressTextLength = 0;
 };
 
 

@@ -35,6 +35,11 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
         m_textBorder.top = m_progressBarBorder.top - 50;
         m_textBorder.bottom = m_progressBarBorder.top;
 
+        m_progressTextBorder.left = m_progressBarBorder.left;
+        m_progressTextBorder.right = m_progressBarBorder.right;
+        m_progressTextBorder.top = m_progressBarBorder.bottom;
+        m_progressTextBorder.bottom = m_progressBarBorder.bottom + 50;
+
         return 0;
     }
 
@@ -75,6 +80,8 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
     {
         auto *p = reinterpret_cast<Graphics::Progress *>(lParam);
         m_progress = p->progress;
+        m_progressText = p->text;
+        m_progressTextLength = static_cast<UINT32>(wcslen(m_progressText));
         SendMessage(m_hwnd, WM_PAINT, 0, 0);
         return 0;
     }
@@ -187,6 +194,9 @@ HRESULT MainWindow::CreateDWriteResources()
     m_loadingText = L"Now Loading...";
     m_loadingTextLength = static_cast<UINT32>(wcslen(m_loadingText));
 
+    m_progressText = L"0%";
+    m_progressTextLength = static_cast<UINT32>(wcslen(m_progressText));
+
     hr = m_dwriteFactory->CreateTextFormat(
         L"Arial",
         nullptr,
@@ -211,6 +221,36 @@ HRESULT MainWindow::CreateDWriteResources()
     }
 
     hr = m_dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to set paragraph alignment\n");
+        return hr;
+    }
+
+    hr = m_dwriteFactory->CreateTextFormat(
+        L"Trebuchet MS",
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        18.0f,
+        L"en-us",
+        &m_progressTextFormat
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to create DWrite text format\n");
+        return hr;
+    }
+
+    hr = m_progressTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (FAILED(hr))
+    {
+        OutputDebugString("failed to set text alignment\n");
+        return hr;
+    }
+
+    hr = m_progressTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     if (FAILED(hr))
     {
         OutputDebugString("failed to set paragraph alignment\n");
@@ -258,6 +298,21 @@ void MainWindow::PaintText() const
         m_loadingTextLength,
         m_dwriteTextFormat.Get(),
         textRect,
+        m_d2dBlackBrush.Get()
+    );
+
+    D2D1_RECT_F progressTextRect = D2D1::RectF(
+        static_cast<FLOAT>(m_progressTextBorder.left),
+        static_cast<FLOAT>(m_progressTextBorder.top),
+        static_cast<FLOAT>(m_progressTextBorder.right),
+        static_cast<FLOAT>(m_progressTextBorder.bottom)
+    );
+
+    m_d2dRenderTarget->DrawText(
+        m_progressText,
+        m_progressTextLength,
+        m_progressTextFormat.Get(),
+        progressTextRect,
         m_d2dBlackBrush.Get()
     );
 }

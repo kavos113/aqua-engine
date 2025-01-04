@@ -28,7 +28,7 @@ void Graphics::SetUp()
         return;
     }
 
-    Progress p = {0.05f};
+    Progress p = {0.05f, L"Initialized COM"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p));
 
     command = std::make_unique<AquaEngine::Command>();
@@ -55,7 +55,7 @@ void Graphics::SetUp()
     );
     camera.AddManager("texture", std::move(camera_range));
 
-    Progress p2 = {0.1f};
+    Progress p2 = {0.1f, L"Created Camera"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p2));
 
     auto light_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
@@ -116,13 +116,15 @@ void Graphics::SetUp()
         std::move(material_range),
         1
     );
+    Progress p25 = {0.15f, L"Created Descriptor Heap Segments"};
+    SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p25));
 
     model = std::make_unique<AquaEngine::FBXModel>(manager, "ninja.fbx", "ninja.png", *command);
     model->Create();
     model->CreateMatrixBuffer(matrix_segment, 0);
     model->SetTexture(texture_segment, 0);
     model->CreateMaterialBufferView(material_segment, 0);
-    Progress p3 = {0.4f};
+    Progress p3 = {0.4f, L"Loaded Model1: ninja.fbx"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p3));
 
     model2 = std::make_unique<AquaEngine::FBXModel>(manager, "isu.fbx", "isu.png", *command);
@@ -130,7 +132,7 @@ void Graphics::SetUp()
     model2->CreateMatrixBuffer(matrix_segment, 1);
     model2->SetTexture(texture_segment, 1);
     model2->CreateMaterialBufferView(material_segment, 1);
-    Progress p4 = {0.7f};
+    Progress p4 = {0.7f, L"Loaded Model2: isu.fbx"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p4));
 
     auto inputElement = model->GetInputElementDescs();
@@ -143,7 +145,7 @@ void Graphics::SetUp()
     AquaEngine::ShaderObject vs, ps;
     vs.Load(L"shader.hlsl", "vsMain", "vs_5_0");
     ps.Load(L"shader.hlsl", "psMain", "ps_5_0");
-    Progress p5 = {0.8f};
+    Progress p5 = {0.8f, L"Loaded Shaders"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p5));
 
     pipelineState.SetRootSignature(&rootSignature);
@@ -153,7 +155,7 @@ void Graphics::SetUp()
     hr = pipelineState.Create();
     if (FAILED(hr)) exit(-1);
 
-    Progress p6 = {1.0f};
+    Progress p6 = {0.95f, L"Created Pipeline State"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p6));
 
     auto anims = model->GetAnimStackNames();
@@ -175,6 +177,9 @@ void Graphics::SetUp()
 
     model->Scale(2.0f, 2.0f, 2.0f);
     model2->Scale(2.0f, 2.0f, 2.0f);
+
+    Progress p7 = {1.0f, L"Finished"};
+    SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p7));
 }
 
 void Graphics::Render()

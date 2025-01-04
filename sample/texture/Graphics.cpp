@@ -49,7 +49,6 @@ void Graphics::SetUp()
     camera.AddManager("texture", std::move(camera_range));
 
     rectangle = std::make_unique<AquaEngine::RectangleTexture>(
-        manager,
         DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),
         DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),
         DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f),
@@ -65,7 +64,7 @@ void Graphics::SetUp()
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    rectangle->CreateShaderResourceView(std::move(texture_range));
+    rectangle->CreateShaderResourceView(std::move(texture_range), manager);
     auto range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
@@ -73,7 +72,7 @@ void Graphics::SetUp()
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    rectangle->CreateMatrixBuffer(std::move(range));
+    rectangle->CreateMatrixBuffer(std::move(range), manager);
     auto inputElement = rectangle->GetInputElementDescs();
 
     rootSignature.AddStaticSampler({

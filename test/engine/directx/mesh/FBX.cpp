@@ -68,5 +68,5 @@ TEST_F(FBXTest, LoadModelTexture)
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    model.SetTexture(std::move(range));
+    model.SetTexture(std::move(range), TODO);
 }

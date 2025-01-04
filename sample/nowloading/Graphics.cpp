@@ -119,7 +119,7 @@ void Graphics::SetUp()
     Progress p25 = {0.15f, L"Created Descriptor Heap Segments"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p25));
 
-    model = std::make_unique<AquaEngine::FBXModel>(manager, "ninja.fbx", "ninja.png", *command);
+    model = std::make_unique<AquaEngine::FBXModel>("ninja.fbx", "ninja.png", *command);
     model->Create();
     model->CreateMatrixBuffer(matrix_segment, 0);
     model->SetTexture(texture_segment, 0);
@@ -127,7 +127,7 @@ void Graphics::SetUp()
     Progress p3 = {0.4f, L"Loaded Model1: ninja.fbx"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p3));
 
-    model2 = std::make_unique<AquaEngine::FBXModel>(manager, "isu.fbx", "isu.png", *command);
+    model2 = std::make_unique<AquaEngine::FBXModel>("isu.fbx", "isu.png", *command);
     model2->Create();
     model2->CreateMatrixBuffer(matrix_segment, 1);
     model2->SetTexture(texture_segment, 1);

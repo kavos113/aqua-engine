@@ -12,9 +12,7 @@ namespace AquaEngine
         Triangle(
             DirectX::XMFLOAT3 pos1,
             DirectX::XMFLOAT3 pos2,
-            DirectX::XMFLOAT3 pos3,
-            DescriptorHeapSegmentManager& manager)
-            : Polygon(manager)
+            DirectX::XMFLOAT3 pos3)
         {
             m_vertices.resize(3);
             m_vertices[0] = pos1;
@@ -27,8 +25,8 @@ namespace AquaEngine
         void Create() override;
 
     private:
-        void CreateVertexBuffer();
-        void CreateIndexBuffer();
+        void CreateVertexBuffer() override;
+        void CreateIndexBuffer() override;
     };
 }
 

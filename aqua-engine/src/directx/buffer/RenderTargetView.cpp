@@ -4,9 +4,9 @@
 
 namespace AquaEngine
 {
-    void RenderTargetView::Create(Buffer &buffer)
+    void RenderTargetView::Create(Buffer &buffer) const
     {
-        if (CheckSegment() != 0) return;
+        if (m_view.CheckSegment() != 0) return;
 
         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 
@@ -16,13 +16,13 @@ namespace AquaEngine
         Device::Get()->CreateRenderTargetView(
             buffer.GetBuffer().Get(),
             &rtvDesc,
-            m_DescriptorHeapSegment->GetCPUHandle(m_offset)
+            m_view.GetCPUHandle()
         );
     }
 
     void RenderTargetView::Create(ID3D12Resource *resource) const
     {
-        if (CheckSegment() != 0) return;
+        if (m_view.CheckSegment() != 0) return;
 
         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 
@@ -32,18 +32,18 @@ namespace AquaEngine
         Device::Get()->CreateRenderTargetView(
             resource,
             &rtvDesc,
-            m_DescriptorHeapSegment->GetCPUHandle(m_offset)
+            m_view.GetCPUHandle()
         );
     }
 
     void RenderTargetView::Create(Buffer &buffer, const D3D12_RENDER_TARGET_VIEW_DESC &rtvDesc) const
     {
-        if (CheckSegment() != 0) return;
+        if (m_view.CheckSegment() != 0) return;
 
         Device::Get()->CreateRenderTargetView(
             buffer.GetBuffer().Get(),
             &rtvDesc,
-            m_DescriptorHeapSegment->GetCPUHandle(m_offset)
+            m_view.GetCPUHandle()
         );
     }
 }

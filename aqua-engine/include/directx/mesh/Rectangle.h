@@ -14,9 +14,7 @@ namespace AquaEngine
             DirectX::XMFLOAT3 topleft,
             DirectX::XMFLOAT3 topright,
             DirectX::XMFLOAT3 bottomleft,
-            DirectX::XMFLOAT3 bottomright,
-            DescriptorHeapSegmentManager& manager)
-            : Polygon(manager)
+            DirectX::XMFLOAT3 bottomright)
         {
             m_vertices.resize(4);
             m_vertices[0] = topleft;
@@ -30,8 +28,8 @@ namespace AquaEngine
         void Create() override;
 
     private:
-        void CreateVertexBuffer();
-        void CreateIndexBuffer();
+        void CreateVertexBuffer() override;
+        void CreateIndexBuffer() override;
     };
 }
 

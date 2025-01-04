@@ -30,11 +30,9 @@ namespace AquaEngine {
         };
 
         FBXModel(
-            DescriptorHeapSegmentManager& manager,
             std::string model_path
         )
-            : Mesh(manager)
-            , m_status(Status::MUST_BE_REFRESHED)
+            : m_status(Status::MUST_BE_REFRESHED)
             , m_animationMode(AnimationMode::ONCE)
             , m_path(std::move(model_path))
         {
@@ -42,13 +40,11 @@ namespace AquaEngine {
         }
 
         explicit FBXModel(
-            DescriptorHeapSegmentManager& manager,
             std::string model_path,
             const std::string &texturePath,
             Command &command
         )
-            : Mesh(manager)
-            , m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
+            : m_texture(Buffer(TextureManager::LoadTextureFromFile(texturePath, command)))
             , m_status(Status::MUST_BE_REFRESHED)
             , m_animationMode(AnimationMode::ONCE)
             , m_path(std::move(model_path))
@@ -61,16 +57,18 @@ namespace AquaEngine {
         void Timer();
 
         void SetTexture(
-            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range,
+            DescriptorHeapSegmentManager &manager
         );
-
-        // if use shared segment
         void SetTexture(
             const std::shared_ptr<DescriptorHeapSegment>& segment,
             int offset = 0
-            );
+        );
 
-        void CreateMaterialBufferView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range);
+        void CreateMaterialBufferView(
+            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range,
+            DescriptorHeapSegmentManager &manager
+        );
         void CreateMaterialBufferView(
             const std::shared_ptr<DescriptorHeapSegment>& segment,
             int offset = 0
@@ -154,8 +152,8 @@ namespace AquaEngine {
 
         const std::string m_path;
 
-        void CreateVertexBuffer();
-        void CreateIndexBuffer();
+        void CreateVertexBuffer() override;
+        void CreateIndexBuffer() override;
         void CreateMaterialBuffer();
         void LoadFBX();
 

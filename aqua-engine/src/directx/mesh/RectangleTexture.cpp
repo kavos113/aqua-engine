@@ -61,9 +61,9 @@ namespace AquaEngine
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * 6;
     }
 
-    void RectangleTexture::CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range)
+    void RectangleTexture::CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range, DescriptorHeapSegmentManager &manager)
     {
-        auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+        auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
 
         m_srv.SetDescriptorHeapSegment(segment, 0);
         m_srv.Create(m_texture);

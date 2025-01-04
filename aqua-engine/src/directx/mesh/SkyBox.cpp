@@ -184,7 +184,7 @@ namespace AquaEngine
         for (int i = 0; i < 6; ++i)
         {
             m_matrixCBV[i].SetDescriptorHeapSegment(segment, i);
-            m_matrixCBV[i].Create(m_matrixBuffer[i]);
+            m_matrixCBV[i].Create(m_matrixBuffer[i].GetBuffer());
         }
     }
 

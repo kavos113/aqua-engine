@@ -13,11 +13,7 @@ namespace AquaEngine
     class Polygon : public Mesh<Polygon>
     {
     public:
-        Polygon(DescriptorHeapSegmentManager& manager)
-            : Mesh(manager)
-        {
-
-        }
+        Polygon() = default;
         ~Polygon() override = default;
 
         void Create() override = 0;

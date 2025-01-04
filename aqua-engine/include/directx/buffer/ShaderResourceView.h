@@ -2,16 +2,19 @@
 #define AQUA_SHADERRESOURCEVIEW_H
 
 
-#include "IBufferView.h"
+#include "BufferView.h"
 
 namespace AquaEngine
 {
-    class ShaderResourceView : public IBufferView
+    class ShaderResourceView
     {
     public:
-        void Create(Buffer &buffer) override;
+        void Create(Buffer &buffer) const;
 
         void Create(Buffer &buffer, const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc) const;
+
+    private:
+        BufferView m_view;
     };
 }
 

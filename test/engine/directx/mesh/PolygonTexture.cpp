@@ -47,7 +47,7 @@ TEST_F(PolygonTextureTest, Texture)
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    rectangle_texture.CreateShaderResourceView(std::move(range));
+    rectangle_texture.CreateShaderResourceView(std::move(range), TODO);
     range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,

@@ -43,6 +43,10 @@ set(SRC
         src/directx/MultiPassRenderer.cpp
         src/directx/PointLight.cpp
         src/directx/PointLight.cpp
+        include/directx/ITransform.cpp
+        include/directx/ITransform.h
+        src/directx/TransformMatrix.cpp
+        include/directx/TransformMatrix.h
 )
 
 set(INCLUDE
@@ -86,6 +90,10 @@ set(INCLUDE
         include/directx/MultiPassRenderer.h
         include/directx/PointLight.h
         include/directx/PointLight.h
+        include/directx/ITransform.cpp
+        include/directx/ITransform.h
+        src/directx/TransformMatrix.cpp
+        include/directx/TransformMatrix.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

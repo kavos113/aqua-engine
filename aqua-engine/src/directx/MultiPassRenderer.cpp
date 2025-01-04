@@ -97,7 +97,7 @@ namespace AquaEngine
         std::ranges::copy(vertices, m_vertexBuffer.GetMappedBuffer());
         m_vertexBuffer.Unmap();
 
-        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetResource()->GetGPUVirtualAddress();
         m_vertexBufferView.StrideInBytes = sizeof(Vertex);
         m_vertexBufferView.SizeInBytes = sizeof(Vertex) * vertices.size();
 

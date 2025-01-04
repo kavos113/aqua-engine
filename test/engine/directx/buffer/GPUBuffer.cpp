@@ -34,7 +34,7 @@ TEST_F(GPUBufferTest, Create)
         std::cout << std::hex << hr << std::endl;
     }
     ASSERT_EQ(hr, S_OK);
-    ASSERT_NE(buffer.GetBuffer(), nullptr);
+    ASSERT_NE(buffer.GetResource(), nullptr);
     
     int* mappedBuffer = buffer.GetMappedBuffer();
     ASSERT_NE(mappedBuffer, nullptr);

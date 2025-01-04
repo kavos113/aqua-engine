@@ -322,7 +322,7 @@ namespace AquaEngine
         std::ranges::copy(m_vertices, m_vertexBuffer.GetMappedBuffer());
         m_vertexBuffer.Unmap();
 
-        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetResource()->GetGPUVirtualAddress();
         m_vertexBufferView.StrideInBytes = sizeof(Vertex);
         m_vertexBufferView.SizeInBytes = sizeof(Vertex) * 8;
     }
@@ -333,7 +333,7 @@ namespace AquaEngine
         std::ranges::copy(m_indices, m_indexBuffer.GetMappedBuffer());
         m_indexBuffer.Unmap();
 
-        m_indexBufferView.BufferLocation = m_indexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_indexBufferView.BufferLocation = m_indexBuffer.GetResource()->GetGPUVirtualAddress();
         m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * 36;
     }

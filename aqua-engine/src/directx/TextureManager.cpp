@@ -121,7 +121,7 @@ namespace AquaEngine
             );
 
         D3D12_TEXTURE_COPY_LOCATION src = {
-            .pResource = upload_buffer.GetBuffer().Get(),
+            .pResource = upload_buffer.GetResource().Get(),
             .Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
             .PlacedFootprint = footprint
         };
@@ -264,7 +264,7 @@ namespace AquaEngine
         );
 
         D3D12_TEXTURE_COPY_LOCATION src = {
-            .pResource = upload_buffer.GetBuffer().Get(),
+            .pResource = upload_buffer.GetResource().Get(),
             .Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,
             .PlacedFootprint = footprint
         };

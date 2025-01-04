@@ -51,7 +51,11 @@ TEST_F(FBXTest, LoadModel)
 
 TEST_F(FBXTest, LoadModelTexture)
 {
-    auto& manager = GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    auto &manager = GlobalDescriptorHeapManager::CreateShaderManager(
+        "rectangle",
+        10,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+    );
     FBXModel model(
         "isu.fbx",
         "isu.png",

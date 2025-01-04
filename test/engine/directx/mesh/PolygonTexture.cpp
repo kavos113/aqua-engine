@@ -30,7 +30,11 @@ protected:
 
 TEST_F(PolygonTextureTest, Texture)
 {
-    auto& manager = GlobalDescriptorHeapManager::CreateShaderManager("rectangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    auto &manager = GlobalDescriptorHeapManager::CreateShaderManager(
+        "rectangle",
+        10,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+    );
     RectangleTexture rectangle_texture = RectangleTexture(
         DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f),
         DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f),

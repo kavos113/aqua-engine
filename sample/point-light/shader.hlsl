@@ -14,11 +14,18 @@ cbuffer Camera : register(b2)
     float3 eye;
 };
 
-cbuffer Light : register(b3)
+cbuffer DirectionLight : register(b3)
 {
-    float3 lightDirection;
-    float3 lightColor;
+    float3 directionLightDirection;
+    float3 directionLightColor;
 }
+
+cbuffer PointLight : register(b4)
+{
+    float3 pointLightPosition;
+    float3 pointLightColor;
+    float pointLightRange;
+};
 
 cbuffer WorldMatrix : register(b0)
 {
@@ -46,22 +53,40 @@ Type vsMain(
     return output;
 }
 
-float4 psMain(Type input) : SV_TARGET
+float3 LambertDiffuse(float3 normal, float3 lightDir, float3 directionLightColor)
 {
-    // lambert
-    float3 lightVec = normalize(lightDirection);
-    float brightness = dot(input.normal.xyz, lightVec) * -1.0f;
-    brightness = saturate(brightness);
+    normal = normalize(normal);
+    lightDir = normalize(lightDir);
+    return max(0.0f, dot(normal, lightDir) * -1.0f) * directionLightColor;
+}
 
-    float3 specularLight = lightColor * brightness;
-
-    // phong
-    float3 refVec = reflect(lightDirection, input.normal.xyz);
-    float3 toEye = normalize(eye - input.position.xyz);
-    float spec = saturate(dot(refVec, toEye));
+float3 PhongSpecular(float3 normal, float3 lightDir, float3 eyeDir, float3 directionLightColor)
+{
+    float3 refVec = reflect(lightDir, normal);
+    refVec = normalize(refVec);
+    eyeDir = normalize(eyeDir);
+    float spec = max(0.0f, dot(refVec, eyeDir));
     spec = pow(spec, 5.0f);
 
-    float3 diffuseLight = lightColor * spec;
+    return spec * directionLightColor;
+}
+
+float4 psMain(Type input) : SV_TARGET
+{
+    float3 diffuseLight = LambertDiffuse(input.normal.xyz, normalize(directionLightDirection), directionLightColor);
+    float3 specularLight = PhongSpecular(input.normal.xyz, directionLightDirection, normalize(eye - input.position.xyz), directionLightColor);
+
+    // point light
+    float3 lightDir = normalize(input.position.xyz - pointLightPosition); // input light vector
+    float3 diffusePointLight = LambertDiffuse(input.normal.xyz, lightDir, pointLightColor);
+    float3 specularPointLight = PhongSpecular(input.normal.xyz, lightDir, normalize(eye - input.position.xyz), pointLightColor);
+
+    float3 lightDistance = length(input.position.xyz - pointLightPosition);
+    float affect = saturate(1.0f - lightDistance / pointLightRange);
+    affect = pow(affect, 2.0f);
+
+    diffuseLight += diffusePointLight * affect;
+    specularLight += specularPointLight * affect;
 
     float3 light = specularLight * specular.xyz + diffuseLight * diffuse.xyz + ambient.xyz;
 

@@ -47,6 +47,7 @@ private:
     AquaEngine::PipelineState pipelineState;
     AquaEngine::Camera camera;
     AquaEngine::DirectionLight directionLight;
+    AquaEngine::PointLight pointLight;
 };
 
 

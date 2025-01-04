@@ -72,6 +72,21 @@ void Graphics::SetUp()
         std::move(light_range)
     );
 
+    auto point_light_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        4,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    pointLight.Init(
+        {0.0f, -1.0f, -1.0f},
+        {1.0f, 0.0f, 0.0f},
+        10000.0f,
+        manager,
+        std::move(point_light_range)
+    );
+
     auto matrix_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
     auto matrix_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
@@ -182,7 +197,7 @@ void Graphics::Render()
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
     // models->RotZ(0.01f);
-    model2->RotY(-0.1f);
+    model2->RotX(-0.01f);
 
     display->BeginRender();
 
@@ -192,6 +207,7 @@ void Graphics::Render()
 
     camera.Render(*command, "texture");
     directionLight.Render(*command);
+    pointLight.Render(*command);
     model->Render(*command);
     model2->Render(*command);
 

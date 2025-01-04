@@ -5,14 +5,15 @@
 namespace AquaEngine
 {
     void PointLight::Init(
-        DirectX::XMFLOAT3 position,
-        DirectX::XMFLOAT3 color,
-        float range,
+        const DirectX::XMFLOAT3 position,
+        const DirectX::XMFLOAT3 color,
+        const float range,
         DescriptorHeapSegmentManager &model_heap,
         std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
     )
     {
         m_manager = &model_heap;
+        SetBuffer(position, color, range, std::move(matrix_range));
     }
 
     void PointLight::Render(Command &command) const
@@ -21,9 +22,9 @@ namespace AquaEngine
     }
 
     void PointLight::SetBuffer(
-        DirectX::XMFLOAT3 position,
-        DirectX::XMFLOAT3 color,
-        float range,
+        const DirectX::XMFLOAT3 &position,
+        const DirectX::XMFLOAT3 &color,
+        const float range,
         std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
     )
     {

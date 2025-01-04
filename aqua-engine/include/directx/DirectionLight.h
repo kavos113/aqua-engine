@@ -11,8 +11,8 @@ namespace AquaEngine
     {
     public:
         void Init(
-            DirectX::XMFLOAT3 direction,
-            DirectX::XMFLOAT3 color,
+            const DirectX::XMFLOAT3 &direction,
+            const DirectX::XMFLOAT3 &color,
             DescriptorHeapSegmentManager &model_heap,
             std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
@@ -41,8 +41,8 @@ namespace AquaEngine
         DescriptorHeapSegmentManager *m_manager;
 
         void SetBuffer(
-            DirectX::XMFLOAT3 direction,
-            DirectX::XMFLOAT3 color,
+            const DirectX::XMFLOAT3 &direction,
+            const DirectX::XMFLOAT3 &color,
             std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
     };

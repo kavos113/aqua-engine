@@ -62,14 +62,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         {0.0f, 1.0f, 0.0f}
     );
 
+    auto& skybox_manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
+        "skybox",
+        10,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+    );
     AquaEngine::SkyBox skyBox(
         "sample1.hdr",
         command,
-        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
-            "skybox",
-            10,
-            D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
-        )
+        skybox_manager
     );
     auto world_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
@@ -78,7 +79,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    skyBox.CreateMatrixBuffer(std::move(world_range));
+    skyBox.CreateMatrixBuffer(std::move(world_range), skybox_manager);
     skyBox.Create();
     skyBox.SetCamera(camera);
     skyBox.ConvertHDRIToCubeMap(command);

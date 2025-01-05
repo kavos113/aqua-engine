@@ -38,9 +38,13 @@ set(SRC
         src/directx/Camera.cpp
         src/fbx/FbxManager.cpp
         src/directx/mesh/fbx/FBXModel.cpp
-        src/directx/DirectionLight.cpp
+        src/directx/light/DirectionLight.cpp
         src/directx/mesh/SkyBox.cpp
         src/directx/MultiPassRenderer.cpp
+        src/directx/light/PointLight.cpp
+        src/directx/TransformMatrix.cpp
+        src/directx/light/SpotLight.cpp
+        include/directx/light/SpotLight.h
 )
 
 set(INCLUDE
@@ -79,9 +83,13 @@ set(INCLUDE
         include/directx/Camera.h
         include/fbx/FbxManager.h
         include/directx/mesh/fbx/FBXModel.h
-        include/directx/DirectionLight.h
+        include/directx/light/DirectionLight.h
         include/directx/mesh/SkyBox.h
         include/directx/MultiPassRenderer.h
+        include/directx/light/PointLight.h
+        include/directx/TransformMatrix.h
+        src/directx/light/SpotLight.cpp
+        include/directx/light/SpotLight.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

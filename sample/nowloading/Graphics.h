@@ -33,6 +33,7 @@ public:
     struct Progress
     {
         float progress;
+        const wchar_t *text;
     };
 
 private:

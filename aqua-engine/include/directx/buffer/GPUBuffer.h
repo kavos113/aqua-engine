@@ -1,13 +1,15 @@
 #ifndef AQUA_GPUBUFFER_H
 #define AQUA_GPUBUFFER_H
 
+#include <d3d12.h>
+#include <wrl.h>
 
 #include "Buffer.h"
 
 namespace AquaEngine
 {
     template<typename T>
-    class GPUBuffer : public Buffer
+    class GPUBuffer
     {
     public:
         GPUBuffer()
@@ -15,24 +17,26 @@ namespace AquaEngine
         {
         }
 
-        ~GPUBuffer() override
+        ~GPUBuffer()
         {
             Unmap();
         }
 
-        HRESULT Create(D3D12_HEAP_PROPERTIES heapProperties,
-                       D3D12_HEAP_FLAGS heapFlags,
-                       D3D12_RESOURCE_DESC resourceDesc,
-                       D3D12_RESOURCE_STATES resourceState,
-                       D3D12_CLEAR_VALUE *clearValue) override
+        HRESULT Create(const D3D12_HEAP_PROPERTIES &heapProperties,
+                       const D3D12_HEAP_FLAGS heapFlags,
+                       const D3D12_RESOURCE_DESC &resourceDesc,
+                       const D3D12_RESOURCE_STATES resourceState,
+                       D3D12_CLEAR_VALUE *clearValue
+        )
         {
-            HRESULT hr = Buffer::Create(heapProperties, heapFlags, resourceDesc, resourceState, clearValue);
+            HRESULT hr = m_buffer.Create(heapProperties, heapFlags, resourceDesc, resourceState, clearValue);
             if (FAILED(hr))
             {
+                OutputDebugStringW(L"Failed to create buffer\n");
                 return hr;
             }
 
-            hr = m_Buffer->Map(0, nullptr, reinterpret_cast<void**>(&m_mappedBuffer));
+            hr = m_buffer.GetBuffer()->Map(0, nullptr, reinterpret_cast<void **>(&m_mappedBuffer));
             if (FAILED(hr))
             {
                 OutputDebugStringW(L"Failed to map buffer\n");
@@ -51,11 +55,28 @@ namespace AquaEngine
         {
             if (m_mappedBuffer)
             {
-                m_Buffer->Unmap(0, nullptr);
+                m_buffer.GetBuffer()->Unmap(0, nullptr);
                 m_mappedBuffer = nullptr;
             }
         }
+
+        [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> GetResource()
+        {
+            return m_buffer.GetBuffer();
+        }
+
+        Buffer &GetBuffer()
+        {
+            return m_buffer;
+        }
+
+        [[nodiscard]] bool IsActive() const
+        {
+            return m_buffer.IsActive();
+        }
+
     private:
+        Buffer m_buffer{};
         T* m_mappedBuffer;
     };
 }

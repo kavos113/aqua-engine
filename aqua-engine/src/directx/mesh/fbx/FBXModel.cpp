@@ -145,7 +145,7 @@ namespace AquaEngine {
         m_vertexBuffer.Create(BUFFER_DEFAULT(sizeof(Vertex) * m_vertices.size()));
         std::ranges::copy(m_vertices, m_vertexBuffer.GetMappedBuffer());
 
-        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetResource()->GetGPUVirtualAddress();
         m_vertexBufferView.StrideInBytes = sizeof(Vertex);
         m_vertexBufferView.SizeInBytes = sizeof(Vertex) * m_vertices.size();
     }
@@ -156,7 +156,7 @@ namespace AquaEngine {
         std::ranges::copy(m_indices, m_indexBuffer.GetMappedBuffer());
         m_indexBuffer.Unmap();
 
-        m_indexBufferView.BufferLocation = m_indexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_indexBufferView.BufferLocation = m_indexBuffer.GetResource()->GetGPUVirtualAddress();
         m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * m_indices.size();
     }
@@ -168,9 +168,9 @@ namespace AquaEngine {
         m_materialBuffer.Unmap();
     }
 
-    void FBXModel::CreateMaterialBufferView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range)
+    void FBXModel::CreateMaterialBufferView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> material_range, DescriptorHeapSegmentManager &manager)
     {
-        const auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+        const auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
         segment->SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
             D3D12_SHADER_VISIBILITY_ALL,
@@ -184,7 +184,7 @@ namespace AquaEngine {
     void FBXModel::CreateMaterialBufferView(const std::shared_ptr<DescriptorHeapSegment> &segment, int offset)
     {
         m_materialCBV.SetDescriptorHeapSegment(segment, offset);
-        m_materialCBV.Create(m_materialBuffer);
+        m_materialCBV.Create(m_materialBuffer.GetBuffer());
     }
 
     void FBXModel::LoadFBX()
@@ -437,9 +437,9 @@ namespace AquaEngine {
         }
     }
 
-    void FBXModel::SetTexture(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range)
+    void FBXModel::SetTexture(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range, DescriptorHeapSegmentManager &manager)
     {
-        const auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+        const auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
 
         m_textureSRV.SetDescriptorHeapSegment(segment, 0);
         m_textureSRV.Create(m_texture);

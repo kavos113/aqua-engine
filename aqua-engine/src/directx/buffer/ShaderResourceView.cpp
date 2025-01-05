@@ -3,9 +3,9 @@
 
 namespace AquaEngine
 {
-    void ShaderResourceView::Create(Buffer &buffer)
+    void ShaderResourceView::Create(Buffer &buffer) const
     {
-        if (CheckSegment() != 0) return;
+        if (m_view.CheckSegment() != 0) return;
 
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 
@@ -20,19 +20,19 @@ namespace AquaEngine
         Device::Get()->CreateShaderResourceView(
             buffer.GetBuffer().Get(),
             &srvDesc,
-            m_DescriptorHeapSegment->GetCPUHandle(m_offset)
+            m_view.GetCPUHandle()
         );
 
     }
 
     void ShaderResourceView::Create(Buffer &buffer, const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc) const
     {
-        if (CheckSegment() != 0) return;
+        if (m_view.CheckSegment() != 0) return;
 
         Device::Get()->CreateShaderResourceView(
             buffer.GetBuffer().Get(),
             &srvDesc,
-            m_DescriptorHeapSegment->GetCPUHandle(m_offset)
+            m_view.GetCPUHandle()
         );
     }
 }

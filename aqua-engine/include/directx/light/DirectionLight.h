@@ -2,8 +2,8 @@
 #define DIRECTIONALLIGHT_H
 #include <DirectXMath.h>
 
-#include "buffer/ConstantBufferView.h"
-#include "buffer/GPUBuffer.h"
+#include "directx/buffer/ConstantBufferView.h"
+#include "directx/buffer/GPUBuffer.h"
 
 namespace AquaEngine
 {
@@ -11,8 +11,8 @@ namespace AquaEngine
     {
     public:
         void Init(
-            DirectX::XMFLOAT3 direction,
-            DirectX::XMFLOAT3 color,
+            const DirectX::XMFLOAT3 &direction,
+            const DirectX::XMFLOAT3 &color,
             DescriptorHeapSegmentManager &model_heap,
             std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
@@ -21,7 +21,6 @@ namespace AquaEngine
 
         DirectionLight()
             : m_light()
-            , m_manager(nullptr)
         {
         }
 
@@ -35,14 +34,14 @@ namespace AquaEngine
 
         Light m_light;
 
-        GPUBuffer<Light> m_buffer;
-        ConstantBufferView m_view;
+        GPUBuffer<Light> m_buffer{};
+        ConstantBufferView m_view{};
 
-        DescriptorHeapSegmentManager *m_manager;
+        DescriptorHeapSegmentManager *m_manager{};
 
         void SetBuffer(
-            DirectX::XMFLOAT3 direction,
-            DirectX::XMFLOAT3 color,
+            const DirectX::XMFLOAT3 &direction,
+            const DirectX::XMFLOAT3 &color,
             std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
     };

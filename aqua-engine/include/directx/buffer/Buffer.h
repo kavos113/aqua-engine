@@ -22,7 +22,7 @@ namespace AquaEngine
 
         [[nodiscard]] Microsoft::WRL::ComPtr<ID3D12Resource> GetBuffer();
 
-        bool IsActive() const
+        [[nodiscard]] bool IsActive() const
         {
             return m_Buffer != nullptr;
         }

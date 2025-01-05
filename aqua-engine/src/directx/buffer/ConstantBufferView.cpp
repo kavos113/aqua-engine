@@ -3,9 +3,9 @@
 
 namespace AquaEngine
 {
-    void ConstantBufferView::Create(Buffer &buffer)
+    void ConstantBufferView::Create(Buffer &buffer) const
     {
-        if (CheckSegment() != 0) return;
+        if (m_view.CheckSegment() != 0) return;
 
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
         cbvDesc.BufferLocation = buffer.GetBuffer()->GetGPUVirtualAddress();
@@ -17,7 +17,7 @@ namespace AquaEngine
             return;
         }
 
-        Device::Get()->CreateConstantBufferView(&cbvDesc, m_DescriptorHeapSegment->GetCPUHandle(m_offset));
+        Device::Get()->CreateConstantBufferView(&cbvDesc, m_view.GetCPUHandle());
     }
 
 }

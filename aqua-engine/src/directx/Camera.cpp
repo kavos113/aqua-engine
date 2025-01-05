@@ -75,6 +75,6 @@ namespace AquaEngine {
         );
 
         m_matrixCBV[manager_name].SetDescriptorHeapSegment(segment, 0);
-        m_matrixCBV[manager_name].Create(m_matrixBuffer);
+        m_matrixCBV[manager_name].Create(m_matrixBuffer.GetBuffer());
     }
 } // AquaEngine

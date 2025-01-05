@@ -50,8 +50,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     AquaEngine::Triangle triangle(
         {0.0f, 0.5f, 0.0f},
         {0.5f, -0.5f, 0.0f},
-        {-0.5f, -0.5f, 0.0f},
-        AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager("triangle", 10, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+        {-0.5f, -0.5f, 0.0f}
+        );
     triangle.Create();
 
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs = AquaEngine::Triangle::GetInputElementDescs();

@@ -45,7 +45,7 @@ namespace AquaEngine
         std::ranges::copy(m_vertices, m_vertexBuffer.GetMappedBuffer());
         m_vertexBuffer.Unmap();
 
-        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_vertexBufferView.BufferLocation = m_vertexBuffer.GetResource()->GetGPUVirtualAddress();
         m_vertexBufferView.StrideInBytes = sizeof(Vertex);
         m_vertexBufferView.SizeInBytes = sizeof(Vertex) * 4;
     }
@@ -56,14 +56,14 @@ namespace AquaEngine
         std::ranges::copy(m_indices, m_indexBuffer.GetMappedBuffer());
         m_indexBuffer.Unmap();
 
-        m_indexBufferView.BufferLocation = m_indexBuffer.GetBuffer()->GetGPUVirtualAddress();
+        m_indexBufferView.BufferLocation = m_indexBuffer.GetResource()->GetGPUVirtualAddress();
         m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
         m_indexBufferView.SizeInBytes = sizeof(unsigned short) * 6;
     }
 
-    void RectangleTexture::CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range)
+    void RectangleTexture::CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range, DescriptorHeapSegmentManager &manager)
     {
-        auto segment = std::make_shared<DescriptorHeapSegment>(m_manager->Allocate(1));
+        auto segment = std::make_shared<DescriptorHeapSegment>(manager.Allocate(1));
 
         m_srv.SetDescriptorHeapSegment(segment, 0);
         m_srv.Create(m_texture);

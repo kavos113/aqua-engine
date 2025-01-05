@@ -207,3 +207,31 @@ create_sample(nowloading
         resources/models/ninja.fbx
         resources/models/ninja.png
 )
+
+create_sample(point-light
+        sample/point-light/main.cpp
+        sample/point-light/Graphics.cpp
+        sample/point-light/Graphics.h
+        sample/point-light/BaseWindow.h
+        sample/point-light/MainWindow.cpp
+        sample/point-light/MainWindow.h
+        sample/point-light/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)
+
+create_sample(spot-light
+        sample/spot-light/main.cpp
+        sample/spot-light/Graphics.cpp
+        sample/spot-light/Graphics.h
+        sample/spot-light/BaseWindow.h
+        sample/spot-light/MainWindow.cpp
+        sample/spot-light/MainWindow.h
+        sample/spot-light/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)

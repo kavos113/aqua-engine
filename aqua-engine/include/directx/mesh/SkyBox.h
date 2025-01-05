@@ -9,15 +9,15 @@
 #include "directx/TextureManager.h"
 #include "directx/buffer/RenderTargetView.h"
 #include "directx/buffer/ShaderResourceView.h"
+#include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
 
 namespace AquaEngine
 {
     class SkyBox : public Mesh<SkyBox>
     {
     public:
-        SkyBox(const std::string &hdriPath, Command &command, DescriptorHeapSegmentManager &manager)
-            : Mesh(manager)
-            , m_viewMatrices()
+        SkyBox(const std::string &hdriPath, Command &command, DescriptorHeapSegmentManager& manager)
+            : m_viewMatrices()
             , m_hdriPath(hdriPath)
             , m_hdriBuffer(TextureManager::LoadTextureFromHDRFile(hdriPath, command))
             , m_hdriSrv(ShaderResourceView())
@@ -42,6 +42,7 @@ namespace AquaEngine
                     2, 3, 6,  3, 7, 6  // Right face
                 }
             )
+            , m_manager(&manager)
         {
         }
 
@@ -96,6 +97,7 @@ namespace AquaEngine
         RootSignature m_hdriRootSignature;
         PipelineState m_hdriPipelineState;
 
+        DescriptorHeapSegmentManager* m_manager;
         Buffer m_cubeMapBuffer;
         ShaderResourceView m_cubeMapSrv;
         std::array<RenderTargetView, 6> m_cubeMapRtv;
@@ -106,8 +108,8 @@ namespace AquaEngine
 
         const unsigned short cubeSize = 512;
 
-        void CreateVertexBuffer();
-        void CreateIndexBuffer();
+        void CreateVertexBuffer() override;
+        void CreateIndexBuffer() override;
 
         void CreateHDRIMatrixBuffer(const DirectX::XMFLOAT3 &eye);
 

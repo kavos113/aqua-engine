@@ -16,7 +16,6 @@ namespace AquaEngine
     {
     public:
         RectangleTexture(
-            DescriptorHeapSegmentManager& manager,
             DirectX::XMFLOAT3 topleft,
             DirectX::XMFLOAT3 topright,
             DirectX::XMFLOAT3 bottomleft,
@@ -24,8 +23,7 @@ namespace AquaEngine
             const std::string &texturePath,
             Command &command
         )
-            : Mesh(manager)
-            , m_vertices({
+            : m_vertices({
                 {topleft, {0.0f, 0.0f}},
                 {topright, {1.0f, 0.0f}},
                 {bottomleft, {0.0f, 1.0f}},
@@ -42,7 +40,7 @@ namespace AquaEngine
 
         void Create() override;
         void Render(Command &command) override;
-        void CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range);
+        void CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range, DescriptorHeapSegmentManager &manager);
 
     private:
         struct Vertex
@@ -60,8 +58,8 @@ namespace AquaEngine
         GPUBuffer<Vertex> m_vertexBuffer;
         GPUBuffer<unsigned short> m_indexBuffer;
 
-        void CreateVertexBuffer();
-        void CreateIndexBuffer();
+        void CreateVertexBuffer() override;
+        void CreateIndexBuffer() override;
     };
 }
 

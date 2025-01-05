@@ -14,9 +14,10 @@
 #include "directx/RootSignature.h"
 #include "directx/ShaderObject.h"
 #include "directx/Camera.h"
-#include "directx/DirectionLight.h"
 #include "directx/MultiPassRenderer.h"
-#include "directx/PointLight.h"
+#include "directx/light/DirectionLight.h"
+#include "directx/light/PointLight.h"
+#include "directx/light/SpotLight.h"
 
 #include "directx/mesh/Triangle.h"
 #include "directx/mesh/Rectangle.h"

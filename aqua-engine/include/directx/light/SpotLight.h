@@ -1,17 +1,15 @@
-#ifndef POINTLIGHT_H
-#define POINTLIGHT_H
+#ifndef SPOTLIGHT_H
+#define SPOTLIGHT_H
 #include <DirectXMath.h>
 
-#include "TransformMatrix.h"
-#include "buffer/ConstantBufferView.h"
-#include "buffer/GPUBuffer.h"
+#include "directx/TransformMatrix.h"
 
 namespace AquaEngine
 {
-    class PointLight
+    class SpotLight
     {
     public:
-        PointLight()
+        SpotLight()
             : m_light()
             , m_manager(nullptr)
         {
@@ -21,6 +19,8 @@ namespace AquaEngine
             DirectX::XMFLOAT3 position,
             DirectX::XMFLOAT3 color,
             float range,
+            DirectX::XMFLOAT3 direction,
+            float angle,
             DescriptorHeapSegmentManager &model_heap,
             std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
         );
@@ -50,14 +50,16 @@ namespace AquaEngine
             float padding;
             DirectX::XMFLOAT3 color;
             float range;
+            DirectX::XMFLOAT3 direction;
+            float angle;
         };
 
         Light m_light;
 
-        TransformMatrix m_matrix;
+        TransformMatrix m_matrix{};
 
-        GPUBuffer<Light> m_buffer;
-        ConstantBufferView m_view;
+        GPUBuffer<Light> m_buffer{};
+        ConstantBufferView m_view{};
 
         DescriptorHeapSegmentManager *m_manager;
 
@@ -65,9 +67,11 @@ namespace AquaEngine
             const DirectX::XMFLOAT3 &position,
             const DirectX::XMFLOAT3 &color,
             float range,
+            const DirectX::XMFLOAT3 &direction,
+            float angle,
             std::unique_ptr<D3D12_DESCRIPTOR_RANGE> light_range
         );
     };
 } // AquaEngine
 
-#endif //POINTLIGHT_H
+#endif //SPOTLIGHT_H

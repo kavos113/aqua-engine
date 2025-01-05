@@ -33,7 +33,7 @@ void Graphics::SetUp()
 
     command = std::make_unique<AquaEngine::Command>();
     display = std::make_unique<AquaEngine::Display>(hwnd, rc, *command);
-    display->SetBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
+    display->SetBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     auto &manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
         "texture",
@@ -72,7 +72,24 @@ void Graphics::SetUp()
         std::move(light_range)
     );
 
-    auto matrix_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
+    auto spot_light_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        4,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    spotLight.Init(
+        {0.0f, -1.0f, 0.0f},
+        {0.0f, 5.0f, 5.0f},
+        5000.0f,
+        {-1.0f, 0.0f, 0.0f},
+        DirectX::XM_PIDIV4,
+        manager,
+        std::move(spot_light_range)
+    );
+
+    auto matrix_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(7));
     auto matrix_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
@@ -87,7 +104,7 @@ void Graphics::SetUp()
         1
     );
 
-    auto texture_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
+    auto texture_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(7));
     auto texture_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
         1,
@@ -102,7 +119,7 @@ void Graphics::SetUp()
         1
     );
 
-    auto material_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(2));
+    auto material_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(manager.Allocate(7));
     auto material_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
         D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
         1,
@@ -124,7 +141,7 @@ void Graphics::SetUp()
     model->CreateMatrixBuffer(matrix_segment, 0);
     model->SetTexture(texture_segment, 0);
     model->CreateMaterialBufferView(material_segment, 0);
-    Progress p3 = {0.4f, L"Loaded Model1: ninja.fbx"};
+    Progress p3 = {0.2f, L"Loaded Model1: ninja.fbx"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p3));
 
     model2 = std::make_unique<AquaEngine::FBXModel>("isu.fbx", "isu.png", *command);
@@ -132,8 +149,19 @@ void Graphics::SetUp()
     model2->CreateMatrixBuffer(matrix_segment, 1);
     model2->SetTexture(texture_segment, 1);
     model2->CreateMaterialBufferView(material_segment, 1);
-    Progress p4 = {0.7f, L"Loaded Model2: isu.fbx"};
+    Progress p4 = {0.25f, L"Loaded Model2: isu.fbx"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p4));
+
+    for (int i = 0; i < models.size(); ++i)
+    {
+        models[i] = std::make_unique<AquaEngine::FBXModel>("ninja.fbx", "ninja.png", *command);
+        models[i]->Create();
+        models[i]->CreateMatrixBuffer(matrix_segment, i + 2);
+        models[i]->SetTexture(texture_segment, i + 2);
+        models[i]->CreateMaterialBufferView(material_segment, i + 2);
+        Progress pp = {0.3f + 0.05f * i, L"Loaded Model: ninja.fbx"};
+        SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&pp));
+    }
 
     auto inputElement = model->GetInputElementDescs();
 
@@ -171,12 +199,26 @@ void Graphics::SetUp()
     model->RotX(-DirectX::XM_PIDIV2);
     model->RotY(DirectX::XM_PI);
     model2->RotX(-DirectX::XM_PIDIV2);
+    for (int i = 0; i < models.size(); ++i)
+    {
+        models[i]->RotX(-DirectX::XM_PIDIV2);
+        models[i]->RotY(DirectX::XM_PI);
+    }
 
     model->Move(-1.5f, -1.0f, 0.0f);
     model2->Move(1.5f, -1.0f, 0.0f);
+    models[0]->Move(-2.5f, -1.0f, 0.0f);
+    models[1]->Move(2.0f, -1.0f, 0.0f);
+    models[2]->Move(-2.0f, -1.0f, 0.0f);
+    models[3]->Move(-0.5f, -1.0f, 1.0f);
+    models[4]->Move(0.5f, -1.0f, 2.0f);
 
     model->Scale(2.0f, 2.0f, 2.0f);
     model2->Scale(2.0f, 2.0f, 2.0f);
+    for (int i = 0; i < models.size(); ++i)
+    {
+        models[i]->Scale(2.0f, 2.0f, 2.0f);
+    }
 
     Progress p7 = {1.0f, L"Finished"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p7));
@@ -197,8 +239,13 @@ void Graphics::Render()
 
     camera.Render(*command, "texture");
     directionLight.Render(*command);
+    spotLight.Render(*command);
     model->Render(*command);
     model2->Render(*command);
+    for (int i = 0; i < models.size(); ++i)
+    {
+        models[i]->Render(*command);
+    }
 
     display->EndRender();
 

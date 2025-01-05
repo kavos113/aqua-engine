@@ -44,10 +44,12 @@ private:
     std::unique_ptr<AquaEngine::Display> display{};
     std::unique_ptr<AquaEngine::FBXModel> model{};
     std::unique_ptr<AquaEngine::FBXModel> model2{};
+    std::array<std::unique_ptr<AquaEngine::FBXModel>, 5> models{};
     AquaEngine::RootSignature rootSignature;
     AquaEngine::PipelineState pipelineState;
     AquaEngine::Camera camera;
     AquaEngine::DirectionLight directionLight;
+    AquaEngine::SpotLight spotLight;
 };
 
 

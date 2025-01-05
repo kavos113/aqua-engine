@@ -14,10 +14,10 @@ cbuffer Camera : register(b2)
     float3 eye;
 };
 
-cbuffer Light : register(b3)
+cbuffer DirectionLight : register(b3)
 {
-    float3 lightDirection;
-    float3 lightColor;
+    float3 directionLightDirection;
+    float3 directionLightColor;
 }
 
 cbuffer WorldMatrix : register(b0)
@@ -46,22 +46,36 @@ Type vsMain(
     return output;
 }
 
-float4 psMain(Type input) : SV_TARGET
+float3 LambertDiffuse(float3 normal, float3 lightDir, float3 directionLightColor)
 {
-    // lambert
-    float3 lightVec = normalize(lightDirection);
-    float brightness = dot(input.normal.xyz, lightVec) * -1.0f;
-    brightness = saturate(brightness);
+    normal = normalize(normal);
+    lightDir = normalize(lightDir);
+    return max(0.0f, dot(normal, lightDir) * -1.0f) * directionLightColor;
+}
 
-    float3 specularLight = lightColor * brightness;
-
-    // phong
-    float3 refVec = reflect(lightDirection, input.normal.xyz);
-    float3 toEye = normalize(eye - input.position.xyz);
-    float spec = saturate(dot(refVec, toEye));
+float3 PhongSpecular(float3 normal, float3 lightDir, float3 eyeDir, float3 directionLightColor)
+{
+    float3 refVec = reflect(lightDir, normal);
+    refVec = normalize(refVec);
+    eyeDir = normalize(eyeDir);
+    float spec = max(0.0f, dot(refVec, eyeDir));
     spec = pow(spec, 5.0f);
 
-    float3 diffuseLight = lightColor * spec;
+    return spec * directionLightColor;
+}
+
+float3 DirectionLight(Type input)
+{
+    float3 diffuseLight = LambertDiffuse(input.normal.xyz, normalize(directionLightDirection), directionLightColor);
+    float3 specularLight = PhongSpecular(input.normal.xyz, directionLightDirection, normalize(eye - input.position.xyz), directionLightColor);
+
+    return specularLight * specular.xyz + diffuseLight * diffuse.xyz + ambient.xyz;
+}
+
+float4 psMain(Type input) : SV_TARGET
+{
+    float3 diffuseLight = LambertDiffuse(input.normal.xyz, normalize(directionLightDirection), directionLightColor);
+    float3 specularLight = PhongSpecular(input.normal.xyz, directionLightDirection, normalize(eye - input.position.xyz), directionLightColor);
 
     float3 light = specularLight * specular.xyz + diffuseLight * diffuse.xyz + ambient.xyz;
 

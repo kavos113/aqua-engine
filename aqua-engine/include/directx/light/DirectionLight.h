@@ -2,8 +2,8 @@
 #define DIRECTIONALLIGHT_H
 #include <DirectXMath.h>
 
-#include "buffer/ConstantBufferView.h"
-#include "buffer/GPUBuffer.h"
+#include "directx/buffer/ConstantBufferView.h"
+#include "directx/buffer/GPUBuffer.h"
 
 namespace AquaEngine
 {
@@ -21,7 +21,6 @@ namespace AquaEngine
 
         DirectionLight()
             : m_light()
-            , m_manager(nullptr)
         {
         }
 
@@ -35,10 +34,10 @@ namespace AquaEngine
 
         Light m_light;
 
-        GPUBuffer<Light> m_buffer;
-        ConstantBufferView m_view;
+        GPUBuffer<Light> m_buffer{};
+        ConstantBufferView m_view{};
 
-        DescriptorHeapSegmentManager *m_manager;
+        DescriptorHeapSegmentManager *m_manager{};
 
         void SetBuffer(
             const DirectX::XMFLOAT3 &direction,

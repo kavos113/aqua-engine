@@ -15,7 +15,8 @@ set sample_6=cubemap
 set sample_7=collision
 set sample_8=background
 set sample_9=nowloading
-set sample_10-=point-light
+set sample_10=point-light
+set sample_11=spot-light
 
 set i=1
 :SAMPLE_LOOP

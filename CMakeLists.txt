@@ -221,3 +221,17 @@ create_sample(point-light
         resources/models/ninja.fbx
         resources/models/ninja.png
 )
+
+create_sample(spot-light
+        sample/spot-light/main.cpp
+        sample/spot-light/Graphics.cpp
+        sample/spot-light/Graphics.h
+        sample/spot-light/BaseWindow.h
+        sample/spot-light/MainWindow.cpp
+        sample/spot-light/MainWindow.h
+        sample/spot-light/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)

@@ -15,16 +15,21 @@ namespace AquaEngine
 
         HRESULT Create();
 
-        void SetInputLayout(D3D12_INPUT_ELEMENT_DESC *inputLayout, int numElements);
-        void SetRootSignature(RootSignature *rootSignature);
-        void SetVertexShader(ShaderObject* vs);
-        void SetPixelShader(ShaderObject* ps);
+        void SetInputLayout(const D3D12_INPUT_ELEMENT_DESC *inputLayout, int numElements);
+
+        void SetRootSignature(const RootSignature *rootSignature);
+
+        void SetVertexShader(const ShaderObject *vs);
+
+        void SetPixelShader(const ShaderObject *ps);
 
         void SetCullMode(D3D12_CULL_MODE cullMode);
 
         void SetDepthEnable(bool enable);
 
         void SetRTVFormat(DXGI_FORMAT format);
+
+        void SetBlendState(const D3D12_BLEND_DESC &blendDesc);
 
 
         void SetToCommand(Command& command) const

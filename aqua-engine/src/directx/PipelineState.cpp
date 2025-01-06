@@ -82,39 +82,44 @@ namespace AquaEngine
         return 0;
     }
 
-    void PipelineState::SetInputLayout(D3D12_INPUT_ELEMENT_DESC *inputLayout, int numElements)
+    void PipelineState::SetInputLayout(const D3D12_INPUT_ELEMENT_DESC *inputLayout, const int numElements)
     {
         m_psoDesc.InputLayout.pInputElementDescs = inputLayout;
         m_psoDesc.InputLayout.NumElements = numElements;
     }
 
-    void PipelineState::SetRootSignature(RootSignature *rootSignature)
+    void PipelineState::SetRootSignature(const RootSignature *rootSignature)
     {
         m_psoDesc.pRootSignature = rootSignature->GetRootSignature().Get();
     }
 
-    void PipelineState::SetVertexShader(ShaderObject *vs)
+    void PipelineState::SetVertexShader(const ShaderObject *vs)
     {
         m_psoDesc.VS = vs->Bytecode();
     }
 
-    void PipelineState::SetPixelShader(ShaderObject *ps)
+    void PipelineState::SetPixelShader(const ShaderObject *ps)
     {
         m_psoDesc.PS = ps->Bytecode();
     }
 
-    void PipelineState::SetCullMode(D3D12_CULL_MODE cullMode)
+    void PipelineState::SetCullMode(const D3D12_CULL_MODE cullMode)
     {
         m_psoDesc.RasterizerState.CullMode = cullMode;
     }
 
-    void PipelineState::SetDepthEnable(bool enable)
+    void PipelineState::SetDepthEnable(const bool enable)
     {
         m_psoDesc.DepthStencilState.DepthEnable = enable;
     }
 
-    void PipelineState::SetRTVFormat(DXGI_FORMAT format)
+    void PipelineState::SetRTVFormat(const DXGI_FORMAT format)
     {
         m_psoDesc.RTVFormats[0] = format;
+    }
+
+    void PipelineState::SetBlendState(const D3D12_BLEND_DESC &blendDesc)
+    {
+        m_psoDesc.BlendState = blendDesc;
     }
 }

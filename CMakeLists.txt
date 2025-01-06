@@ -235,3 +235,18 @@ create_sample(spot-light
         resources/models/ninja.fbx
         resources/models/ninja.png
 )
+
+create_sample(blend
+        sample/blend/main.cpp
+        sample/blend/Graphics.cpp
+        sample/blend/Graphics.h
+        sample/blend/BaseWindow.h
+        sample/blend/MainWindow.cpp
+        sample/blend/MainWindow.h
+        sample/blend/shader.hlsl
+        sample/blend/rect.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)

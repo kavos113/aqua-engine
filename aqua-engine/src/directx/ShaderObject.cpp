@@ -38,7 +38,7 @@ namespace AquaEngine
         );
         if (FAILED(hr))
         {
-            OutputDebugString(_T("Failed to compile vertex shader\n"));
+            OutputDebugString(_T("Failed to compile shader\n"));
             HRESULT hr2 = HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
 
             if (hr == hr2)

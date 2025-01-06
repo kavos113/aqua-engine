@@ -75,21 +75,7 @@ void Graphics::SetUp()
     rectangle->CreateMatrixBuffer(std::move(range), manager);
     auto inputElement = rectangle->GetInputElementDescs();
 
-    rootSignature.AddStaticSampler({
-        .Filter = D3D12_FILTER_MIN_MAG_MIP_POINT,
-        .AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        .AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        .AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP,
-        .MipLODBias = 0,
-        .MaxAnisotropy = 0,
-        .ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER,
-        .BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK,
-        .MinLOD = 0.0f,
-        .MaxLOD = D3D12_FLOAT32_MAX,
-        .ShaderRegister = 0,
-        .RegisterSpace = 0,
-        .ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL
-    });
+    rootSignature.AddStaticSampler(AquaEngine::RootSignature::DefaultStaticSampler());
     rootSignature.SetDescriptorHeapSegmentManager(&manager);
     rootSignature.Create();
 

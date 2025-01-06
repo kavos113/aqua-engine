@@ -2,7 +2,6 @@
 #define AQUA_PIPELINESTATE_H
 
 #include <d3d12.h>
-#include <memory>
 #include "RootSignature.h"
 #include "ShaderObject.h"
 

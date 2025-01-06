@@ -34,6 +34,7 @@ namespace AquaEngine
         [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle(unsigned int offset = 0) const;
 
         void SetGraphicsRootDescriptorTable(Command *command, unsigned int offset = 0) const;
+        void SetComputeRootDescriptorTable(Command *command, unsigned int offset = 0) const;
         void SetRootParameter(
             D3D12_ROOT_PARAMETER_TYPE type,
             D3D12_SHADER_VISIBILITY visibility,

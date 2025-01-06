@@ -27,6 +27,11 @@ namespace AquaEngine
             m_descriptorHeapSegment->SetGraphicsRootDescriptorTable(command, m_offset);
         }
 
+        void SetComputeRootDescriptorTable(Command *command) const
+        {
+            m_descriptorHeapSegment->SetComputeRootDescriptorTable(command, m_offset);
+        }
+
         [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() const
         {
             return m_descriptorHeapSegment->GetCPUHandle(m_offset);

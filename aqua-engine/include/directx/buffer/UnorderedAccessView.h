@@ -1,25 +1,17 @@
-#ifndef AQUA_SHADERRESOURCEVIEW_H
-#define AQUA_SHADERRESOURCEVIEW_H
-
-
+#ifndef UNORDEREDACCESSVIEW_H
+#define UNORDEREDACCESSVIEW_H
 #include "BufferView.h"
 
 namespace AquaEngine
 {
-    class ShaderResourceView
+    class UnorderedAccessView
     {
     public:
-        void Create(Buffer &buffer) const;
-        void Create(Buffer &buffer, const D3D12_SHADER_RESOURCE_VIEW_DESC &srvDesc) const;
+        void Create(Buffer &buffer, const D3D12_UNORDERED_ACCESS_VIEW_DESC &uavDesc) const;
 
         void SetDescriptorHeapSegment(const std::shared_ptr<DescriptorHeapSegment> &descriptorHeapSegment, int offset)
         {
             m_view.SetDescriptorHeapSegment(descriptorHeapSegment, offset);
-        }
-
-        void SetGraphicsRootDescriptorTable(Command *command) const
-        {
-            m_view.SetGraphicsRootDescriptorTable(command);
         }
 
         void SetComputeRootDescriptorTable(Command *command) const
@@ -45,6 +37,6 @@ namespace AquaEngine
     private:
         BufferView m_view;
     };
-}
+} // AquaEngine
 
-#endif //AQUA_SHADERRESOURCEVIEW_H
+#endif //UNORDEREDACCESSVIEW_H

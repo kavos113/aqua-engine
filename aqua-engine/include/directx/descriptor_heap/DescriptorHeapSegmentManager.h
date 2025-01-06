@@ -53,6 +53,7 @@ namespace AquaEngine
 
         void SetFirstGPUHandle(D3D12_GPU_DESCRIPTOR_HANDLE handle);
         void SetGraphicsRootDescriptorTable(Command &command, GLOBAL_HEAP_ID id, unsigned int offset = 0) const;
+        void SetComputeRootDescriptorTable(Command &command, GLOBAL_HEAP_ID id, unsigned int offset = 0) const;
 
     private:
         std::string m_name;

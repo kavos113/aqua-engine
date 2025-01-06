@@ -138,4 +138,15 @@ namespace AquaEngine
         command.List()->SetGraphicsRootDescriptorTable(id, handle);
     }
 
+    void DescriptorHeapSegmentManager::SetComputeRootDescriptorTable(
+        Command &command,
+        GLOBAL_HEAP_ID id,
+        unsigned int offset
+    ) const
+    {
+        D3D12_GPU_DESCRIPTOR_HANDLE handle = GetGPUHandle(id);
+        handle.ptr += static_cast<UINT64>(offset) * m_incrementSize;
+
+        command.List()->SetComputeRootDescriptorTable(id, handle);
+    }
 }

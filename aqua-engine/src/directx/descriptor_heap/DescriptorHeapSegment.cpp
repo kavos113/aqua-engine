@@ -60,6 +60,11 @@ namespace AquaEngine
         m_manager->SetGraphicsRootDescriptorTable(*command, m_segmentId, offset);
     }
 
+    void DescriptorHeapSegment::SetComputeRootDescriptorTable(Command *command, unsigned int offset) const
+    {
+        m_manager->SetComputeRootDescriptorTable(*command, m_segmentId, offset);
+    }
+
     void DescriptorHeapSegment::SetRootParameter(
         D3D12_ROOT_PARAMETER_TYPE type,
         D3D12_SHADER_VISIBILITY visibility,

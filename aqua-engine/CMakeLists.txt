@@ -44,7 +44,8 @@ set(SRC
         src/directx/light/PointLight.cpp
         src/directx/TransformMatrix.cpp
         src/directx/light/SpotLight.cpp
-        include/directx/light/SpotLight.h
+        src/directx/ComputePipeline.cpp
+        src/directx/buffer/UnorderedAccessView.cpp
 )
 
 set(INCLUDE
@@ -88,8 +89,9 @@ set(INCLUDE
         include/directx/MultiPassRenderer.h
         include/directx/light/PointLight.h
         include/directx/TransformMatrix.h
-        src/directx/light/SpotLight.cpp
         include/directx/light/SpotLight.h
+        include/directx/ComputePipeline.h
+        include/directx/buffer/UnorderedAccessView.h
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")

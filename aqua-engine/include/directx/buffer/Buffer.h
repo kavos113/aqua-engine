@@ -97,7 +97,7 @@ namespace AquaEngine
         Microsoft::WRL::ComPtr<ID3D12Resource> m_Buffer;
     };
 
-    #define BUFFER_DEFAULT(size) Buffer::HeapProperties::Upload(), D3D12_HEAP_FLAG_NONE, Buffer::ResourceDesc::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr
+    #define BUFFER_DEFAULT(size) AquaEngine::Buffer::HeapProperties::Upload(), D3D12_HEAP_FLAG_NONE, AquaEngine::Buffer::ResourceDesc::Buffer(size), D3D12_RESOURCE_STATE_GENERIC_READ, nullptr
 
 }
 #endif //AQUA_BUFFER_H

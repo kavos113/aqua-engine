@@ -2,9 +2,8 @@
 Game Engine for Windows
 ## Build
 ### Add FBX, png files
-- test/engine/directx: isu.fbx, isu.png, icon.png
-- sample/fbx: isu.fbx. isu.png, ninja.fbx, ninja.fbx
-- sample/light: isu.fbx. isu.png, ninja.fbx, ninja.fbx
+- resources/models isu.fbx, isu.png, ninja.fbx, ninja.fbx, icon.png
+- resources/hdrs sample1.hdr
 
 ### Install dependencies
 - Install FBXSDK, set `FBXSDK_DIR` for root directory

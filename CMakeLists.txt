@@ -44,9 +44,9 @@ if (LOCAL_BUILD)
     file(COPY
             test/engine/directx/ps.hlsl
             test/engine/directx/vs.hlsl
-            test/engine/directx/isu.png
-            test/engine/directx/isu.fbx
-            test/engine/directx/icon.png
+            resources/models/isu.png
+            resources/models/isu.fbx
+            resources/models/icon.png
             DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
     )
 else()
@@ -245,6 +245,21 @@ create_sample(blend
         sample/blend/MainWindow.h
         sample/blend/shader.hlsl
         sample/blend/rect.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)
+
+create_sample(blur
+        sample/blur/main.cpp
+        sample/blur/Graphics.cpp
+        sample/blur/Graphics.h
+        sample/blur/BaseWindow.h
+        sample/blur/MainWindow.h
+        sample/blur/MainWindow.cpp
+        sample/blur/shader.hlsl
+        sample/blur/rt1.hlsl
         resources/models/isu.fbx
         resources/models/isu.png
         resources/models/ninja.fbx

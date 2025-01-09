@@ -1,4 +1,4 @@
-#include "../../include/directx/MultiPassRenderer.h"
+#include "../../include/directx/RenderTarget.h"
 
 #include <array>
 
@@ -8,10 +8,10 @@
 
 namespace AquaEngine
 {
-    HRESULT MultiPassRenderer::Create(
+    HRESULT RenderTarget::Create(
         const D3D12_RESOURCE_DESC &desc,
-        float width,
-        float height
+        const UINT width,
+        const UINT height
     )
     {
         HRESULT hr = CreateVertexBuffer();
@@ -45,7 +45,7 @@ namespace AquaEngine
         return S_OK;
     }
 
-    void MultiPassRenderer::BeginRender(Command &command)
+    void RenderTarget::BeginRender(Command &command)
     {
         Barrier::Transition(
             &command,
@@ -63,7 +63,7 @@ namespace AquaEngine
         command.List()->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
     }
 
-    void MultiPassRenderer::EndRender(Command &command)
+    void RenderTarget::EndRender(Command &command)
     {
         Barrier::Transition(
             &command,
@@ -73,12 +73,19 @@ namespace AquaEngine
         );
     }
 
-    void MultiPassRenderer::UseAsTexture(Command &command) const
+    void RenderTarget::Render(Command &command) const
+    {
+        command.List()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+        command.List()->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+        command.List()->DrawInstanced(4, 1, 0, 0);
+    }
+
+    void RenderTarget::UseAsTexture(Command &command) const
     {
         m_srv.SetGraphicsRootDescriptorTable(&command);
     }
 
-    HRESULT MultiPassRenderer::CreateVertexBuffer()
+    HRESULT RenderTarget::CreateVertexBuffer()
     {
         std::array vertices = {
             Vertex{DirectX::XMFLOAT3{-1.0f, -1.0f, 0.0f}, DirectX::XMFLOAT2{0.0f, 1.0f}},
@@ -104,7 +111,7 @@ namespace AquaEngine
         return S_OK;
     }
 
-    HRESULT MultiPassRenderer::CreateRenderBuffer(const D3D12_RESOURCE_DESC &desc)
+    HRESULT RenderTarget::CreateRenderBuffer(const D3D12_RESOURCE_DESC &desc)
     {
         D3D12_CLEAR_VALUE clear_value = {
             .Format = DXGI_FORMAT_R8G8B8A8_UNORM
@@ -130,9 +137,9 @@ namespace AquaEngine
         return S_OK;
     }
 
-    HRESULT MultiPassRenderer::CreateRenderTargetView()
+    HRESULT RenderTarget::CreateRenderTargetView()
     {
-        auto rtv_manager = GlobalDescriptorHeapManager::GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+        auto& rtv_manager = GlobalDescriptorHeapManager::GetCPUHeapManager(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         auto rtv_segment = std::make_shared<DescriptorHeapSegment>(rtv_manager.Allocate(1));
 
         m_rtv.SetDescriptorHeapSegment(rtv_segment, 0);
@@ -141,7 +148,7 @@ namespace AquaEngine
         return S_OK;
     }
 
-    HRESULT MultiPassRenderer::CreateShaderResourceView(std::shared_ptr<DescriptorHeapSegment> segment, int offset)
+    HRESULT RenderTarget::CreateShaderResourceView(const std::shared_ptr<DescriptorHeapSegment>& segment, const int offset)
     {
         m_srv.SetDescriptorHeapSegment(segment, offset);
         m_srv.Create(m_buffer);
@@ -149,7 +156,7 @@ namespace AquaEngine
         return S_OK;
     }
 
-    HRESULT MultiPassRenderer::CreateDepthStencilView(float width, float height)
+    HRESULT RenderTarget::CreateDepthStencilView(const UINT width, const UINT height)
     {
         D3D12_CLEAR_VALUE clear_value = {
             .Format = DXGI_FORMAT_D32_FLOAT,
@@ -181,7 +188,7 @@ namespace AquaEngine
         return S_OK;
     }
 
-    std::vector<D3D12_INPUT_ELEMENT_DESC> MultiPassRenderer::m_inputElementDescs = {
+    std::vector<D3D12_INPUT_ELEMENT_DESC> RenderTarget::m_inputElementDescs = {
         {
             "POSITION",
             0,

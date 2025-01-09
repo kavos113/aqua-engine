@@ -17,6 +17,8 @@ set sample_8=background
 set sample_9=nowloading
 set sample_10=point-light
 set sample_11=spot-light
+set sample_12=blend
+set sample_13=blur
 
 set i=1
 :SAMPLE_LOOP

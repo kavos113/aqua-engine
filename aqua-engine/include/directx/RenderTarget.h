@@ -1,5 +1,5 @@
-#ifndef MULTIPASSRENDERER_H
-#define MULTIPASSRENDERER_H
+#ifndef RENDERTARGET_H
+#define RENDERTARGET_H
 #include <DirectXMath.h>
 #include <array>
 
@@ -11,18 +11,18 @@
 
 namespace AquaEngine
 {
-    class MultiPassRenderer
+    class RenderTarget
     {
     public:
-        MultiPassRenderer()
+        RenderTarget()
             : m_vertexBufferView()
         {
         }
 
         HRESULT Create(
             const D3D12_RESOURCE_DESC &desc,
-            float width,
-            float height
+            UINT width,
+            UINT height
         );
 
         void BeginRender(Command &command);
@@ -31,7 +31,9 @@ namespace AquaEngine
 
         void UseAsTexture(Command &command) const;
 
-        HRESULT CreateShaderResourceView(std::shared_ptr<DescriptorHeapSegment> segment, int offset = 0);
+        void Render(Command &command) const;
+
+        HRESULT CreateShaderResourceView(const std::shared_ptr<DescriptorHeapSegment>& segment, int offset = 0);
 
         void SetBackgroundColor(float r, float g, float b, float a)
         {
@@ -53,8 +55,7 @@ namespace AquaEngine
 
         HRESULT CreateRenderTargetView();
 
-
-        HRESULT CreateDepthStencilView(float width, float height);
+        HRESULT CreateDepthStencilView(UINT width, UINT height);
 
         struct Vertex
         {
@@ -78,4 +79,4 @@ namespace AquaEngine
     };
 } // AquaEngine
 
-#endif //MULTIPASSRENDERER_H
+#endif //RENDERTARGET_H

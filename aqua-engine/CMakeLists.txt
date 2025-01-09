@@ -40,7 +40,7 @@ set(SRC
         src/directx/mesh/fbx/FBXModel.cpp
         src/directx/light/DirectionLight.cpp
         src/directx/mesh/SkyBox.cpp
-        src/directx/MultiPassRenderer.cpp
+        src/directx/RenderTarget.cpp
         src/directx/light/PointLight.cpp
         src/directx/TransformMatrix.cpp
         src/directx/light/SpotLight.cpp
@@ -86,7 +86,7 @@ set(INCLUDE
         include/directx/mesh/fbx/FBXModel.h
         include/directx/light/DirectionLight.h
         include/directx/mesh/SkyBox.h
-        include/directx/MultiPassRenderer.h
+        include/directx/RenderTarget.h
         include/directx/light/PointLight.h
         include/directx/TransformMatrix.h
         include/directx/light/SpotLight.h

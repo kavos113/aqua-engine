@@ -59,7 +59,7 @@ namespace AquaEngine
 
             std::string errStr;
             errStr.resize(error->GetBufferSize());
-            std::copy_n(reinterpret_cast<char*>(error->GetBufferPointer()), error->GetBufferSize(), errStr.begin());
+            std::copy_n(static_cast<char*>(error->GetBufferPointer()), error->GetBufferSize(), errStr.begin());
 
             OutputDebugStringA(errStr.c_str());
             return hr;
@@ -69,7 +69,7 @@ namespace AquaEngine
         {
             if (root_parameter.ParameterType == D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE)
             {
-                delete root_parameter.DescriptorTable.pDescriptorRanges;
+                //delete root_parameter.DescriptorTable.pDescriptorRanges;
             }
         }
 

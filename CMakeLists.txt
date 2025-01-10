@@ -13,6 +13,9 @@ endif ()
 
 add_subdirectory(aqua-engine)
 
+set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/effekseer/src)
+set(EFK_BUILD_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/effekseer/build_msvc2022_x64/src)
+
 # Test
 set(TEST_SRC
         test/engine/directx/wrapper/Factory.cpp
@@ -95,7 +98,7 @@ function(create_sample name files)
             file(COPY ${src_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         endif ()
         if (LOCAL_BUILD)
-            if (src_file MATCHES ".*\\.(fbx|png|hdr)$")
+            if (src_file MATCHES ".*\\.(fbx|png|hdr|efkefc)$")
                 file(COPY ${src_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
             endif ()
         endif ()
@@ -107,6 +110,14 @@ function(create_sample name files)
     target_link_libraries(${exe_name} aqua-engine)
     target_link_libraries(${exe_name} d2d1.lib)
     target_link_libraries(${exe_name} dwrite.lib)
+
+    target_include_directories(${exe_name} PUBLIC
+            ${EFK_RUNTIME_ROOT}/Effekseer
+            ${EFK_RUNTIME_ROOT}/EffekseerRendererDX12)
+    target_link_libraries(${exe_name}
+            ${EFK_BUILD_ROOT}/Effekseer/Debug/Effekseerd.lib
+            ${EFK_BUILD_ROOT}/EffekseerRendererDX12/Debug/EffekseerRendererDX12d.lib)
+    set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
 
     message(STATUS "Successfully created sample: ${name}")
 endfunction()
@@ -264,4 +275,19 @@ create_sample(blur
         resources/models/isu.png
         resources/models/ninja.fbx
         resources/models/ninja.png
+)
+
+create_sample(effect
+        sample/effect/main.cpp
+        sample/effect/Graphics.cpp
+        sample/effect/Graphics.h
+        sample/effect/BaseWindow.h
+        sample/effect/MainWindow.h
+        sample/effect/MainWindow.cpp
+        sample/effect/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+        vendor/effekseer/Examples/Resources/Laser01.efkefc
 )

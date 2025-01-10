@@ -33,7 +33,7 @@ void Graphics::SetUp()
 
     command = std::make_unique<AquaEngine::Command>();
     display = std::make_unique<AquaEngine::Display>(hwnd, rc, *command);
-    display->SetBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
+    display->SetBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     auto &manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
         "texture",
@@ -210,10 +210,30 @@ void Graphics::LoadEffect()
     manager->SetModelLoader(renderer->CreateModelLoader());
     manager->SetMaterialLoader(renderer->CreateMaterialLoader());
     manager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+
+    Effekseer::Matrix44 cameraMatrix;
+    Effekseer::Matrix44 projMatrix;
+    DirectX::XMMATRIX view = camera.GetView();
+    DirectX::XMMATRIX proj = camera.GetProjection();
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < 4; j++)
+        {
+            cameraMatrix.Values[i][j] = view.r[i].m128_f32[j];
+            projMatrix.Values[i][j] = proj.r[i].m128_f32[j];
+        }
+    }
+    renderer->SetCameraMatrix(cameraMatrix);
+    renderer->SetProjectionMatrix(projMatrix);
+
     renderer->SetCommandList(commandList);
 
-    char16_t path = *L"Laser1.efkefc";
-    effect = Effekseer::Effect::Create(manager, &path);
+    effect = Effekseer::Effect::Create(manager, u"Laser01.efkefc");
+    if (effect == nullptr)
+    {
+        OutputDebugString("Failed to load effect\n");
+        return;
+    }
     handle = manager->Play(effect, 0, 0, 0);
 }
 

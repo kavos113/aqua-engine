@@ -110,13 +110,15 @@ function(create_sample name files)
     target_link_libraries(${exe_name} d2d1.lib)
     target_link_libraries(${exe_name} dwrite.lib)
 
-    target_include_directories(${exe_name} PUBLIC
-            ${EFK_RUNTIME_ROOT}/include/Effekseer
-            ${EFK_RUNTIME_ROOT}/include/EffekseerRendererDX12)
-    target_link_libraries(${exe_name}
-            ${EFK_RUNTIME_ROOT}/lib/Effekseerd.lib
-            ${EFK_RUNTIME_ROOT}/lib/EffekseerRendererDX12d.lib
-            ${EFK_RUNTIME_ROOT}/lib/LLGId.lib)
+    if (LOCAL_BUILD)
+        target_include_directories(${exe_name} PUBLIC
+                ${EFK_RUNTIME_ROOT}/include/Effekseer
+                ${EFK_RUNTIME_ROOT}/include/EffekseerRendererDX12)
+        target_link_libraries(${exe_name}
+                ${EFK_RUNTIME_ROOT}/lib/Effekseerd.lib
+                ${EFK_RUNTIME_ROOT}/lib/EffekseerRendererDX12d.lib
+                ${EFK_RUNTIME_ROOT}/lib/LLGId.lib)
+    endif ()
     set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
 
     message(STATUS "Successfully created sample: ${name}")

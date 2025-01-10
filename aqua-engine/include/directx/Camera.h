@@ -75,6 +75,16 @@ namespace AquaEngine {
             UpdateMatrixBuffer();
         }
 
+        DirectX::XMMATRIX GetView() const
+        {
+            return m_view;
+        }
+
+        DirectX::XMMATRIX GetProjection() const
+        {
+            return m_projection;
+        }
+
     private:
         struct CameraMatrix
         {

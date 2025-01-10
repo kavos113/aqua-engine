@@ -13,6 +13,8 @@ endif ()
 
 add_subdirectory(aqua-engine)
 
+set(EFK_RUNTIME_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/vendor/effekseer/install_msvc2022_x64)
+
 # Test
 set(TEST_SRC
         test/engine/directx/wrapper/Factory.cpp
@@ -95,7 +97,7 @@ function(create_sample name files)
             file(COPY ${src_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         endif ()
         if (LOCAL_BUILD)
-            if (src_file MATCHES ".*\\.(fbx|png|hdr)$")
+            if (src_file MATCHES ".*\\.(fbx|png|hdr|efkefc)$")
                 file(COPY ${src_file} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
             endif ()
         endif ()
@@ -107,6 +109,19 @@ function(create_sample name files)
     target_link_libraries(${exe_name} aqua-engine)
     target_link_libraries(${exe_name} d2d1.lib)
     target_link_libraries(${exe_name} dwrite.lib)
+
+    if (LOCAL_BUILD)
+        target_include_directories(${exe_name} PUBLIC
+                ${EFK_RUNTIME_ROOT}/include/Effekseer
+                ${EFK_RUNTIME_ROOT}/include/EffekseerRendererDX12)
+        target_link_libraries(${exe_name}
+                ${EFK_RUNTIME_ROOT}/lib/Effekseerd.lib
+                ${EFK_RUNTIME_ROOT}/lib/EffekseerRendererDX12d.lib
+                ${EFK_RUNTIME_ROOT}/lib/LLGId.lib)
+        set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
+    else ()
+        set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+    endif ()
 
     message(STATUS "Successfully created sample: ${name}")
 endfunction()
@@ -265,3 +280,20 @@ create_sample(blur
         resources/models/ninja.fbx
         resources/models/ninja.png
 )
+
+if (LOCAL_BUILD)
+    create_sample(effect
+            sample/effect/main.cpp
+            sample/effect/Graphics.cpp
+            sample/effect/Graphics.h
+            sample/effect/BaseWindow.h
+            sample/effect/MainWindow.h
+            sample/effect/MainWindow.cpp
+            sample/effect/shader.hlsl
+            resources/models/isu.fbx
+            resources/models/isu.png
+            resources/models/ninja.fbx
+            resources/models/ninja.png
+            vendor/effekseer/Examples/Resources/Laser01.efkefc
+    )
+endif ()

@@ -118,8 +118,10 @@ function(create_sample name files)
                 ${EFK_RUNTIME_ROOT}/lib/Effekseerd.lib
                 ${EFK_RUNTIME_ROOT}/lib/EffekseerRendererDX12d.lib
                 ${EFK_RUNTIME_ROOT}/lib/LLGId.lib)
+        set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
+    else ()
+        set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
     endif ()
-    set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebugDLL")
 
     message(STATUS "Successfully created sample: ${name}")
 endfunction()

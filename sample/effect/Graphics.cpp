@@ -178,10 +178,13 @@ void Graphics::SetUp()
     model->Scale(2.0f, 2.0f, 2.0f);
     model2->Scale(2.0f, 2.0f, 2.0f);
 
-    Progress p7 = {1.0f, L"Finished"};
+    Progress p7 = {0.95f, L"Finished"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p7));
 
     LoadEffect();
+
+    Progress p8 = {1.0f, L"Loaded Effect"};
+    SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p8));
 }
 
 void Graphics::LoadEffect()
@@ -235,6 +238,8 @@ void Graphics::LoadEffect()
         return;
     }
     handle = manager->Play(effect, 0, 0, 0);
+    manager->SetLocation(handle, Effekseer::Vector3D(4.0f, -3.0f, 12.0f));
+    manager->SetRotation(handle, 1.0f, 1.0f, 0.0f);
 }
 
 void Graphics::Render()

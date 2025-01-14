@@ -297,3 +297,17 @@ if (LOCAL_BUILD)
             vendor/effekseer/Examples/Resources/Laser01.efkefc
     )
 endif ()
+
+create_sample(d2d
+        sample/d2d/main.cpp
+        sample/d2d/Graphics.cpp
+        sample/d2d/Graphics.h
+        sample/d2d/BaseWindow.h
+        sample/d2d/MainWindow.cpp
+        sample/d2d/MainWindow.h
+        sample/d2d/shader.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+)

@@ -447,45 +447,87 @@ void Graphics::InitD2D()
     }
 }
 
+void Graphics::OnPress()
+{
+    if (weight == 0.0f)
+    {
+        isChangingScene = true;
+    }
+}
+
 void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
-    weight += 0.01f;
-    if (weight > 1.0f) weight = 0.0f;
-    weightBuffer.GetMappedBuffer()->weight = weight;
+    if (!isChangingScene && weight == 0.0f)
+    {
+        display->BeginRender();
 
-    // models->RotZ(0.01f);
-    model2->RotY(-0.1f);
+        display->SetViewports();
+        skybox->Render(*command);
 
-    model_rt.BeginRender(*command);
+        display->EndRender();
+    }
 
-    pipelineState.SetToCommand(*command);
-    rootSignature.SetToCommand(*command);
-    display->SetViewports();
-    camera->Render(*command, "texture");
-    directionLight.Render(*command);
-    model->Render(*command);
-    model2->Render(*command);
+    if (!isChangingScene && weight == 1.0f)
+    {
+        display->BeginRender();
 
-    model_rt.EndRender(*command);
+        pipelineState.SetToCommand(*command);
+        rootSignature.SetToCommand(*command);
+        display->SetViewports();
+        camera->Render(*command, "texture");
+        directionLight.Render(*command);
+        model->Render(*command);
+        model2->Render(*command);
 
-    cubemap_rt.BeginRender(*command);
-    display->SetViewports();
-    skybox->Render(*command);
-    cubemap_rt.EndRender(*command);
+        display->EndRender();
+    }
 
-    display->BeginRender();
+    if (isChangingScene)
+    {
+        weight += 0.04f;
 
-    rt_pipelineState.SetToCommand(*command);
-    rt_rootSignature.SetToCommand(*command);
-    model_rt.UseAsTexture(*command);
-    cubemap_rt.UseAsTexture(*command);
-    weightCBV.SetGraphicsRootDescriptorTable(command.get());
-    display->SetViewports();
-    model_rt.Render(*command);
+        if (weight >= 1.0f)
+        {
+            isChangingScene = false;
+            weight = 1.0f;
+        }
 
-    display->EndRender();
+        weightBuffer.GetMappedBuffer()->weight = weight;
+
+        // models->RotZ(0.01f);
+        model2->RotY(-0.1f);
+
+        model_rt.BeginRender(*command);
+
+        pipelineState.SetToCommand(*command);
+        rootSignature.SetToCommand(*command);
+        display->SetViewports();
+        camera->Render(*command, "texture");
+        directionLight.Render(*command);
+        model->Render(*command);
+        model2->Render(*command);
+
+        model_rt.EndRender(*command);
+
+        cubemap_rt.BeginRender(*command);
+        display->SetViewports();
+        skybox->Render(*command);
+        cubemap_rt.EndRender(*command);
+
+        display->BeginRender();
+
+        rt_pipelineState.SetToCommand(*command);
+        rt_rootSignature.SetToCommand(*command);
+        model_rt.UseAsTexture(*command);
+        cubemap_rt.UseAsTexture(*command);
+        weightCBV.SetGraphicsRootDescriptorTable(command.get());
+        display->SetViewports();
+        model_rt.Render(*command);
+
+        display->EndRender();
+    }
 
     HRESULT hr = command->Execute();
     if (FAILED(hr)) exit(-1);
@@ -506,7 +548,7 @@ void Graphics::RenderD2D()
         1
     );
 
-    static const wchar_t text[] = L"Hello, Direct2D On Direct3D12!";
+    static const wchar_t text[] = L"Press any button";
 
     d2dDeviceContext->SetTarget(d2dRenderTargets[index].Get());
     d2dDeviceContext->BeginDraw();

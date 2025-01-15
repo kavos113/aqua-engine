@@ -34,6 +34,8 @@ public:
 
     void Timer(int id) const;
 
+    void OnPress();
+
     struct Progress
     {
         float progress;
@@ -68,6 +70,7 @@ private:
     AquaEngine::ConstantBufferView weightCBV;
 
     float weight = 0.0f;
+    bool isChangingScene = false;
 
     Microsoft::WRL::ComPtr<ID3D11On12Device> d3d11On12Device;
     Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3d11DeviceContext;

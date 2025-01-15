@@ -86,6 +86,13 @@ LRESULT MainWindow::HandleMessage(UINT message, WPARAM wParam, LPARAM lParam)
         return 0;
     }
 
+    case WM_KEYDOWN:
+        if (m_isInitialized)
+        {
+            m_graphics->OnPress();
+        }
+        return 0;
+
     default:
         return DefWindowProc(m_hwnd, message, wParam, lParam);
     }

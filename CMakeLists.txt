@@ -123,6 +123,12 @@ function(create_sample name files)
         set_property(TARGET ${exe_name} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
     endif ()
 
+    if (${exe_name} STREQUAL "sample-d2d")
+        target_link_libraries(${exe_name} d2d1.lib)
+        target_link_libraries(${exe_name} dwrite.lib)
+        target_link_libraries(${exe_name} d3d11.lib)
+    endif ()
+
     message(STATUS "Successfully created sample: ${name}")
 endfunction()
 
@@ -297,3 +303,21 @@ if (LOCAL_BUILD)
             vendor/effekseer/Examples/Resources/Laser01.efkefc
     )
 endif ()
+
+create_sample(d2d
+        sample/d2d/main.cpp
+        sample/d2d/Graphics.cpp
+        sample/d2d/Graphics.h
+        sample/d2d/BaseWindow.h
+        sample/d2d/MainWindow.cpp
+        sample/d2d/MainWindow.h
+        sample/d2d/shader.hlsl
+        sample/d2d/all.hlsl
+        aqua-engine/src/directx/mesh/skybox.hlsl
+        aqua-engine/src/directx/mesh/cubemap.hlsl
+        resources/models/isu.fbx
+        resources/models/isu.png
+        resources/models/ninja.fbx
+        resources/models/ninja.png
+        resources/hdrs/sample1.hdr
+)

@@ -16,9 +16,7 @@ cbuffer CameraMat : register(b0)
     float3 eye;
 };
 
-cbuffer ObjectMat :
-
-register (b1)
+cbuffer ObjectMat : register (b1)
 {
     matrix world;
 };

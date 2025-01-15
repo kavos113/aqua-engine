@@ -1,5 +1,6 @@
 #ifndef UNORDEREDACCESSVIEW_H
 #define UNORDEREDACCESSVIEW_H
+#include "Buffer.h"
 #include "BufferView.h"
 
 namespace AquaEngine

@@ -6,7 +6,6 @@
 #include <utility>
 
 #include "directx/descriptor_heap/DescriptorHeapSegment.h"
-#include "Buffer.h"
 
 namespace AquaEngine
 {

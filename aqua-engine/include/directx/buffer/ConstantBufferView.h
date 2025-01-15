@@ -1,6 +1,7 @@
 #ifndef AQUA_CONSTANTBUFFERVIEW_H
 #define AQUA_CONSTANTBUFFERVIEW_H
 
+#include "Buffer.h"
 #include "BufferView.h"
 
 namespace AquaEngine

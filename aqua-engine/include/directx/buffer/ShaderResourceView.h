@@ -2,6 +2,7 @@
 #define AQUA_SHADERRESOURCEVIEW_H
 
 
+#include "Buffer.h"
 #include "BufferView.h"
 
 namespace AquaEngine

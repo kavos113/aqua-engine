@@ -1,4 +1,6 @@
 #include "directx/buffer/ShaderResourceView.h"
+
+#include "directx/buffer/Buffer.h"
 #include "directx/wrapper/Device.h"
 
 namespace AquaEngine

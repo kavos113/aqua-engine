@@ -19,6 +19,11 @@ namespace AquaEngine
 
         void SetViewports() const;
 
+        [[nodiscard]] UINT GetCurrentBackBufferIndex() const
+        {
+            return m_backBuffers.GetCurrentBackBufferIndex();
+        }
+
         // TODO zantei
         [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetBackBufferRTV() const
         {
@@ -28,6 +33,18 @@ namespace AquaEngine
         [[nodiscard]] D3D12_RESOURCE_DESC GetBackBufferResourceDesc() const
         {
             return m_backBuffers.GetBackBufferDesc();
+        }
+
+        [[nodiscard]] DXGI_SWAP_CHAIN_DESC1 GetSwapChainDesc() const
+        {
+            DXGI_SWAP_CHAIN_DESC1 desc;
+            m_backBuffers.GetDesc(&desc);
+            return desc;
+        }
+
+        [[nodiscard]] std::vector<ID3D12Resource *> GetBackBufferResouces() const
+        {
+            return m_backBuffers.GetBackBuffers();
         }
 
         void SetBackgroundColor(float r, float g, float b, float a)

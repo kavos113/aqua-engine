@@ -9,7 +9,6 @@ Graphics::Graphics(HWND hwnd, RECT rc)
     , command(nullptr)
     , display(nullptr)
     , model(nullptr)
-    , camera(rc)
 {
     AquaEngine::Factory::Init(true);
     AquaEngine::Device::GetAdaptors();
@@ -48,12 +47,13 @@ void Graphics::SetUp()
         0,
         D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
     );
-    camera.Init(
+    camera = std::make_shared<AquaEngine::Camera>(rc);
+    camera->Init(
         {0.0f, 0.0f, -2.0f},
         {0.0f, 0.0f, 0.0f},
         {0.0f, 1.0f, 0.0f}
     );
-    camera.AddManager("texture", std::move(camera_range));
+    camera->AddManager("texture", std::move(camera_range));
 
     Progress p2 = {0.1f, L"Created Camera"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p2));
@@ -180,32 +180,357 @@ void Graphics::SetUp()
 
     Progress p7 = {1.0f, L"Finished"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p7));
+
+    auto& skybox_manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
+        "skybox",
+        10,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+    );
+    skybox = std::make_unique<AquaEngine::SkyBox>(
+        "sample1.hdr",
+        *command,
+        skybox_manager
+    );
+    auto world_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        1,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    skybox->CreateMatrixBuffer(std::move(world_range), skybox_manager);
+    skybox->Create();
+    skybox->SetCamera(camera);
+    skybox->ConvertHDRIToCubeMap(*command);
+    skybox->CreateCubeMapPipelineState();
+    skybox->Scale(1000.0f, 1000.0f, 1000.0f);
+
+    hr = model_rt.Create(display->GetBackBufferResourceDesc(), rc.right - rc.left, rc.bottom - rc.top);
+    if (FAILED(hr)) exit(-2);
+    model_rt.SetBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
+    auto& rt_manager = AquaEngine::GlobalDescriptorHeapManager::CreateShaderManager(
+        "rt",
+        10,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV
+    );
+    auto model_rt_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(rt_manager.Allocate(1));
+    auto model_rt_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    model_rt_segment->SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+        D3D12_SHADER_VISIBILITY_PIXEL,
+        std::move(model_rt_range),
+        1
+    );
+    hr = model_rt.CreateShaderResourceView(model_rt_segment, 0);
+    if (FAILED(hr)) exit(-3);
+
+    hr = cubemap_rt.Create(display->GetBackBufferResourceDesc(), rc.right - rc.left, rc.bottom - rc.top);
+    if (FAILED(hr)) exit(-4);
+    cubemap_rt.SetBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
+    auto cubemap_rt_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(rt_manager.Allocate(1));
+    auto cubemap_rt_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_SRV,
+        1,
+        1,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    cubemap_rt_segment->SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+        D3D12_SHADER_VISIBILITY_PIXEL,
+        std::move(cubemap_rt_range),
+        1
+    );
+    hr = cubemap_rt.CreateShaderResourceView(cubemap_rt_segment, 0);
+    if (FAILED(hr)) exit(-5);
+
+    weightBuffer.Create(BUFFER_DEFAULT(AquaEngine::AlignmentSize(sizeof(Weight), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
+    weightBuffer.GetMappedBuffer()->weight = weight;
+    auto weight_segment = std::make_shared<AquaEngine::DescriptorHeapSegment>(rt_manager.Allocate(1));
+    auto weight_range = std::make_unique<D3D12_DESCRIPTOR_RANGE>(
+        D3D12_DESCRIPTOR_RANGE_TYPE_CBV,
+        1,
+        0,
+        0,
+        D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND
+    );
+    weight_segment->SetRootParameter(
+        D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE,
+        D3D12_SHADER_VISIBILITY_PIXEL,
+        std::move(weight_range),
+        1
+    );
+    weightCBV.SetDescriptorHeapSegment(weight_segment, 0);
+    weightCBV.Create(weightBuffer.GetBuffer());
+
+    rt_rootSignature.AddStaticSampler(AquaEngine::RootSignature::DefaultStaticSampler());
+    rt_rootSignature.SetDescriptorHeapSegmentManager(&rt_manager);
+    hr = rt_rootSignature.Create();
+    if (FAILED(hr)) exit(-6);
+    auto rt_in = AquaEngine::RenderTarget::GetInputElementDescs();
+
+    AquaEngine::ShaderObject rt_vs, rt_ps;
+    rt_vs.Load(L"all.hlsl", "vs", "vs_5_0");
+    rt_ps.Load(L"all.hlsl", "ps", "ps_5_0");
+
+    rt_pipelineState.SetRootSignature(&rt_rootSignature);
+    rt_pipelineState.SetVertexShader(&rt_vs);
+    rt_pipelineState.SetPixelShader(&rt_ps);
+    rt_pipelineState.SetInputLayout(rt_in.data(), rt_in.size());
+    hr = rt_pipelineState.Create();
+    if (FAILED(hr)) exit(-7);
+
+    InitD2D();
+}
+
+void Graphics::InitD2D()
+{
+    Microsoft::WRL::ComPtr<ID3D11Device> d3d11Device;
+    HRESULT hr = D3D11On12CreateDevice(
+        AquaEngine::Device::Get().Get(),
+        D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+        nullptr,
+        0,
+        reinterpret_cast<IUnknown**>(command->Queue().GetAddressOf()),
+        1,
+        0,
+        &d3d11Device,
+        &d3d11DeviceContext,
+        nullptr
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create D3D11On12 device\n");
+        return;
+    }
+
+    hr = d3d11Device.As(&d3d11On12Device);
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to get D3D11On12 device\n");
+        return;
+    }
+
+    hr = D2D1CreateFactory(
+        D2D1_FACTORY_TYPE_SINGLE_THREADED,
+        __uuidof(d2dFactory),
+        nullptr,
+        &d2dFactory
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create D2D factory\n");
+        return;
+    }
+
+    hr = d3d11On12Device.As(&dxgiDevice);
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to get DXGI device\n");
+        return;
+    }
+
+    hr = d2dFactory->CreateDevice(dxgiDevice.Get(), &d2dDevice);
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create D2D device\n");
+        return;
+    }
+
+    hr = d2dDevice->CreateDeviceContext(
+        D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+        &d2dDeviceContext
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create D2D device context\n");
+        return;
+    }
+
+    hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(dwriteFactory),
+        reinterpret_cast<IUnknown**>(dwriteFactory.GetAddressOf())
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create DWrite factory\n");
+        return;
+    }
+
+    // create render targets for D2D
+    DXGI_SWAP_CHAIN_DESC1 swap_chain_desc = display->GetSwapChainDesc();
+    auto back_buffers = display->GetBackBufferResouces();
+    wrappedBackBuffers.resize(swap_chain_desc.BufferCount);
+    d2dRenderTargets.resize(swap_chain_desc.BufferCount);
+    for (int i = 0; i < swap_chain_desc.BufferCount; ++i)
+    {
+        D3D11_RESOURCE_FLAGS flags = {D3D11_BIND_RENDER_TARGET};
+        hr = d3d11On12Device->CreateWrappedResource(
+            back_buffers[i],
+            &flags,
+            D3D12_RESOURCE_STATE_RENDER_TARGET,
+            D3D12_RESOURCE_STATE_PRESENT,
+            IID_PPV_ARGS(&wrappedBackBuffers[i])
+        );
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to create wrapped resource\n");
+            return;
+        }
+
+        Microsoft::WRL::ComPtr<IDXGISurface> surface;
+        hr = wrappedBackBuffers[i].As(&surface);
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to get IDXGISurface\n");
+            return;
+        }
+
+        hr = d2dDeviceContext->CreateBitmapFromDxgiSurface(
+            surface.Get(),
+            nullptr,
+            &d2dRenderTargets[i]
+        );
+        if (FAILED(hr))
+        {
+            OutputDebugString("Failed to create D2D bitmap\n");
+            return;
+        }
+    }
+
+    // create d2d resources
+    hr = d2dDeviceContext->CreateSolidColorBrush(
+        D2D1::ColorF(D2D1::ColorF::Red),
+        &d2dBrush
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create D2D brush\n");
+        return;
+    }
+
+    hr = dwriteFactory->CreateTextFormat(
+        L"Arial",
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        72.0f,
+        L"en-US",
+        &dwriteTextFormat
+    );
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to create DWrite text format\n");
+        return;
+    }
+
+    hr = dwriteTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to set text alignment\n");
+        return;
+    }
+
+    hr = dwriteTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to set paragraph alignment\n");
+        return;
+    }
 }
 
 void Graphics::Render()
 {
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
+    weight += 0.01f;
+    if (weight > 1.0f) weight = 0.0f;
+    weightBuffer.GetMappedBuffer()->weight = weight;
+
     // models->RotZ(0.01f);
     model2->RotY(-0.1f);
 
-    display->BeginRender();
+    model_rt.BeginRender(*command);
 
     pipelineState.SetToCommand(*command);
     rootSignature.SetToCommand(*command);
     display->SetViewports();
-
-    camera.Render(*command, "texture");
+    camera->Render(*command, "texture");
     directionLight.Render(*command);
     model->Render(*command);
     model2->Render(*command);
+
+    model_rt.EndRender(*command);
+
+    cubemap_rt.BeginRender(*command);
+    display->SetViewports();
+    skybox->Render(*command);
+    cubemap_rt.EndRender(*command);
+
+    display->BeginRender();
+
+    rt_pipelineState.SetToCommand(*command);
+    rt_rootSignature.SetToCommand(*command);
+    model_rt.UseAsTexture(*command);
+    cubemap_rt.UseAsTexture(*command);
+    weightCBV.SetGraphicsRootDescriptorTable(command.get());
+    display->SetViewports();
+    model_rt.Render(*command);
 
     display->EndRender();
 
     HRESULT hr = command->Execute();
     if (FAILED(hr)) exit(-1);
 
+    RenderD2D();
+
     display->Present();
+}
+
+void Graphics::RenderD2D()
+{
+    UINT index = display->GetCurrentBackBufferIndex();
+    D2D1_SIZE_F size = d2dRenderTargets[index]->GetSize();
+    D2D1_RECT_F textRect = D2D1::RectF(0, 0, size.width, size.height);
+
+    d3d11On12Device->AcquireWrappedResources(
+        wrappedBackBuffers[index].GetAddressOf(),
+        1
+    );
+
+    static const wchar_t text[] = L"Hello, Direct2D On Direct3D12!";
+
+    d2dDeviceContext->SetTarget(d2dRenderTargets[index].Get());
+    d2dDeviceContext->BeginDraw();
+    d2dDeviceContext->SetTransform(D2D1::Matrix3x2F::Identity());
+    d2dDeviceContext->DrawTextA(
+        text,
+        wcslen(text),
+        dwriteTextFormat.Get(),
+        textRect,
+        d2dBrush.Get()
+    );
+    HRESULT hr = d2dDeviceContext->EndDraw();
+    if (FAILED(hr))
+    {
+        OutputDebugString("Failed to draw text\n");
+        return;
+    }
+
+    d3d11On12Device->ReleaseWrappedResources(
+        wrappedBackBuffers[index].GetAddressOf(),
+        1
+    );
+
+    d3d11DeviceContext->Flush();
 }
 
 void Graphics::Timer(int id) const

@@ -48,6 +48,11 @@ namespace AquaEngine
             return m_swapChain.GetCurrentBackBufferIndex();
         }
 
+        [[nodiscard]] std::vector<ID3D12Resource *> GetBackBuffers() const
+        {
+            return m_backBuffers;
+        }
+
         [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE GetCurrentRTVHandle() const;
 
         void BeginRender() const;

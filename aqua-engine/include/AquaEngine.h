@@ -1,9 +1,6 @@
 #ifndef AQUA_AQUAENGINE_H
 #define AQUA_AQUAENGINE_H
 
-#include <d3d12.h>
-#include <dxgi1_6.h>
-
 #include "directx/descriptor_heap/GlobalDescriptorHeapManager.h"
 #include "directx/wrapper/Device.h"
 #include "directx/wrapper/Factory.h"
@@ -35,5 +32,8 @@
 #include "directx/buffer/Buffer.h"
 
 #include "fbx/FBXManager.h"
+
+#include <d3d12.h>
+#include <dxgi1_6.h>
 
 #endif //AQUA_AQUAENGINE_H

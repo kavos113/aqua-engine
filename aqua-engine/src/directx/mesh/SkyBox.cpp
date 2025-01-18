@@ -200,8 +200,8 @@ namespace AquaEngine
         }
 
         ShaderObject vs, ps;
-        vs.Load(L"cubemap.hlsl", "vs", "vs_5_0");
-        ps.Load(L"cubemap.hlsl", "ps", "ps_5_0");
+        vs.Load(L"shaders/cubemap.hlsl", "vs", "vs_5_0");
+        ps.Load(L"shaders/cubemap.hlsl", "ps", "ps_5_0");
 
         m_hdriPipelineState.SetRootSignature(&m_hdriRootSignature);
         m_hdriPipelineState.SetVertexShader(&vs);
@@ -287,8 +287,8 @@ namespace AquaEngine
         }
 
         ShaderObject vs, ps;
-        vs.Load(L"skybox.hlsl", "vs", "vs_5_0");
-        ps.Load(L"skybox.hlsl", "ps", "ps_5_0");
+        vs.Load(L"shaders/skybox.hlsl", "vs", "vs_5_0");
+        ps.Load(L"shaders/skybox.hlsl", "ps", "ps_5_0");
 
         m_cubeMapPipelineState.SetRootSignature(&m_cubeMapRootSignature);
         m_cubeMapPipelineState.SetVertexShader(&vs);

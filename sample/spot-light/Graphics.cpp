@@ -171,8 +171,8 @@ void Graphics::SetUp()
     if (FAILED(hr)) exit(-1);
 
     AquaEngine::ShaderObject vs, ps;
-    vs.Load(L"shader.hlsl", "vsMain", "vs_5_0");
-    ps.Load(L"shader.hlsl", "psMain", "ps_5_0");
+    vs.Load(L"shaders/shader.hlsl", "vsMain", "vs_5_0");
+    ps.Load(L"shaders/shader.hlsl", "psMain", "ps_5_0");
     Progress p5 = {0.8f, L"Loaded Shaders"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p5));
 

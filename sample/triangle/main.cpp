@@ -57,8 +57,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow)
     std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs = AquaEngine::Triangle::GetInputElementDescs();
 
     AquaEngine::ShaderObject vs, ps;
-    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
-    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
+    vs.Load(L"shaders/vs.hlsl", "vsMain", "vs_5_0");
+    ps.Load(L"shaders/ps.hlsl", "psMain", "ps_5_0");
 
     AquaEngine::RootSignature rootSignature;
     rootSignature.Create();

@@ -19,6 +19,8 @@ set sample_10=point-light
 set sample_11=spot-light
 set sample_12=blend
 set sample_13=blur
+set sample_14=effect
+set sample_15=d2d
 
 set i=1
 :SAMPLE_LOOP

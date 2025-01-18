@@ -143,8 +143,8 @@ void Graphics::SetUp()
     if (FAILED(hr)) exit(-1);
 
     AquaEngine::ShaderObject vs, ps;
-    vs.Load(L"shader.hlsl", "vsMain", "vs_5_0");
-    ps.Load(L"shader.hlsl", "psMain", "ps_5_0");
+    vs.Load(L"shaders/shader.hlsl", "vsMain", "vs_5_0");
+    ps.Load(L"shaders/shader.hlsl", "psMain", "ps_5_0");
     Progress p5 = {0.8f, L"Loaded Shaders"};
     SendMessage(hwnd, WM_AQUA_LOADING, 0, reinterpret_cast<LPARAM>(&p5));
 
@@ -186,8 +186,8 @@ void Graphics::SetUp()
     rootSignature2.SetDescriptorHeapSegmentManager(&tex_manager);
     rootSignature2.Create();
     AquaEngine::ShaderObject vs2, ps2;
-    vs2.Load(L"rect.hlsl", "vs", "vs_5_0");
-    ps2.Load(L"rect.hlsl", "ps", "ps_5_0");
+    vs2.Load(L"shaders/rect.hlsl", "vs", "vs_5_0");
+    ps2.Load(L"shaders/rect.hlsl", "ps", "ps_5_0");
     pipelineState2.SetRootSignature(&rootSignature2);
     pipelineState2.SetVertexShader(&vs2);
     pipelineState2.SetPixelShader(&ps2);

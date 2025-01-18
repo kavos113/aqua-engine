@@ -136,8 +136,8 @@ void Graphics::SetUp()
     if (FAILED(hr)) exit(-1);
 
     AquaEngine::ShaderObject vs, ps;
-    vs.Load(L"vs.hlsl", "vsMain", "vs_5_0");
-    ps.Load(L"ps.hlsl", "psMain", "ps_5_0");
+    vs.Load(L"shaders/vs.hlsl", "vsMain", "vs_5_0");
+    ps.Load(L"shaders/ps.hlsl", "psMain", "ps_5_0");
     OutputDebugString("[Message] Shader loaded\n");
 
     pipelineState.SetRootSignature(&rootSignature);

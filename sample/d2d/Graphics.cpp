@@ -276,8 +276,8 @@ void Graphics::SetUp()
     auto rt_in = AquaEngine::RenderTarget::GetInputElementDescs();
 
     AquaEngine::ShaderObject rt_vs, rt_ps;
-    rt_vs.Load(L"all.hlsl", "vs", "vs_5_0");
-    rt_ps.Load(L"all.hlsl", "ps", "ps_5_0");
+    rt_vs.Load(L"shaders/all.hlsl", "vs", "vs_5_0");
+    rt_ps.Load(L"shaders/all.hlsl", "ps", "ps_5_0");
 
     rt_pipelineState.SetRootSignature(&rt_rootSignature);
     rt_pipelineState.SetVertexShader(&rt_vs);

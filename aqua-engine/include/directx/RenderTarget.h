@@ -48,7 +48,11 @@ namespace AquaEngine
             return m_inputElementDescs;
         }
 
-    private:
+        [[nodiscard]] ID3D12Resource *GetBuffer() {
+          return m_buffer.GetBuffer().Get();
+        }
+
+      private:
         HRESULT CreateVertexBuffer();
 
         HRESULT CreateRenderBuffer(const D3D12_RESOURCE_DESC &desc);

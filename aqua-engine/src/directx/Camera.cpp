@@ -38,8 +38,8 @@ namespace AquaEngine {
         m_projection = DirectX::XMMatrixPerspectiveFovLH(
             DirectX::XM_PIDIV2,
             static_cast<float>(wr.right - wr.left) / static_cast<float>(wr.bottom - wr.top),
-            1.0f,
-            10.0f
+            0.1f,
+            1000.0f
             );
 
         m_matrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(CameraMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));

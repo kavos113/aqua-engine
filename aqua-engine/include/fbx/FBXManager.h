@@ -6,6 +6,8 @@
 
 #include "AquaEngine.h"
 
+#include <iostream>
+
 namespace AquaEngine {
 
     class FBXManager {
@@ -25,7 +27,7 @@ namespace AquaEngine {
             lSdkManager->Destroy();
         }
 
-        static int ReadFile(const char* filename, FbxScene** scene)
+        static int ReadFile(const char* filename , FbxScene** scene)
         {
             if (!FbxFileUtils::Exist(filename))
             {

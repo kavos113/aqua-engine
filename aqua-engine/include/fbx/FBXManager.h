@@ -27,8 +27,7 @@ namespace AquaEngine {
             lSdkManager->Destroy();
         }
 
-        static int ReadFile(const char* filename , FbxScene** scene)
-        {
+        static int ReadFile(const char *filename, FbxScene **scene) {
             if (!FbxFileUtils::Exist(filename))
             {
                 std::println("FBX file not found: {}", filename);

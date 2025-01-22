@@ -28,8 +28,7 @@ namespace AquaEngine {
         }
 
         static int ReadFile(const char *filename, FbxScene **scene) {
-          if (!FbxFileUtils::Exist(filename))
-            {
+          if (!FbxFileUtils::Exist(filename)) {
                 std::println("FBX file not found: {}", filename);
                 return -1;
             }

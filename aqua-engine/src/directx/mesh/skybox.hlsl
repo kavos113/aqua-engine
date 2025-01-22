@@ -6,7 +6,7 @@ struct VS_INPUT
 struct VS_OUTPUT 
 {
     float4 position : SV_POSITION;
-    float3 direction : TEXCOORD;
+    float3 direction : UVFACE;
 };
 
 cbuffer CameraMat : register(b0)
@@ -24,9 +24,10 @@ cbuffer ObjectMat : register (b1)
 VS_OUTPUT vs(VS_INPUT input)
 {
     VS_OUTPUT output;
-    output.position = mul(float4(input.position, 1.0f), world);
-    output.position = mul(output.position, view);
-    output.direction = input.position;
+    output.position = mul(float4(input.position, 0.0f), world);
+    output.position = mul(mul(projection, view), output.position).xyww;
+    output.position.z = 0.0f;
+    output.direction = input.position.xyz;
     return output;
 }
 
@@ -48,13 +49,15 @@ float ACESToneMapping(float l)
 float4 ps(VS_OUTPUT input) : SV_TARGET
 {
     //float3 color = cubeTexture.Sample(cubeSampler, normalize(input.direction)).rgb;
-    float3 tex = normalize(input.position);
-    float3 color = cubeTexture.Sample(cubeSampler, tex).rgb;
-    float luminance = dot(color, float3(0.299f, 0.587f, 0.114f));
+    // float3 tex = normalize(input.position);
+    // float3 color = cubeTexture.Sample(cubeSampler, tex).rgb;
+    // float luminance = dot(color, float3(0.299f, 0.587f, 0.114f));
 
-    float toneMappedluminance = ACESToneMapping(luminance);
+    // float toneMappedluminance = ACESToneMapping(luminance);
 
-    float4 finalColor = float4(color * (toneMappedluminance / luminance), 1.0f);
+    // float4 finalColor = float4(color * (toneMappedluminance / luminance), 1.0f);
 
-    return finalColor * 12.0f;
+    // // return finalColor * 12.0f;
+    float4 tex = cubeTexture.Sample(cubeSampler, input.direction);
+    return float4(tex.xyz, 1.0f);
 }

@@ -75,6 +75,93 @@ namespace AquaEngine {
             UpdateMatrixBuffer();
         }
 
+        void Rot(const DirectX::XMMATRIX &transform_matrix) {
+          DirectX::XMVECTOR targetvec = DirectX::XMVector3Transform(
+              XMLoadFloat3(&m_defaultTarget), transform_matrix);
+          DirectX::XMVECTOR upvec = DirectX::XMVector3Transform(
+              XMLoadFloat3(&m_defaultUp), transform_matrix);
+
+          targetvec = DirectX::XMVector3Normalize(targetvec);
+          targetvec = DirectX::XMVectorScale(targetvec, m_focusDistance);
+          upvec = DirectX::XMVector3Normalize(upvec);
+
+          m_eye =
+              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
+                                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
+          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
+                                   DirectX::XMVectorGetY(upvec),
+                                   DirectX::XMVectorGetZ(upvec));
+          UpdateMatrixBuffer();
+        }
+
+        void RotX(const DirectX::XMMATRIX &transform_matrix, float angle) {
+          DirectX::XMVECTOR targetvec = XMVector3Transform(
+              XMVector3Transform(XMLoadFloat3(&m_defaultTarget),
+                                 DirectX::XMMatrixRotationX(angle)),
+              transform_matrix);
+          DirectX::XMVECTOR upvec = XMVector3Transform(
+              XMVector3Transform(XMLoadFloat3(&m_defaultUp),
+                                 DirectX::XMMatrixRotationX(angle)),
+              transform_matrix);
+
+          m_eye =
+              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
+                                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
+          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
+                                   DirectX::XMVectorGetY(upvec),
+                                   DirectX::XMVectorGetZ(upvec));
+          UpdateMatrixBuffer();
+        }
+
+        void RotY(const DirectX::XMMATRIX &transform_matrix, float angle) {
+          DirectX::XMVECTOR targetvec = XMVector3Transform(
+              XMVector3Transform(XMLoadFloat3(&m_defaultTarget),
+                                 DirectX::XMMatrixRotationY(angle)),
+              transform_matrix);
+          DirectX::XMVECTOR upvec = XMVector3Transform(
+              XMVector3Transform(XMLoadFloat3(&m_defaultUp),
+                                 DirectX::XMMatrixRotationY(angle)),
+              transform_matrix);
+
+          m_eye =
+              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
+                                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
+          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
+                                   DirectX::XMVectorGetY(upvec),
+                                   DirectX::XMVectorGetZ(upvec));
+          UpdateMatrixBuffer();
+        }
+
+        void RotZ(const DirectX::XMMATRIX &transform_matrix, float angle) {
+          DirectX::XMVECTOR targetvec = XMVector3Transform(
+              XMVector3Transform(XMLoadFloat3(&m_defaultTarget),
+                                 DirectX::XMMatrixRotationZ(angle)),
+              transform_matrix);
+          DirectX::XMVECTOR upvec = XMVector3Transform(
+              XMVector3Transform(XMLoadFloat3(&m_defaultUp),
+                                 DirectX::XMMatrixRotationZ(angle)),
+              transform_matrix);
+
+          m_eye =
+              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
+                                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
+          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
+                                   DirectX::XMVectorGetY(upvec),
+                                   DirectX::XMVectorGetZ(upvec));
+          UpdateMatrixBuffer();
+        }
+
+        void Move(float dx, float dy, float dz) {
+          m_eye = DirectX::XMFLOAT3(m_eye.x + dx, m_eye.y + dy, m_eye.z + dz);
+          m_focus =
+              DirectX::XMFLOAT3(m_focus.x + dx, m_focus.y + dy, m_focus.z + dz);
+          UpdateMatrixBuffer();
+        }
+
         DirectX::XMMATRIX GetView() const
         {
             return m_view;
@@ -108,7 +195,11 @@ namespace AquaEngine {
         DirectX::XMFLOAT3 m_focus{};
         DirectX::XMFLOAT3 m_up{};
 
+        DirectX::XMFLOAT3 m_defaultTarget{};
+        DirectX::XMFLOAT3 m_defaultUp{};
+
         GPUBuffer<CameraMatrix> m_matrixBuffer;
+        GPUBuffer<CameraMatrix> m_skyboxMatrixBuffer;
         std::unordered_map<std::string, ConstantBufferView> m_matrixCBV{};
 
         float m_focusDistance;

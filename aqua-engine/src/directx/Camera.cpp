@@ -30,6 +30,13 @@ namespace AquaEngine {
         m_focus = focus;
         m_up = up;
 
+        m_defaultTarget = DirectX::XMFLOAT3(
+            focus.x - eye.x,
+            focus.y - eye.y,
+            focus.z - eye.z
+        );
+        m_defaultUp = up;
+
         m_view = DirectX::XMMatrixLookAtLH(
             XMLoadFloat3(&eye),
             XMLoadFloat3(&focus),
@@ -44,6 +51,13 @@ namespace AquaEngine {
         m_matrixBuffer.GetMappedBuffer()->view = m_view;
         m_matrixBuffer.GetMappedBuffer()->projection = m_projection;
         m_matrixBuffer.GetMappedBuffer()->eye = m_eye;
+
+        DirectX::XMMATRIX view = m_view;
+        //view.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+        m_skyboxMatrixBuffer.Create(BUFFER_DEFAULT(AlignmentSize(sizeof(CameraMatrix), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT)));
+        m_skyboxMatrixBuffer.GetMappedBuffer()->view = view;
+        m_skyboxMatrixBuffer.GetMappedBuffer()->projection = m_projection;
+        m_skyboxMatrixBuffer.GetMappedBuffer()->eye = m_eye;
     }
 
     void Camera::UpdateMatrixBuffer()
@@ -73,6 +87,15 @@ namespace AquaEngine {
         );
 
         m_matrixCBV[manager_name].SetDescriptorHeapSegment(segment, 0);
-        m_matrixCBV[manager_name].Create(m_matrixBuffer.GetBuffer());
+
+        if (manager_name == "skybox")
+        {
+            m_matrixCBV[manager_name].Create(m_skyboxMatrixBuffer.GetBuffer());
+        }
+        else
+        {
+            m_matrixCBV[manager_name].Create(m_matrixBuffer.GetBuffer());
+        }
+
     }
 } // AquaEngine

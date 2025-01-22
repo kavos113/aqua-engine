@@ -197,7 +197,9 @@ void Graphics::Render() const
     AquaEngine::GlobalDescriptorHeapManager::SetToCommand(*command);
 
     // models->RotZ(0.01f);
-    model2->RotY(-0.1f);
+    model2->RotY(-0.01f);
+
+    camera->Move(0.01f, 0.0f, 0.0f);
 
     display->BeginRender();
 

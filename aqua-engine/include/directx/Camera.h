@@ -162,14 +162,19 @@ namespace AquaEngine {
           UpdateMatrixBuffer();
         }
 
-        DirectX::XMMATRIX GetView() const
+        [[nodiscard]] DirectX::XMMATRIX GetView() const
         {
             return m_view;
         }
 
-        DirectX::XMMATRIX GetProjection() const
+        [[nodiscard]] DirectX::XMMATRIX GetProjection() const
         {
             return m_projection;
+        }
+
+        [[nodiscard]] DirectX::XMFLOAT3 GetEye() const
+        {
+            return m_eye;
         }
 
     private:

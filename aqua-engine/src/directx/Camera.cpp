@@ -46,7 +46,7 @@ void Camera::SetMatrixBuffer(
         XMLoadFloat3(&up)
     );
     m_projection = DirectX::XMMatrixPerspectiveFovLH(
-        DirectX::XM_PIDIV2,
+        DirectX::XM_PIDIV4,
         static_cast<float>(wr.right - wr.left) / static_cast<float>(wr.bottom - wr.top),
         0.1f,
         1000.0f

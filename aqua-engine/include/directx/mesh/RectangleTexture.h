@@ -42,6 +42,8 @@ namespace AquaEngine
         void Render(Command &command) override;
         void CreateShaderResourceView(std::unique_ptr<D3D12_DESCRIPTOR_RANGE> texture_range, DescriptorHeapSegmentManager &manager);
 
+        void CreateShaderResourceView(const std::shared_ptr<DescriptorHeapSegment> &segment, int offset);
+
     private:
         struct Vertex
         {

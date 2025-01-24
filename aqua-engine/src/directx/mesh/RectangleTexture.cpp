@@ -75,4 +75,10 @@ namespace AquaEngine
             1
         );
     }
+
+    void RectangleTexture::CreateShaderResourceView(const std::shared_ptr<DescriptorHeapSegment> &segment, int offset)
+    {
+        m_srv.SetDescriptorHeapSegment(segment, offset);
+        m_srv.Create(m_texture);
+    }
 }

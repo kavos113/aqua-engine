@@ -58,6 +58,8 @@ public:
            m_radius + mesh.m_radius;
   }
 
+  float GetRadius() const { return m_radius; }
+
   [[nodiscard]] DirectX::XMVECTOR GetPos() const {
     DirectX::XMFLOAT3 pos = {m_coordinateMatrix.r[3].m128_f32[0],
                              m_coordinateMatrix.r[3].m128_f32[1],

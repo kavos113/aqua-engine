@@ -9,210 +9,262 @@
 #include "descriptor_heap/DescriptorHeapSegment.h"
 #include "descriptor_heap/DescriptorHeapSegmentManager.h"
 
-namespace AquaEngine {
+namespace AquaEngine
+{
+class Camera
+{
+public:
+    void Init(
+        DirectX::XMFLOAT3 eye,
+        DirectX::XMFLOAT3 focus,
+        DirectX::XMFLOAT3 up
+    );
 
-    class Camera {
-    public:
-        void Init(
-            DirectX::XMFLOAT3 eye,
-            DirectX::XMFLOAT3 focus,
-            DirectX::XMFLOAT3 up
+    void Render(Command &command, const std::string &manager_name);
+
+    void AddManager(
+        const std::string &manager_name,
+        std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
+    );
+
+    explicit Camera(RECT wr)
+        : m_view()
+        , m_projection()
+        , m_focusDistance(0)
+        , wr(wr)
+    {
+    }
+
+    void RotX(float angle)
+    {
+        Rotate(angle, 0.0f, 0.0f);
+    }
+
+    // 水平回転
+    void RotY(float angle)
+    {
+        Rotate(0.0f, angle, 0.0f);
+    }
+
+    void RotZ(float angle)
+    {
+        Rotate(0.0f, 0.0f, angle);
+    }
+
+    void Rotate(float x = 0.0f, float y = 0.0f, float z = 0.0f)
+    {
+        DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(x, y, z);
+        DirectX::XMVECTOR focus_new = XMVector3TransformCoord(
+            DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
+            rot
+        );
+        m_focus = DirectX::XMFLOAT3(
+            m_eye.x + DirectX::XMVectorGetX(focus_new),
+            m_eye.y + DirectX::XMVectorGetY(focus_new),
+            m_eye.z + DirectX::XMVectorGetZ(focus_new)
         );
 
-        void Render(Command &command, const std::string &manager_name);
+        DirectX::XMVECTOR up_new = XMVector3TransformCoord(
+            XMLoadFloat3(&m_up),
+            rot
+        );
+        m_up = DirectX::XMFLOAT3(
+            DirectX::XMVectorGetX(up_new),
+            DirectX::XMVectorGetY(up_new),
+            DirectX::XMVectorGetZ(up_new)
+        );
+        UpdateMatrixBuffer();
+    }
 
-        void AddManager(
-            const std::string &manager_name,
-            std::unique_ptr<D3D12_DESCRIPTOR_RANGE> matrix_range
+    void Rot(const DirectX::XMMATRIX &transform_matrix)
+    {
+        DirectX::XMVECTOR targetvec = DirectX::XMVector3Transform(
+            XMLoadFloat3(&m_defaultTarget),
+            transform_matrix
+        );
+        DirectX::XMVECTOR upvec = DirectX::XMVector3Transform(
+            XMLoadFloat3(&m_defaultUp),
+            transform_matrix
         );
 
-        explicit Camera(RECT wr)
-            : m_view()
-            , m_projection()
-            , m_focusDistance(0)
-            , wr(wr)
-        {
-        }
+        targetvec = DirectX::XMVector3Normalize(targetvec);
+        targetvec = DirectX::XMVectorScale(targetvec, m_focusDistance);
+        upvec = DirectX::XMVector3Normalize(upvec);
 
-        void RotX(float angle)
-        {
-            Rotate(angle, 0.0f, 0.0f);
-        }
-
-        // 水平回転
-        void RotY(float angle)
-        {
-            Rotate(0.0f, angle, 0.0f);
-        }
-
-        void RotZ(float angle)
-        {
-            Rotate(0.0f, 0.0f, angle);
-        }
-
-        void Rotate(float x = 0.0f, float y = 0.0f, float z = 0.0f)
-        {
-            DirectX::XMMATRIX rot = DirectX::XMMatrixRotationRollPitchYaw(x, y, z);
-            DirectX::XMVECTOR focus_new = XMVector3TransformCoord(
-                DirectX::XMVectorSubtract(XMLoadFloat3(&m_focus), XMLoadFloat3(&m_eye)),
-                rot
+        m_eye =
+            DirectX::XMFLOAT3(
+                m_focus.x - DirectX::XMVectorGetX(targetvec),
+                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                m_focus.z - DirectX::XMVectorGetZ(targetvec)
             );
-            m_focus = DirectX::XMFLOAT3(
-                m_eye.x + DirectX::XMVectorGetX(focus_new),
-                m_eye.y + DirectX::XMVectorGetY(focus_new),
-                m_eye.z + DirectX::XMVectorGetZ(focus_new)
-            );
+        m_up = DirectX::XMFLOAT3(
+            DirectX::XMVectorGetX(upvec),
+            DirectX::XMVectorGetY(upvec),
+            DirectX::XMVectorGetZ(upvec)
+        );
+        UpdateMatrixBuffer();
+    }
 
-            DirectX::XMVECTOR up_new = XMVector3TransformCoord(
-                XMLoadFloat3(&m_up),
-                rot
-            );
-            m_up = DirectX::XMFLOAT3(
-                DirectX::XMVectorGetX(up_new),
-                DirectX::XMVectorGetY(up_new),
-                DirectX::XMVectorGetZ(up_new)
-            );
-            UpdateMatrixBuffer();
-        }
-
-        void Rot(const DirectX::XMMATRIX &transform_matrix) {
-          DirectX::XMVECTOR targetvec = DirectX::XMVector3Transform(
-              XMLoadFloat3(&m_defaultTarget), transform_matrix);
-          DirectX::XMVECTOR upvec = DirectX::XMVector3Transform(
-              XMLoadFloat3(&m_defaultUp), transform_matrix);
-
-          targetvec = DirectX::XMVector3Normalize(targetvec);
-          targetvec = DirectX::XMVectorScale(targetvec, m_focusDistance);
-          upvec = DirectX::XMVector3Normalize(upvec);
-
-          m_eye =
-              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
-                                m_focus.y - DirectX::XMVectorGetY(targetvec),
-                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
-          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
-                                   DirectX::XMVectorGetY(upvec),
-                                   DirectX::XMVectorGetZ(upvec));
-          UpdateMatrixBuffer();
-        }
-
-        void RotX(const DirectX::XMMATRIX &transform_matrix, float angle) {
-          DirectX::XMVECTOR targetvec = XMVector3Transform(
-              XMVector3Transform(XMLoadFloat3(&m_defaultTarget),
-                                 DirectX::XMMatrixRotationX(angle)),
-              transform_matrix);
-          DirectX::XMVECTOR upvec = XMVector3Transform(
-              XMVector3Transform(XMLoadFloat3(&m_defaultUp),
-                                 DirectX::XMMatrixRotationX(angle)),
-              transform_matrix);
-
-          m_eye =
-              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
-                                m_focus.y - DirectX::XMVectorGetY(targetvec),
-                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
-          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
-                                   DirectX::XMVectorGetY(upvec),
-                                   DirectX::XMVectorGetZ(upvec));
-          UpdateMatrixBuffer();
-        }
-
-        void RotY(const DirectX::XMMATRIX &transform_matrix, float angle) {
-          DirectX::XMVECTOR targetvec = XMVector3Transform(
-              XMVector3Transform(XMLoadFloat3(&m_defaultTarget),
-                                 DirectX::XMMatrixRotationY(angle)),
-              transform_matrix);
-          DirectX::XMVECTOR upvec = XMVector3Transform(
-              XMVector3Transform(XMLoadFloat3(&m_defaultUp),
-                                 DirectX::XMMatrixRotationY(angle)),
-              transform_matrix);
-
-          m_eye =
-              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
-                                m_focus.y - DirectX::XMVectorGetY(targetvec),
-                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
-          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
-                                   DirectX::XMVectorGetY(upvec),
-                                   DirectX::XMVectorGetZ(upvec));
-          UpdateMatrixBuffer();
-        }
-
-        void RotZ(const DirectX::XMMATRIX &transform_matrix, float angle) {
-          DirectX::XMVECTOR targetvec = XMVector3Transform(
-              XMVector3Transform(XMLoadFloat3(&m_defaultTarget),
-                                 DirectX::XMMatrixRotationZ(angle)),
-              transform_matrix);
-          DirectX::XMVECTOR upvec = XMVector3Transform(
-              XMVector3Transform(XMLoadFloat3(&m_defaultUp),
-                                 DirectX::XMMatrixRotationZ(angle)),
-              transform_matrix);
-
-          m_eye =
-              DirectX::XMFLOAT3(m_focus.x - DirectX::XMVectorGetX(targetvec),
-                                m_focus.y - DirectX::XMVectorGetY(targetvec),
-                                m_focus.z - DirectX::XMVectorGetZ(targetvec));
-          m_up = DirectX::XMFLOAT3(DirectX::XMVectorGetX(upvec),
-                                   DirectX::XMVectorGetY(upvec),
-                                   DirectX::XMVectorGetZ(upvec));
-          UpdateMatrixBuffer();
-        }
-
-        void Move(float dx, float dy, float dz) {
-          m_eye = DirectX::XMFLOAT3(m_eye.x + dx, m_eye.y + dy, m_eye.z + dz);
-          m_focus =
-              DirectX::XMFLOAT3(m_focus.x + dx, m_focus.y + dy, m_focus.z + dz);
-          UpdateMatrixBuffer();
-        }
-
-        [[nodiscard]] DirectX::XMMATRIX GetView() const
-        {
-            return m_view;
-        }
-
-        [[nodiscard]] DirectX::XMMATRIX GetProjection() const
-        {
-            return m_projection;
-        }
-
-        [[nodiscard]] DirectX::XMFLOAT3 GetEye() const
-        {
-            return m_eye;
-        }
-
-    private:
-        struct CameraMatrix
-        {
-            DirectX::XMMATRIX view;
-            DirectX::XMMATRIX projection;
-            DirectX::XMFLOAT3 eye;
-        };
-
-        void SetMatrixBuffer(
-            DirectX::XMFLOAT3 eye,
-            DirectX::XMFLOAT3 focus,
-            DirectX::XMFLOAT3 up
+    void RotX(const DirectX::XMMATRIX &transform_matrix, float angle)
+    {
+        DirectX::XMVECTOR targetvec = XMVector3Transform(
+            XMVector3Transform(
+                XMLoadFloat3(&m_defaultTarget),
+                DirectX::XMMatrixRotationX(angle)
+            ),
+            transform_matrix
+        );
+        DirectX::XMVECTOR upvec = XMVector3Transform(
+            XMVector3Transform(
+                XMLoadFloat3(&m_defaultUp),
+                DirectX::XMMatrixRotationX(angle)
+            ),
+            transform_matrix
         );
 
-        void UpdateMatrixBuffer();
+        m_eye =
+            DirectX::XMFLOAT3(
+                m_focus.x - DirectX::XMVectorGetX(targetvec),
+                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                m_focus.z - DirectX::XMVectorGetZ(targetvec)
+            );
+        m_up = DirectX::XMFLOAT3(
+            DirectX::XMVectorGetX(upvec),
+            DirectX::XMVectorGetY(upvec),
+            DirectX::XMVectorGetZ(upvec)
+        );
+        UpdateMatrixBuffer();
+    }
 
-        DirectX::XMMATRIX m_view;
-        DirectX::XMMATRIX m_projection;
+    void RotY(const DirectX::XMMATRIX &transform_matrix, float angle)
+    {
+        DirectX::XMVECTOR targetvec = XMVector3Transform(
+            XMVector3Transform(
+                XMLoadFloat3(&m_defaultTarget),
+                DirectX::XMMatrixRotationY(angle)
+            ),
+            transform_matrix
+        );
+        DirectX::XMVECTOR upvec = XMVector3Transform(
+            XMVector3Transform(
+                XMLoadFloat3(&m_defaultUp),
+                DirectX::XMMatrixRotationY(angle)
+            ),
+            transform_matrix
+        );
 
-        DirectX::XMFLOAT3 m_eye{};
-        DirectX::XMFLOAT3 m_focus{};
-        DirectX::XMFLOAT3 m_up{};
+        m_eye =
+            DirectX::XMFLOAT3(
+                m_focus.x - DirectX::XMVectorGetX(targetvec),
+                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                m_focus.z - DirectX::XMVectorGetZ(targetvec)
+            );
+        m_up = DirectX::XMFLOAT3(
+            DirectX::XMVectorGetX(upvec),
+            DirectX::XMVectorGetY(upvec),
+            DirectX::XMVectorGetZ(upvec)
+        );
+        UpdateMatrixBuffer();
+    }
 
-        DirectX::XMFLOAT3 m_defaultTarget{};
-        DirectX::XMFLOAT3 m_defaultUp{};
+    void RotZ(const DirectX::XMMATRIX &transform_matrix, float angle)
+    {
+        DirectX::XMVECTOR targetvec = XMVector3Transform(
+            XMVector3Transform(
+                XMLoadFloat3(&m_defaultTarget),
+                DirectX::XMMatrixRotationZ(angle)
+            ),
+            transform_matrix
+        );
+        DirectX::XMVECTOR upvec = XMVector3Transform(
+            XMVector3Transform(
+                XMLoadFloat3(&m_defaultUp),
+                DirectX::XMMatrixRotationZ(angle)
+            ),
+            transform_matrix
+        );
 
-        GPUBuffer<CameraMatrix> m_matrixBuffer;
-        GPUBuffer<CameraMatrix> m_skyboxMatrixBuffer;
-        std::unordered_map<std::string, ConstantBufferView> m_matrixCBV{};
+        m_eye =
+            DirectX::XMFLOAT3(
+                m_focus.x - DirectX::XMVectorGetX(targetvec),
+                m_focus.y - DirectX::XMVectorGetY(targetvec),
+                m_focus.z - DirectX::XMVectorGetZ(targetvec)
+            );
+        m_up = DirectX::XMFLOAT3(
+            DirectX::XMVectorGetX(upvec),
+            DirectX::XMVectorGetY(upvec),
+            DirectX::XMVectorGetZ(upvec)
+        );
+        UpdateMatrixBuffer();
+    }
 
-        float m_focusDistance;
+    void Move(float dx, float dy, float dz)
+    {
+        m_eye = DirectX::XMFLOAT3(m_eye.x + dx, m_eye.y + dy, m_eye.z + dz);
+        m_focus =
+            DirectX::XMFLOAT3(m_focus.x + dx, m_focus.y + dy, m_focus.z + dz);
+        UpdateMatrixBuffer();
+    }
 
-        RECT wr;
+    [[nodiscard]] DirectX::XMMATRIX GetView() const
+    {
+        return m_view;
+    }
 
+    [[nodiscard]] DirectX::XMMATRIX GetProjection() const
+    {
+        return m_projection;
+    }
+
+    [[nodiscard]] DirectX::XMFLOAT3 GetEye() const
+    {
+        return m_eye;
+    }
+
+    [[nodiscard]] DirectX::XMVECTOR GetTarget() const
+    {
+        return DirectX::XMVECTOR{m_focus.x - m_eye.x, m_focus.y - m_eye.y, m_focus.z - m_eye.z};
+    }
+
+    [[nodiscard]] DirectX::XMVECTOR GetUp() const
+    {
+        return XMLoadFloat3(&m_up);
+    }
+
+private:
+    struct CameraMatrix
+    {
+        DirectX::XMMATRIX view;
+        DirectX::XMMATRIX projection;
+        DirectX::XMFLOAT3 eye;
     };
 
+    void SetMatrixBuffer(
+        DirectX::XMFLOAT3 eye,
+        DirectX::XMFLOAT3 focus,
+        DirectX::XMFLOAT3 up
+    );
+
+    void UpdateMatrixBuffer();
+
+    DirectX::XMMATRIX m_view;
+    DirectX::XMMATRIX m_projection;
+
+    DirectX::XMFLOAT3 m_eye{};
+    DirectX::XMFLOAT3 m_focus{};
+    DirectX::XMFLOAT3 m_up{};
+
+    DirectX::XMFLOAT3 m_defaultTarget{};
+    DirectX::XMFLOAT3 m_defaultUp{};
+
+    GPUBuffer<CameraMatrix> m_matrixBuffer;
+    GPUBuffer<CameraMatrix> m_skyboxMatrixBuffer;
+    std::unordered_map<std::string, ConstantBufferView> m_matrixCBV{};
+
+    float m_focusDistance;
+
+    RECT wr;
+};
 } // AquaEngine
 
 #endif //CAMERA_H

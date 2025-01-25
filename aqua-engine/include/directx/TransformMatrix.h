@@ -24,6 +24,11 @@ namespace AquaEngine
 
         void SetToCommand(Command &command) const;
 
+        DirectX::XMMATRIX GetMatrix() const
+        {
+            return m_matrixBuffer.GetMappedBuffer()->world;
+        }
+
     private:
         struct Matrix
         {

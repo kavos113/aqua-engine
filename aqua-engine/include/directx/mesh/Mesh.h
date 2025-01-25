@@ -142,6 +142,10 @@ public:
     return m_transformMatrix * m_coordinateMatrix;
   }
 
+  [[nodiscard]] DirectX::XMMATRIX GetMappedMatrix() const {
+    return m_matrixBuffer.GetMatrix();
+  }
+
   [[nodiscard]] DirectX::XMMATRIX GetCoordinate() const {
     return m_coordinateMatrix;
   }

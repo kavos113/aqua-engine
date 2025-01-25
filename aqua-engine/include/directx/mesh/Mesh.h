@@ -134,6 +134,16 @@ public:
     m_matrixBuffer.SetMatrixBuffer(matrix);
   }
 
+  void SetTransformMatrix(const DirectX::XMMATRIX &matrix) {
+    m_transformMatrix = matrix;
+    m_matrixBuffer.SetMatrixBuffer(m_transformMatrix * m_coordinateMatrix);
+  }
+
+  void SetCoordinateMatrix(const DirectX::XMMATRIX &matrix) {
+    m_coordinateMatrix = matrix;
+    m_matrixBuffer.SetMatrixBuffer(m_transformMatrix * m_coordinateMatrix);
+  }
+
   [[nodiscard]] DirectX::XMMATRIX GetTransformMatrix() const {
     return m_transformMatrix;
   }
